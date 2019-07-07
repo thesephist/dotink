@@ -1,14 +1,18 @@
 {{ define "main" }}
 
  <main aria-role="main">
-     <div class="hero">
+     <div class="hero inverted">
          <div class="overlay">
              <h1>{{ .Title }}</h1>
-             <article>
-                 {{ .Content }}
-             </article>
+         </div>
+         <div class="meta overlay">
+             <div class="meta-item date" itemprop="datepublished">{{ .Date.Format "January 6, 2006" }}</div>
+             <div class="meta-item location" itemprop="place">{{ .Params.location }}</div>
          </div>
      </div>
+     <article class="overlay">
+         {{ .Content }}
+     </article>
  </main>
 
  {{ end }}

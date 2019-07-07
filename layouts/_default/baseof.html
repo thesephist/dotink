@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 
-{{ partial "head.html" }}
+<head>
+    {{ partial "head.html" }}
+</head>
 
-{{ partial "header.html" }}
-{{ block "main" . }}
-{{ end }}
-{{ partial "footer.html" }}
+<body class="type-{{ .Kind }}">
+    {{ partial "header.html" }}
+
+    {{ block "main" . }}
+    {{ end }}
+
+    {{ partial "footer.html" }}
+</body>
