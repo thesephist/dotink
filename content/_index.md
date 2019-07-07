@@ -1,7 +1,6 @@
 ---
 title: "The Ink technical blog"
 date: 2019-07-07T00:00:00-00:00
-evalURL: "https://linus.zone/eval"
 ---
 
 Hi there,
@@ -12,7 +11,7 @@ I usually go by [@thesephist](https://twitter.com/thesephist).
 
 # This is my blog
 
-about software and design. It's named after and runs on a programming language I crated called Ink, a functional language that takes after modern JavaScript and Go.
+about software and design. It's named after and runs on a programming language I crated called Ink, a functional language that takes after modern JavaScript and Go. [Read more about Ink here.](https://linus.zone/ink)
 
 ## These are my posts
 
