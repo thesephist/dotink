@@ -15,7 +15,7 @@ about software and design. It's named after and runs on a programming language I
 
 ## These are my posts
 
-on programming languages, interpreters and compilers, frameworks, web applications, software architecture, observability and operations, and other things. You can [read them here](/posts).
+on programming languages, interpreters and compilers, frameworks, web applications, software architecture, observability and operations, and other things. You can [read them here](/posts/).
 
 ## I work on infrastructure,
 
