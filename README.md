@@ -1,2 +1,3 @@
-# dotink
-dotink (.ink) is the Ink programming language's blog, and my general technical blog
+# .ink
+
+dotink (.ink) is the Ink programming language's blog, and my general technical blog.

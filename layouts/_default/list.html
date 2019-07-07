@@ -1,0 +1,26 @@
+{{ define "main" }}
+
+<main aria-role="main">
+    <section class="hero">
+        <div class="overlay">
+            <h1>{{ .Title }}</h1>
+            <div class="tagline">{{ .Params.Tagline }}</div>
+            <article>
+                {{ .Content }}
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <div class="overlay">
+            {{ range (.Pages.ByParam "order") }}
+            <a href="{{.Permalink}}">
+                <h2>{{ .Title }}</h2>
+                <p>{{ .Summary }}</p>
+            </a>
+            {{ end }}
+        </div>
+    </section>
+</main>
+
+{{ end }}
