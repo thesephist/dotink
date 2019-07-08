@@ -1,0 +1,28 @@
+[Unit]
+Description=dotink blog server (ink-serve)
+ConditionPathExists=/home/dotink/go/bin/ink
+After=network.target
+
+[Service]
+Type=simple
+User=dotink
+LimitNOFILE=1024
+
+Restart=on-failure
+RestartSec=10
+startLimitIntervalSec=60
+
+WorkingDirectory=/home/dotink/dotink
+ExecStart=/home/dotink/go/bin/ink -input src/fileserver.ink
+
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/log/dotink
+ExecStartPre=/bin/chown syslog:adm /var/log/dotink
+ExecStartPre=/bin/chmod 755 /var/log/dotink
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=dotink
+
+[Install]
+WantedBy=multi-user.target
