@@ -29,8 +29,22 @@ body {
     color: var(--foreground-default);
     background: var(--background-default);
 
+    border-bottom: 8px solid var(--foreground-default);
+
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    border-bottom: 4px solid var(--foreground-default);
+}
+
+header,
+footer {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+main {
+    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 /* bit of a hack for this special case */
@@ -254,6 +268,10 @@ code {
 code {
     display: block;
     padding: 1em;
+}
+
+blockquote {
+    font-style: italic;
 }
 
 /* SECTION */

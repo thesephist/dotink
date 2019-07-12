@@ -62,7 +62,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 				)
 				_ -> (
                     elapsedMs := (time() - reqStart) * 1000
-					log('-> ' + evt.data.url + ' served in ' + string(elapsedMs) + 'ms')
+					log('-> ' + evt.data.url + ' served in ' + string(floor(elapsedMs)) + 'ms')
 					(evt.end)({
 						status: 200
 						headers: {

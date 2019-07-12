@@ -11,7 +11,7 @@ I usually go by [@thesephist](https://twitter.com/thesephist).
 
 # This is my blog
 
-about software and design. It's named after a programming language I created called Ink, a functional language that takes after modern JavaScript and Go. This website is served by a [server written in Ink](https://github.com/thesephist/dotink/blob/master/fileserver.ink). [Read more about Ink here.](https://linus.zone/ink)
+about software and design. It's named after a programming language I created called Ink, a functional language that takes after modern JavaScript and Go. This website is served by a [server written in Ink](https://github.com/thesephist/dotink/blob/master/src/fileserver.ink). [Read more about Ink here.](https://linus.zone/ink)
 
 ## These are my posts
 
