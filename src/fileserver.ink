@@ -1,5 +1,5 @@
 ` a primitive HTTP static file server
-    written in Ink, from github.com/thesephist/ink/blob/master/samples/fileserver.ink`
+	written in Ink, from github.com/thesephist/ink/blob/master/samples/fileserver.ink`
 
 DIR := './public'
 PORT := 7800
@@ -43,7 +43,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 				'/' -> path + 'index.html'
 				_ -> path
 			})
-            reqStart := time()
+			reqStart := time()
 
 			log(evt.data.method + ': ' + evt.data.url + ', type: ' + getType(path))
 		
@@ -61,7 +61,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 					})
 				)
 				_ -> (
-                    elapsedMs := (time() - reqStart) * 1000
+					elapsedMs := (time() - reqStart) * 1000
 					log('-> ' + evt.data.url + ' served in ' + string(floor(elapsedMs)) + 'ms')
 					(evt.end)({
 						status: 200

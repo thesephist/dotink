@@ -1,18 +1,32 @@
 {{ define "main" }}
 
- <main aria-role="main">
-     <div class="hero inverted">
-         <div class="overlay">
-             <h1>{{ .Title }}</h1>
-         </div>
-         <div class="meta overlay">
-             <div class="meta-item date" itemprop="datepublished">{{ .Date.Format "January 6, 2006" }}</div>
-             <div class="meta-item location" itemprop="place">{{ .Params.location }}</div>
-         </div>
-     </div>
-     <article class="overlay">
-         {{ .Content }}
-     </article>
- </main>
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>{{ .Title }}</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">{{ .Date.Format "January 6, 2006" }}</div>
+            <div class="meta-item location" itemprop="place">{{ .Params.location }}</div>
+        </div>
+    </div>
+    <article class="overlay">
+        {{ .Content }}
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            {{ if .NextInSection }}
+            my next post,
+            <a href="{{ .NextInSection.Permalink }}"><em>{{ .NextInSection.Title }}</em></a>.
+            {{ else }}
+                {{ if .PrevInSection }}
+                my previous post,
+                <a href="{{ .PrevInSection.Permalink }}"><em>{{ .PrevInSection.Title }}</em></a>.
+                {{ else }}
+                other posts on the site. Read more on the <a href="/posts/">posts page</a>.
+                {{ end }}
+            {{ end }}
+        </p>
+    </article>
+</main>
 
- {{ end }}
+{{ end }}
