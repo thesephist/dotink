@@ -251,6 +251,7 @@ pre, code {
 }
 
 pre {
+    display: block;
     margin: 1.5em 0;
     background: var(--background-block);
     overflow-x: auto;
@@ -261,13 +262,18 @@ pre {
     flex-direction: row;
 }
 
-code {
+pre > code {
     flex-shrinK: 0;
+    display: block;
+    padding: 1em;
 }
 
 code {
-    display: block;
-    padding: 1em;
+    background: var(--background-block);
+}
+
+p code {
+    padding: 3px 5px;
 }
 
 blockquote {
