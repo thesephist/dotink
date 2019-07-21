@@ -225,9 +225,11 @@ main {
 }
 
 .meta-item {
-    width: 0;
     flex-grow: 1;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 p img {
