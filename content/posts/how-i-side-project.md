@@ -1,7 +1,6 @@
 ---
 title: "How I side project"
-date: 2019-07-07T00:00:00-00:00
-draft: false
+date: 2019-07-22T00:00:00-00:00
 location: "San Francisco, CA"
 ---
 
