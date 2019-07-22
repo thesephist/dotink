@@ -38,7 +38,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 		'error' -> log('Server error: ' + evt.message)
 		'req' -> (
 			` normalize path `
-			path := DIR + evt.data.url
+			path := DIR + trimQP(evt.data.url)
 			path := (path.(len(path) - 1) :: {
 				'/' -> path + 'index.html'
 				_ -> path
@@ -121,6 +121,18 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 		)
 	}
 ))
+
+` trim query parameters `
+trimQP := path => (
+	max := len(path) - 1
+	(sub := (idx, acc) => idx :: {
+		max -> path
+		_ -> path.(idx) :: {
+			'?' -> acc
+			_ -> sub(idx + 1, acc + path.(idx))
+		}
+	})(0, '')
+)
 
 ` given a path, get the MIME type `
 getType := path => (
