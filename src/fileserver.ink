@@ -83,7 +83,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 							headers: {
 								'Content-Type': 'text/plain'
 								'X-Served-By': 'ink-serve'
-								'Location': evt.data.url + '/'
+								'Location': trimQP(evt.data.url) + '/'
 							}
 							body: []
 						})
