@@ -124,7 +124,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 
 ` trim query parameters `
 trimQP := path => (
-	max := len(path) - 1
+	max := len(path)
 	(sub := (idx, acc) => idx :: {
 		max -> path
 		_ -> path.(idx) :: {
