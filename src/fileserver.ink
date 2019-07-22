@@ -45,37 +45,66 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 			})
 			reqStart := time()
 
-			log(evt.data.method + ': ' + evt.data.url + ', type: ' + getType(path))
+			log(evt.data.method + ': ' + evt.data.url)
 		
 			` pre-define callback to readRawFile `
-			readHandler := fileBody => fileBody :: {
-				() -> (
-					log('-> ' + path + ' not found')
-					(evt.end)({
-						status: 404
-						headers: {
-							'Content-Type': 'text/plain'
-							'X-Served-By': 'ink-serve'
-						}
-						body: encode('not found'),
-					})
-				)
-				_ -> (
-					elapsedMs := (time() - reqStart) * 1000
-					log('-> ' + evt.data.url + ' served in ' + string(floor(elapsedMs)) + 'ms')
-					(evt.end)({
-						status: 200
-						headers: {
-							'Content-Type': getType(path)
-							'X-Served-By': 'ink-serve'
-						}
-						body: fileBody,
-					})
-				)
-			}
+			readHandler := (path, fileBody, withIndex) => (
+				` there seems to be a funny bug on macOS where sometimes a read
+					of a directory as a file will succeed and return no bytes `
+				fileBody := (fileBody :: {
+					{} -> ()
+					_ -> fileBody
+				})
+
+				[fileBody, withIndex] :: {
+					` if not found, maybe try again with /index.html appended? `
+					[(), false] -> (
+						log('-> ' + path + ' not found, trying with /index.html')
+						readRawFile(path + '/index.html', data => readHandler(path + '/index.html', data, true))
+					)
+					` if this is the second attempt, just give up `
+					[(), true] -> (
+						log('-> ' + path + ' not found')
+						(evt.end)({
+							status: 404
+							headers: {
+								'Content-Type': 'text/plain'
+								'X-Served-By': 'ink-serve'
+							}
+							body: encode('not found')
+						})
+					)
+					` if found on an /index.html suffix, redirect `
+					[_, true] -> (
+						elapsedMs := (time() - reqStart) * 1000
+						log('-> ' + evt.data.url + ' type: ' + getType(path) + ' redirected in ' + string(floor(elapsedMs)) + 'ms')
+						(evt.end)({
+							status: 301
+							headers: {
+								'Content-Type': 'text/plain'
+								'X-Served-By': 'ink-serve'
+								'Location': evt.data.url + '/'
+							}
+							body: []
+						})
+					)
+					_ -> (
+						elapsedMs := (time() - reqStart) * 1000
+						log('-> ' + evt.data.url + ' type: ' + getType(path) + ' served in ' + string(floor(elapsedMs)) + 'ms')
+						(evt.end)({
+							status: 200
+							headers: {
+								'Content-Type': getType(path)
+								'X-Served-By': 'ink-serve'
+							}
+							body: fileBody
+						})
+					)
+				}
+			)
 
 			evt.data.method :: {
-				'GET' -> readRawFile(path, readHandler)
+				'GET' -> readRawFile(path, data => readHandler(path, data, false))
 				_ -> (
 					` if other methods, just drop the request `
 					log('-> ' + evt.data.url + ' dropped')
@@ -85,7 +114,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 							'Content-Type': 'text/plain'
 							'X-Served-By': 'ink-serve'
 						}
-						body: encode('method not allowed'),
+						body: encode('method not allowed')
 					})
 				)
 			}
