@@ -92,7 +92,7 @@ h3 {
     font-size: 20px;
 }
 
-p {
+p, li {
     font-size: 18px;
     line-height: 1.45em;
     margin: 1em 0;
@@ -123,7 +123,7 @@ p {
         font-size: 32px;
     }
 
-    p {
+    p, li {
         font-size: 20px;
         margin: 1em 0;
     }
