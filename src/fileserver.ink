@@ -30,8 +30,7 @@ TYPES := {
 std := load('std')
 
 log := std.log
-encode := std.encode
-readRawFile := std.readRawFile
+readFile := std.readFile
 
 close := listen('0.0.0.0:' + string(PORT), evt => (
 	evt.type :: {
@@ -47,12 +46,12 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 
 			log(evt.data.method + ': ' + evt.data.url)
 		
-			` pre-define callback to readRawFile `
+			` pre-define callback to readFile `
 			readHandler := (path, fileBody, withIndex) => (
 				` there seems to be a funny bug on macOS where sometimes a read
 					of a directory as a file will succeed and return no bytes `
 				fileBody := (fileBody :: {
-					{} -> ()
+					'' -> ()
 					_ -> fileBody
 				})
 
@@ -60,7 +59,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 					` if not found, maybe try again with /index.html appended? `
 					[(), false] -> (
 						log('-> ' + path + ' not found, trying with /index.html')
-						readRawFile(path + '/index.html', data => readHandler(path + '/index.html', data, true))
+						readFile(path + '/index.html', data => readHandler(path + '/index.html', data, true))
 					)
 					` if this is the second attempt, just give up `
 					[(), true] -> (
@@ -71,7 +70,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 								'Content-Type': 'text/plain'
 								'X-Served-By': 'ink-serve'
 							}
-							body: encode('not found')
+							body: 'not found'
 						})
 					)
 					` if found on an /index.html suffix, redirect `
@@ -85,7 +84,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 								'X-Served-By': 'ink-serve'
 								'Location': trimQP(evt.data.url) + '/'
 							}
-							body: []
+							body: ''
 						})
 					)
 					_ -> (
@@ -104,7 +103,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 			)
 
 			evt.data.method :: {
-				'GET' -> readRawFile(path, data => readHandler(path, data, false))
+				'GET' -> readFile(path, data => readHandler(path, data, false))
 				_ -> (
 					` if other methods, just drop the request `
 					log('-> ' + evt.data.url + ' dropped')
@@ -114,7 +113,7 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 							'Content-Type': 'text/plain'
 							'X-Served-By': 'ink-serve'
 						}
-						body: encode('method not allowed')
+						body: 'method not allowed'
 					})
 				)
 			}
