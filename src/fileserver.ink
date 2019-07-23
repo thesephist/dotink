@@ -30,6 +30,7 @@ TYPES := {
 std := load('std')
 
 log := std.log
+slice := std.slice
 readFile := std.readFile
 
 close := listen('0.0.0.0:' + string(PORT), evt => (
@@ -75,8 +76,8 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 					)
 					` if found on an /index.html suffix, redirect `
 					[_, true] -> (
-						elapsedMs := (time() - reqStart) * 1000
-						log('-> ' + evt.data.url + ' type: ' + getType(path) + ' redirected in ' + string(floor(elapsedMs)) + 'ms')
+						elapsedMs := floor((time() - reqStart) * 1000000) / 1000
+						log('-> ' + evt.data.url + ' type: ' + getType(path) + ' redirected in ' + slice(string(elapsedMs), 0, 6) + 'ms')
 						(evt.end)({
 							status: 301
 							headers: {
@@ -88,8 +89,8 @@ close := listen('0.0.0.0:' + string(PORT), evt => (
 						})
 					)
 					_ -> (
-						elapsedMs := (time() - reqStart) * 1000
-						log('-> ' + evt.data.url + ' type: ' + getType(path) + ' served in ' + string(floor(elapsedMs)) + 'ms')
+						elapsedMs := floor((time() - reqStart) * 1000000) / 1000
+						log('-> ' + evt.data.url + ' type: ' + getType(path) + ' served in ' + slice(string(elapsedMs), 0, 6) + 'ms')
 						(evt.end)({
 							status: 200
 							headers: {
