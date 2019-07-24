@@ -13,7 +13,7 @@ map := std.map
 each := std.each
 readFile := std.readFile
 
-DIR := '.'
+DIR := './public'
 PORT := 7800
 ALLOWINDEX := false
 
