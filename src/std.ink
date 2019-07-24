@@ -17,25 +17,8 @@ scan := callback => (
 )
 
 ` hexadecimal conversion utility functions `
-hToN := {
-	'0': 0
-	'1': 1
-	'2': 2
-	'3': 3
-	'4': 4
-	'5': 5
-	'6': 6
-	'7': 7
-	'8': 8
-	'9': 9
-	'a': 10
-	'b': 11
-	'c': 12
-	'd': 13
-	'e': 14
-	'f': 15
-}
-nToH := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+hToN := {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14, 'f': 15}
+nToH := '0123456789abcdef'
 
 ` take number, return hex string `
 hex := n => (
@@ -106,10 +89,11 @@ slice := (str, start, end) => (
 	start := x.start
 	end := x.end
 
-	(sl := (i, acc) => i :: {
-		end -> acc
-		_ -> sl(i + 1, acc + str.(i))
-	})(start, '')
+	max := end - start
+	(sub := (i, acc) => i :: {
+		max -> acc
+		_ -> sub(i + 1, acc + str.(start + i))
+	})(0, '')
 )
 
 ` get a sub-list of a given list `
@@ -119,10 +103,11 @@ sliceList := (list, start, end) => (
 	start := x.start
 	end := x.end
 
-	(sl := (i, acc) => i :: {
-		end -> acc
-		_ -> sl(i + 1, acc.len(acc) := list.(i))
-	})(start, [])
+	max := end - start
+	(sub := (i, acc) => i :: {
+		max -> acc
+		_ -> sub(i + 1, acc.(i) := list.(start + i))
+	})(0, [])
 )
 
 ` join one list to the end of another, return the original first list `
@@ -142,27 +127,14 @@ append := (base, child) => (
 join := (base, child) => append(clone(base), child)
 
 ` clone a composite value `
-clone := comp => (
-	reduce(keys(comp), (acc, k) => (
-		acc.(k) := comp.(k)
-	), {})
-)
+clone := x => type(x) :: {
+	'string' -> '' + x
+	'composite' -> reduce(keys(x), (acc, k) => acc.(k) := x.(k), {})
+	_ -> x
+}
 
 ` tail recursive numeric list -> string converter `
-stringList := list => (
-	length := len(list)
-	stringListRec := (start, acc) => start :: {
-		length -> acc
-		_ -> stringListRec(
-			start + 1
-			(acc :: {
-				'' -> ''
-				_ -> acc + ', '
-			}) + string(list.(start))
-		)
-	}
-	'[' + stringListRec(0, '') + ']'
-)
+stringList := list => '[' + cat(map(list, x => string(x)), ', ') + ']'
 
 ` tail recursive reversing a list `
 reverse := list => (
