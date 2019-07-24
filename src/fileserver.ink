@@ -15,7 +15,7 @@ readFile := std.readFile
 
 DIR := '.'
 PORT := 7800
-ALLOWINDEX := true
+ALLOWINDEX := false
 
 ` short non-comprehensive list of MIME types `
 TYPES := {
