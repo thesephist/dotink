@@ -20,7 +20,7 @@ I wanted these images to allow me to easily, visually take in what a sorting alg
 
 ![What a drawing of a sorting algorithm looks like](/img/selection-color.png)
 
-My particular implementation of this generates a list of 500 random numbers between 0 and 1, and at each line of pixels, I apply a single "step" of the algorithm, usually a single swap of two numbers in the list. And I continue adding on new lines until the "line" -- the list -- is completely sorted. The full program is a bit lengthy (about 340 lines), so I won't embed it here, but you can find the Ink source code for this post on my [GitHub](https://github.com/thesephist/dotink/blobs/master/static/ink/sorting-algorithms.ink), including the recursive implementations for all the algorithms we'll explore here.
+My particular implementation of this generates a list of 500 random numbers between 0 and 1, and at each line of pixels, I apply a single "step" of the algorithm, usually a single swap of two numbers in the list. And I continue adding on new lines until the "line" -- the list -- is completely sorted. The full program is a bit lengthy (about 340 lines), so I won't embed it here, but you can find the Ink source code for this post on my [GitHub](https://github.com/thesephist/dotink/blob/master/static/ink/sorting-algorithms.ink), including the recursive implementations for all the algorithms we'll explore here.
 
 ## The algorithms
 
