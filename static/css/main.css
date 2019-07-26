@@ -235,7 +235,7 @@ main {
 p img {
     margin: 1.5em 0;
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
 }
 
 @media only screen and (max-width: 600px) {

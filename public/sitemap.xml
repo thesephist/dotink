@@ -3,12 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dotink.co/posts/how-i-side-project/</loc>
-    <lastmod>2019-07-22T00:00:00+00:00</lastmod>
+    <loc>https://dotink.co/posts/</loc>
+    <lastmod>2019-07-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dotink.co/posts/</loc>
+    <loc>https://dotink.co/posts/visualizing-sorting-algorithms/</loc>
+    <lastmod>2019-07-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/how-i-side-project/</loc>
     <lastmod>2019-07-22T00:00:00+00:00</lastmod>
   </url>
   
