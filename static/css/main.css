@@ -282,6 +282,10 @@ blockquote {
     font-style: italic;
 }
 
+.summaryLink {
+    margin-bottom: 52px;
+}
+
 /* SECTION */
 
 .type-section section a {

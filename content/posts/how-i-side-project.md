@@ -123,4 +123,4 @@ I like to joke that, in an alternate timeline, my dream career would to be move 
 
 Even as my personal projects continue to be a way for me to learn and experiment with technologies, I hope I can get to a point where I can also build things that go beyond that, to be tools that artists can use to tell better stories or find better media for their ideas, or even to open up new and interesting questions altogether.
 
-At any rate, I'll keep hacking and sharing, and I appreciate you being here to tune in when things get interesting.
+At any rate, I'll keep hacking and sharing, and I appreciate you being here to tune in when things get interesting. If you've got thoughts or questions, you can [share it and discuss on Hacker News](https://news.ycombinator.com/item?id=20551571).

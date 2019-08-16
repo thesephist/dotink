@@ -6,10 +6,21 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Jul 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 15 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Thank you Repl.it, Hello Hack Club</title>
+      <link>https://dotink.co/posts/composing-the-future/</link>
+      <pubDate>Thu, 15 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/posts/composing-the-future/</guid>
+      <description>Summer&amp;rsquo;s almost over! It&amp;rsquo;s a change of season, and the season of changes.
+My internship at Repl.it is coming to a close, and I&amp;rsquo;m joining the fantastic team at Hack Club moving forward. I wanted to take a moment to talk about what I learned at Repl.it, and why I&amp;rsquo;m so excited about Hack Club.
+Repl.it: building for builders Today was my last day as an engineering intern at Repl.</description>
+    </item>
     
     <item>
       <title>Visualizing and exploring sorting algorithms in two dimensions with Ink</title>
