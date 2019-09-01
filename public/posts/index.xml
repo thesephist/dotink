@@ -6,10 +6,19 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 26 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Things I&#39;m learning about in sales</title>
+      <link>https://dotink.co/posts/sales-learnings/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/posts/sales-learnings/</guid>
+      <description>As I&amp;rsquo;m diving deeper into my role at Hack Club Bank, I&amp;rsquo;m trying to learn more about sales and working with customers, and I&amp;rsquo;m also learning a lot every week about leading a B2B product. This is a place for me to collect the things I&amp;rsquo;m learning in the process. I&amp;rsquo;m going to keep this up to date over time, and I thought it would be nice to make it publicly available, in case you might find it useful as well.</description>
+    </item>
     
     <item>
       <title>Thank you Repl.it, Hello Hack Club</title>
