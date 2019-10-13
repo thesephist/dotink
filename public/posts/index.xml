@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on .ink</title>
@@ -6,10 +6,19 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 26 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Twenty-one things I don&#39;t know at twenty-one</title>
+      <link>https://dotink.co/posts/twenty-one-things-i-dont-know/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/posts/twenty-one-things-i-dont-know/</guid>
+      <description>As of today, I&amp;rsquo;m twenty-one years old, an arbitrary number that&amp;rsquo;s only slightly less arbitrary in the US. I&amp;rsquo;ve talked for pages and pages about what I&amp;rsquo;ve learned in all of the years leading up to today, so today, I wanted to take a few pages to share what I still don&amp;rsquo;t know. Over time, hopefully, I&amp;rsquo;ll be able to check off this list one by one. The best I can do now is to slowly chip away at these big questions.</description>
+    </item>
     
     <item>
       <title>Things I&#39;m learning about in sales</title>

@@ -33,3 +33,7 @@ They're about things. The podcast. The music earworm.
 A good life is one that builds a good story in this sense --(?) honest, authentic, one with a belief that's unique, one that is resilient.
 
 // Thank you to Andys, speakers, people I met, and attendees for the memorable weekend.
+
+---
+
+// share this with Sofi, XOXO commons.

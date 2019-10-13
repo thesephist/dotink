@@ -1,5 +1,5 @@
 ---
-title: "The Ink technical blog"
+title: "The Ink blog"
 date: 2019-07-07T00:00:00-00:00
 ---
 
