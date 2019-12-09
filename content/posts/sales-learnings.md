@@ -18,7 +18,7 @@ More tactically, **in a sales conversation, anchor the conversation early around
 
 **Use previous customers' case studies to help potential new customers find their product fit/value.** Testimonials serve to build trust with new customers that the product they're buying into is going to solve their problems, but I can build an even more powerful case by talking about how previous, similar customers have faced similar challenges, and how a product I'm building helped them overcome those challenges. And as we sell and get more customers, we can start to accrue a larger and larger body of customer stories, that we can then build on to make the story of the product itself much more convincing.
 
-**Understand how each team is different, organizationally and in interal goals.** Each team might be structured differently, and each organization cares about a different set of priorities. If two teams are different in this way, trying to pitch the same value propositions to the same people won't work.
+**Understand how each team is different, organizationally and in internal goals.** Each team might be structured differently, and each organization cares about a different set of priorities. If two teams are different in this way, trying to pitch the same value propositions to the same people won't work.
 
 **Sales is a continuous, ongoing process, even after the transaction.** This is especially true for subscription-based products like Hack Club Bank. Sales works better when we view it as a continuous process. It's not over when the transaction takes place; every interaction the customer has with the product, with us, with the company, and with other customers is an opportunity to provide more value or convince them that they paid too much.
 
