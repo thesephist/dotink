@@ -10,7 +10,7 @@ LimitNOFILE=1024
 
 Restart=on-failure
 RestartSec=10
-startLimitIntervalSec=60
+StartLimitIntervalSec=60
 
 WorkingDirectory=/home/dotink/dotink
 ExecStart=/home/dotink/go/bin/ink src/fileserver.ink
