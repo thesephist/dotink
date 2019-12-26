@@ -4,6 +4,8 @@ date: 2019-08-15T00:00:00-00:00
 location: "San Francisco, CA"
 ---
 
+(This is an archived copy of a post originally published at [thesephist.com](https://thesephist.com/posts/composing-the-future/).)
+
 Summer's almost over! It's a change of season, and the season of changes.
 
 My internship at [Repl.it](https://repl.it) is coming to a close, and I'm joining the fantastic team at [Hack Club](https://hackclub.com) moving forward. I wanted to take a moment to talk about what I learned at Repl.it, and why I'm so excited about Hack Club.

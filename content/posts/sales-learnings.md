@@ -4,6 +4,8 @@ date: 2019-08-26T00:00:00-00:00
 location: "23rd & Broadway, NYC"
 ---
 
+(This is an archived copy of a post originally published at [thesephist.com](https://thesephist.com/posts/sales-learnings/).)
+
 As I'm diving deeper into my role at [Hack Club Bank](https://hackclub.com/bank), I'm trying to learn more about sales and working with customers, and I'm also learning a lot every week about leading a B2B product. This is a place for me to collect the things I'm learning in the process. I'm going to keep this up to date over time, and I thought it would be nice to make it publicly available, in case you might find it useful as well.
 
 With that, here's what I've learned, from most to least recent.
