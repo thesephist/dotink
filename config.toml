@@ -1,3 +1,6 @@
 baseURL = "https://dotink.co/"
 languageCode = "en-us"
 title = ".ink"
+
+[markup.goldmark.renderer]
+    unsafe = true
