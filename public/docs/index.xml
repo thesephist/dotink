@@ -11,12 +11,13 @@
     
     
     <item>
-      <title>Overview</title>
+      <title>An overview of Ink</title>
       <link>https://dotink.co/docs/overview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/overview/</guid>
-      <description>// like the first chapter of Awk
+      <description>Ink is a functional, general-purpose scripting language.
+// like the first chapter of Awk
 Overview of the Ink programming language.</description>
     </item>
     

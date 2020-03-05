@@ -9,7 +9,7 @@ log := std.log
 sl := std.stringList
 clone := std.clone
 reverse := std.reverse
-sliceList := std.sliceList
+slice := std.slice
 append := std.append
 range := std.range
 map := std.map
@@ -96,7 +96,7 @@ SelectionSort := list => (
 
 	sort := () => (
 		` find the minimum value in the remaining section of the list `
-		idx := state.idx + minIdx(sliceList(list, state.idx, LENGTH))
+		idx := state.idx + minIdx(slice(list, state.idx, LENGTH))
 
 		` swap with the end of the sorted list `
 		state.idx :: {
@@ -134,13 +134,13 @@ InsertionSort := list => (
 
 	sort := () => (
 		next := list.(state.idx)
-		nextPos := getPos(sliceList(list, 0, state.idx), next)
+		nextPos := getPos(slice(list, 0, state.idx), next)
 
 		` construct the new, more sorted list in pieces `
-		nextList := sliceList(list, 0, nextPos)
+		nextList := slice(list, 0, nextPos)
 		nextList.len(nextList) := next
-		append(nextList, sliceList(list, nextPos, state.idx))
-		append(nextList, sliceList(list, state.idx + 1, LENGTH))
+		append(nextList, slice(list, nextPos, state.idx))
+		append(nextList, slice(list, state.idx + 1, LENGTH))
 
 		` copy over sorted vesion of list to "list" from "next" `
 		each(range(0, LENGTH, 1), i => list.(i) := nextList.(i))
@@ -166,11 +166,11 @@ MergeSort := list => (
 			[_, _] -> a.0 < b.0 :: {
 				true -> (
 					result.len(result) := a.0
-					sub(sliceList(a, 1, len(a)), b)
+					sub(slice(a, 1, len(a)), b)
 				)
 				false -> (
 					result.len(result) := b.0
-					sub(a, sliceList(b, 1, len(b)))
+					sub(a, slice(b, 1, len(b)))
 				)
 			}
 		})(first, second)
@@ -196,7 +196,7 @@ MergeSort := list => (
 
 		` always return the flattened list structure `
 		reduce(
-			sliceList(state.prevDivisions, state.nextMergeIdx, len(state.prevDivisions))
+			slice(state.prevDivisions, state.nextMergeIdx, len(state.prevDivisions))
 			(acc, row) => append(acc, row)
 			reduce(state.nextDivisions, (acc, row) => append(acc, row), [])
 		)
@@ -268,7 +268,7 @@ QuickSort := list => (
 		and queues two more partitions, if applicable, to be sorted `
 	advancePartition := pidx => (
 		currentPartition := state.partitions.0
-		state.partitions := sliceList(state.partitions, 1, len(state.partitions))
+		state.partitions := slice(state.partitions, 1, len(state.partitions))
 
 		state.partitions.len(state.partitions) := [currentPartition.0, pidx]
 		state.partitions.len(state.partitions) := [pidx + 1, currentPartition.1]
@@ -282,7 +282,7 @@ QuickSort := list => (
 					state.pivot := list.(state.lo)
 				)
 				false -> (
-					state.partitions := sliceList(state.partitions, 1, len(state.partitions))
+					state.partitions := slice(state.partitions, 1, len(state.partitions))
 					sub()
 				)
 			}
