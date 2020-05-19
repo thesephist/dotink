@@ -14,4 +14,8 @@
     {{ end }}
 
     {{ partial "footer.html" }}
+
+	{{ if .Params.Math }}
+	<script async defer src="/js/mathjax.js"></script>
+	{{ end }}
 </body>
