@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 
 <head>
-    {{ partial "head.html" }}
+	{{ partial "head.html" }}
 
-    <title>{{ if .Title }}{{ .Title }}{{ else }}main{{ end }}</title>
-    <link rel="canonical" href="{{ .Permalink }}" />
+	<title>{{ if .Title }}{{ .Title }}{{ else }}main{{ end }}</title>
+	<link rel="canonical" href="{{ .Permalink }}" />
 </head>
 
 <body class="type-{{ .Kind }}">
-    {{ partial "header.html" }}
+	{{ partial "header.html" }}
 
-    {{ block "main" . }}
-    {{ end }}
+	{{ block "main" . }}
+	{{ end }}
 
-    {{ partial "footer.html" }}
+	{{ partial "footer.html" }}
 
 	{{ if .Params.Math }}
-	<script async defer src="/js/mathjax.js"></script>
+	<script>
+		window.MathJax = {
+			tex: {
+				inlineMath: [['\\(', '\\)']]
+			},
+			svg: {
+				fontCache: 'global'
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	{{ end }}
 </body>
