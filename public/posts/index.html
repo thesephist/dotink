@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 
 <head>
-    <meta charset="utf-8" />
+	<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 
 <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/main.css" />
 
 
-    <title>Posts</title>
-    <link rel="canonical" href="https://dotink.co/posts/" />
+	<title>Posts</title>
+	<link rel="canonical" href="https://dotink.co/posts/" />
 </head>
 
 <body class="type-section">
-    <header>
+	<header>
     <div class="overlay">
         <div class="home">
             <a href="/">.ink</a>
@@ -27,7 +27,7 @@
 </header>
 
 
-    
+	
 
 <main aria-role="main">
     <section class="hero">
@@ -42,6 +42,13 @@
 
     <section>
         <div class="overlay">
+            
+            <a class="summaryLink" href="https://dotink.co/posts/pi-by-riemann-sum/">
+                <h2>Computing pi as a Riemann sum</h2>
+                <p>While researching the difference between Intel&rsquo;s various x86 SIMD extensions, I came across this article that demonstrates SSE and AVX performance differences using an algorithm to compute an approximation of pi using a Riemann sum under a curve. Specifically, we can numerically compute the integral
+$$\int_{0}^{1} \frac{4}{1 + x^2} \mathrm{d} x = 4 \tan ^{-1} (x) = \pi $$
+to find a reasonably quickly converging approximation of \( \pi \). This approach to approximating pi was novel to me, and seemed fun, so wrote a little Ink script to compute the integrals numerically for me.</p>
+            </a>
             
             <a class="summaryLink" href="https://dotink.co/posts/sales-learnings/">
                 <h2>Things I&#39;m learning about in sales</h2>
@@ -77,7 +84,7 @@ Question to all the side project machines that I follow (with much respect) : wh
 
 
 
-    <footer>
+	<footer>
     <div class="overlay">
         <div class="left">
             <p>- Linus</p>
@@ -88,4 +95,6 @@ Question to all the side project machines that I follow (with much respect) : wh
     </div>
 </footer>
 
+
+	
 </body>

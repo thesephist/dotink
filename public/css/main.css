@@ -98,6 +98,10 @@ p, li {
     margin: 1em 0;
 }
 
+p img.blend-multiply {
+    mix-blend-mode: multiply;
+}
+
 @media only screen and (min-width: 600px) {
     .overlay {
         max-width: 740px;

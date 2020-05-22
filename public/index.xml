@@ -12,6 +12,17 @@
     
     
     <item>
+      <title>Computing pi as a Riemann sum</title>
+      <link>https://dotink.co/posts/pi-by-riemann-sum/</link>
+      <pubDate>Fri, 29 May 2020 10:08:59 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/pi-by-riemann-sum/</guid>
+      <description>While researching the difference between Intel&amp;rsquo;s various x86 SIMD extensions, I came across this article that demonstrates SSE and AVX performance differences using an algorithm to compute an approximation of pi using a Riemann sum under a curve. Specifically, we can numerically compute the integral
+$$\int_{0}^{1} \frac{4}{1 + x^2} \mathrm{d} x = 4 \tan ^{-1} (x) = \pi $$
+to find a reasonably quickly converging approximation of \( \pi \). This approach to approximating pi was novel to me, and seemed fun, so wrote a little Ink script to compute the integrals numerically for me.</description>
+    </item>
+    
+    <item>
       <title>Things I&#39;m learning about in sales</title>
       <link>https://dotink.co/posts/sales-learnings/</link>
       <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
