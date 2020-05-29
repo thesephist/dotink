@@ -110,4 +110,4 @@ Pi at Riemann sum of 900000: 3.14159265 (1323ms)
 Pi at Riemann sum of 1000000: 3.14159265 (1477ms)
 ```
 
-which, whie pretty slow to compute due to my language choice, is a respectable approximation of \\( \pi \\) for most practical uses.
+which, while pretty slow to compute due to my language choice, is a respectable approximation of \\( \pi \\) for most practical uses.
