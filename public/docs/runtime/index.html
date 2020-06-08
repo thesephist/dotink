@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+
+	<title>Runtime and builtins</title>
+	<link rel="canonical" href="https://dotink.co/docs/runtime/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Runtime and builtins</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item readtime" itemprop="duration">1 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#operating-system-interfaces">Operating system interfaces</a>
+      <ul>
+        <li><a href="#args"><code>args</code></a></li>
+        <li><a href="#in"><code>in</code></a></li>
+        <li><a href="#out"><code>out</code></a></li>
+        <li><a href="#dir"><code>dir</code></a></li>
+        <li><a href="#make"><code>make</code></a></li>
+        <li><a href="#stat"><code>stat</code></a></li>
+        <li><a href="#read"><code>read</code></a></li>
+        <li><a href="#write"><code>write</code></a></li>
+        <li><a href="#delete"><code>delete</code></a></li>
+        <li><a href="#listen"><code>listen</code></a></li>
+        <li><a href="#req"><code>req</code></a></li>
+        <li><a href="#rand"><code>rand</code></a></li>
+        <li><a href="#urand"><code>urand</code></a></li>
+        <li><a href="#time"><code>time</code></a></li>
+        <li><a href="#wait"><code>wait</code></a></li>
+        <li><a href="#exec"><code>exec</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#math-builtins">Math builtins</a>
+      <ul>
+        <li><a href="#sin"><code>sin</code></a></li>
+        <li><a href="#cos"><code>cos</code></a></li>
+        <li><a href="#asin"><code>asin</code></a></li>
+        <li><a href="#acos"><code>acos</code></a></li>
+        <li><a href="#pow"><code>pow</code></a></li>
+        <li><a href="#ln"><code>ln</code></a></li>
+        <li><a href="#floor"><code>floor</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#runtime-introspection-functions">Runtime introspection functions</a>
+      <ul>
+        <li><a href="#string"><code>string</code></a></li>
+        <li><a href="#number"><code>number</code></a></li>
+        <li><a href="#point"><code>point</code></a></li>
+        <li><a href="#char"><code>char</code></a></li>
+        <li><a href="#type"><code>type</code></a></li>
+        <li><a href="#len"><code>len</code></a></li>
+        <li><a href="#keys"><code>keys</code></a></li>
+        <li><a href="#load"><code>load</code></a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <h2 id="operating-system-interfaces">Operating system interfaces</h2>
+<h3 id="args"><code>args</code></h3>
+<h3 id="in"><code>in</code></h3>
+<h3 id="out"><code>out</code></h3>
+<h3 id="dir"><code>dir</code></h3>
+<h3 id="make"><code>make</code></h3>
+<h3 id="stat"><code>stat</code></h3>
+<h3 id="read"><code>read</code></h3>
+<h3 id="write"><code>write</code></h3>
+<h3 id="delete"><code>delete</code></h3>
+<h3 id="listen"><code>listen</code></h3>
+<h3 id="req"><code>req</code></h3>
+<h3 id="rand"><code>rand</code></h3>
+<h3 id="urand"><code>urand</code></h3>
+<h3 id="time"><code>time</code></h3>
+<h3 id="wait"><code>wait</code></h3>
+<h3 id="exec"><code>exec</code></h3>
+<h2 id="math-builtins">Math builtins</h2>
+<h3 id="sin"><code>sin</code></h3>
+<h3 id="cos"><code>cos</code></h3>
+<h3 id="asin"><code>asin</code></h3>
+<h3 id="acos"><code>acos</code></h3>
+<h3 id="pow"><code>pow</code></h3>
+<h3 id="ln"><code>ln</code></h3>
+<h3 id="floor"><code>floor</code></h3>
+<h2 id="runtime-introspection-functions">Runtime introspection functions</h2>
+<h3 id="string"><code>string</code></h3>
+<h3 id="number"><code>number</code></h3>
+<h3 id="point"><code>point</code></h3>
+<h3 id="char"><code>char</code></h3>
+<h3 id="type"><code>type</code></h3>
+<h3 id="len"><code>len</code></h3>
+<h3 id="keys"><code>keys</code></h3>
+<h3 id="load"><code>load</code></h3>
+
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="/css/main.css" />
 
 
-	<title>An overview of Ink</title>
-	<link rel="canonical" href="https://dotink.co/docs/overview/" />
+	<title>Standard library reference</title>
+	<link rel="canonical" href="https://dotink.co/docs/lib/" />
 </head>
 
 <body class="type-page">
@@ -32,7 +32,7 @@
 <main aria-role="main">
     <div class="hero inverted">
         <div class="overlay">
-            <h1>An overview of Ink</h1>
+            <h1>Standard library reference</h1>
         </div>
         <div class="meta overlay">
             <div class="meta-item readtime" itemprop="duration">1 mins</div>
@@ -46,28 +46,24 @@
             </summary>
             <nav id="TableOfContents">
   <ul>
-    <li><a href="#whats-ink">What&rsquo;s Ink?</a></li>
-    <li><a href="#setup-and-installation">Setup and installation</a>
-      <ul>
-        <li><a href="#the-repl">The repl</a></li>
-        <li><a href="#writing-and-running-programs">Writing and running programs</a></li>
-      </ul>
-    </li>
-    <li><a href="#quick-start">Quick start</a></li>
-    <li><a href="#security-and-permissions-model">Security and permissions model</a></li>
+    <li><a href="#standard-std">Standard (<code>std</code>)</a></li>
+    <li><a href="#string-str">String (<code>str</code>)</a></li>
+    <li><a href="#sort-quicksort">Sort (<code>quicksort</code>)</a></li>
+    <li><a href="#uuid-uuid">UUID (<code>uuid</code>)</a></li>
   </ul>
 </nav>
         </details>
         
 
-        <h2 id="whats-ink">What&rsquo;s Ink?</h2>
-<p>Ink is a functional, general-purpose, interpreted scripting language.</p>
-<p>// like the first chapter of Awk</p>
-<h2 id="setup-and-installation">Setup and installation</h2>
-<h3 id="the-repl">The repl</h3>
-<h3 id="writing-and-running-programs">Writing and running programs</h3>
-<h2 id="quick-start">Quick start</h2>
-<h2 id="security-and-permissions-model">Security and permissions model</h2>
+        <p>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries <a href="https://github.com/thesephist/ink/tree/master/samples">on GitHub</a>.</p>
+<h2 id="standard-std">Standard (<code>std</code>)</h2>
+<p><code>std</code> is Ink&rsquo;s core library.</p>
+<h2 id="string-str">String (<code>str</code>)</h2>
+<p><code>str</code> contains string manipulation functions.</p>
+<h2 id="sort-quicksort">Sort (<code>quicksort</code>)</h2>
+<p><code>quicksort</code> contains an implementation of Quicksort using Hoare partition.</p>
+<h2 id="uuid-uuid">UUID (<code>uuid</code>)</h2>
+<p><code>uuid</code> generates version 4 UUIDs from the <code>rand()</code> builtin.</p>
 
     </article>
 </main>

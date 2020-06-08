@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+
+	<title>Syntax</title>
+	<link rel="canonical" href="https://dotink.co/docs/syntax/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Syntax</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item readtime" itemprop="duration">1 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#comments">Comments</a></li>
+    <li><a href="#keywords">Keywords</a></li>
+    <li><a href="#commas-and-automatic-comma-insertion">Commas and automatic comma insertion</a></li>
+    <li><a href="#grouping">Grouping</a></li>
+    <li><a href="#whitespace-and-indentation">Whitespace and indentation</a></li>
+    <li><a href="#variables-and-assignment">Variables and assignment</a></li>
+    <li><a href="#operators">Operators</a></li>
+    <li><a href="#match-expressions">Match expressions</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>// in the style of: <a href="http://wren.io/syntax.html">http://wren.io/syntax.html</a></p>
+<p>Ink programs are UTF-8 or ASCII text files with the <code>.ink</code> file extension. Ink&rsquo;s syntax takes inspiration from Go and modern JavaScript, and strives to be minimal, concise, unambiguous, and fast to parse.</p>
+<h2 id="comments">Comments</h2>
+<p>Ink, like C, has both single- and multi-line comments.</p>
+<h2 id="keywords">Keywords</h2>
+<h2 id="commas-and-automatic-comma-insertion">Commas and automatic comma insertion</h2>
+<h2 id="grouping">Grouping</h2>
+<h2 id="whitespace-and-indentation">Whitespace and indentation</h2>
+<h2 id="variables-and-assignment">Variables and assignment</h2>
+<p>Ink identifiers can start with any alphabetic character and can contain any alphanumeric character. Ink variables cannot contain the characters <code>-</code>, <code>_</code>, or <code>$</code>, unlike many other scripting languages. This means Ink variables that are more than one word are written in <code>camelCase</code>.</p>
+<p>By convention, mutable and local variables start with a lowercase letter, and constants and global variables start with an uppercase letter.</p>
+<pre><code>` global variable `
+MaxLineLength := 80
+
+` local/mutable variable `
+currentLine := getInput()
+counter := 1
+</code></pre><p>There is only one assignment operator in Ink, the &ldquo;define&rdquo; operator <code>:=</code>. <code>:=</code> creates a new variable for a value if one doesn&rsquo;t exist in the current scope, and mutates a variable if one exists in the current scope. This means that in Ink, a variable <em>always shadows</em> the same name from a larger scope.</p>
+<h2 id="operators">Operators</h2>
+<h2 id="match-expressions">Match expressions</h2>
+
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

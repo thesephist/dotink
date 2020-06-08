@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+
+	<title>Types and interfaces</title>
+	<link rel="canonical" href="https://dotink.co/docs/types/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Types and interfaces</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item readtime" itemprop="duration">2 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#primitive-types">Primitive Types</a></li>
+    <li><a href="#the-composite-interface">The composite interface</a>
+      <ul>
+        <li><a href="#polymorphism-over-composite-types">Polymorphism over composite types</a></li>
+      </ul>
+    </li>
+    <li><a href="#type-introspection">Type introspection</a></li>
+    <li><a href="#type-conversion">Type conversion</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <h2 id="primitive-types">Primitive Types</h2>
+<p>Ink has four primitive types:</p>
+<ul>
+<li></li>
+</ul>
+<h2 id="the-composite-interface">The composite interface</h2>
+<p>Ink&rsquo;s <code>string</code> and <code>composite</code> (and there for list) data types both follow the same interface for composite data types. This means that any functions buit around the interface will be correct for strings (including arbitrary blob data), composite dictionaries, and lists. The coposite interface consists of the following operations and functions. Say we have a composite <code>c</code> with string key <code>k</code>.</p>
+<ul>
+<li><code>c.(k)</code>: return the value the composite holds at key <code>k</code>. For strings, this returns a character at a given integer index.</li>
+<li><code>len(c)</code>: return the number of distinct keys in the composite. For strings and integer-keyed lists, this is the length; for blob data stored in strings, it&rsquo;s the size of the blob in bytes; for composite dictionaries, it&rsquo;s the number of keys in the dictionary.</li>
+<li>When passed to function calls or returned from call sites, all composite types (strings, composites, lists, blobs) are passed by reference; no copying takes place unless explicit with <code>std.clone</code>, which is polymorphic over all composite types.</li>
+</ul>
+<p>By convention, a value in a string is often represented by <code>c</code> (character), and an integer index in a string or list is often represented by <code>i</code>.</p>
+<h3 id="polymorphism-over-composite-types">Polymorphism over composite types</h3>
+<p>Having a single interface shared by all composite data types in Ink enables an elegant kind of polymorphism over key functions in the standard library, and hopefully, in other more complex programs.</p>
+<h2 id="type-introspection">Type introspection</h2>
+<p>Use Ink&rsquo;s <code>type()</code> builtin function to query a value for its run-time type as a string.</p>
+<h2 id="type-conversion">Type conversion</h2>
+<p>Ink does not have implicit type casts &ndash; every type conversion must be explicit using the <code>string()</code> or <code>number()</code> function. A <code>boolean()</code> is not provided to avoid ambiguity:</p>
+<ul>
+<li>A boolean type conversion works differently in different languages. Some languages only consider <code>false</code> and the null value falsy, while other languages also consider values like <code>0</code> and the empty string / empty list falsy. Forcing the program to define what it means by a falsy value avoids this kind of ambiguity.</li>
+<li>Writing a case-specific <code>boolean()</code> is trivial, especially compared to <code>string()</code> and <code>number()</code>, which must be versatile &ndash; one either returns true or false based on a few checks.</li>
+</ul>
+
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

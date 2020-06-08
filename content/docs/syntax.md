@@ -1,6 +1,7 @@
 ---
 title: "Syntax"
-draft: true
+brief: Specification for Ink's syntax
+toc: true
 ---
 
 // in the style of: http://wren.io/syntax.html

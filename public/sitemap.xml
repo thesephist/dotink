@@ -50,7 +50,27 @@
   </url>
   
   <url>
+    <loc>https://dotink.co/docs/projects/</loc>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/docs/runtime/</loc>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/docs/lib/</loc>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/docs/syntax/</loc>
+  </url>
+  
+  <url>
     <loc>https://dotink.co/tags/</loc>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/docs/types/</loc>
   </url>
   
 </urlset>

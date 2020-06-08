@@ -16,9 +16,64 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/overview/</guid>
-      <description>Ink is a functional, general-purpose scripting language.
+      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language.
 // like the first chapter of Awk
-Overview of the Ink programming language.</description>
+Setup and installation The repl Writing and running programs Quick start Security and permissions model </description>
+    </item>
+    
+    <item>
+      <title>Open-source Ink projects</title>
+      <link>https://dotink.co/docs/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/docs/projects/</guid>
+      <description>dotink This website is served by a web server written in Ink
+Polyx Polyx is Linus&amp;rsquo;s personal productivity suite
+Codeliner Codeliner generates graphics from program source files</description>
+    </item>
+    
+    <item>
+      <title>Runtime and builtins</title>
+      <link>https://dotink.co/docs/runtime/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/docs/runtime/</guid>
+      <description>Operating system interfaces args in out dir make stat read write delete listen req rand urand time wait exec Math builtins sin cos asin acos pow ln floor Runtime introspection functions string number point char type len keys load </description>
+    </item>
+    
+    <item>
+      <title>Standard library reference</title>
+      <link>https://dotink.co/docs/lib/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/docs/lib/</guid>
+      <description>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries on GitHub.
+Standard (std) std is Ink&amp;rsquo;s core library.
+String (str) str contains string manipulation functions.
+Sort (quicksort) quicksort contains an implementation of Quicksort using Hoare partition.
+UUID (uuid) uuid generates version 4 UUIDs from the rand() builtin.</description>
+    </item>
+    
+    <item>
+      <title>Syntax</title>
+      <link>https://dotink.co/docs/syntax/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/docs/syntax/</guid>
+      <description>// in the style of: http://wren.io/syntax.html
+Ink programs are UTF-8 or ASCII text files with the .ink file extension. Ink&amp;rsquo;s syntax takes inspiration from Go and modern JavaScript, and strives to be minimal, concise, unambiguous, and fast to parse.
+Comments Ink, like C, has both single- and multi-line comments.
+Keywords Commas and automatic comma insertion Grouping Whitespace and indentation Variables and assignment Ink identifiers can start with any alphabetic character and can contain any alphanumeric character.</description>
+    </item>
+    
+    <item>
+      <title>Types and interfaces</title>
+      <link>https://dotink.co/docs/types/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/docs/types/</guid>
+      <description>Primitive Types Ink has four primitive types:
+   The composite interface Ink&amp;rsquo;s string and composite (and there for list) data types both follow the same interface for composite data types. This means that any functions buit around the interface will be correct for strings (including arbitrary blob data), composite dictionaries, and lists. The coposite interface consists of the following operations and functions. Say we have a composite c with string key k.</description>
     </item>
     
   </channel>

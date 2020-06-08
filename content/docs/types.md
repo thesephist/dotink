@@ -1,6 +1,7 @@
 ---
 title: "Types and interfaces"
-draft: true
+brief: Working with dynamically typed values in Ink programs
+toc: true
 ---
 
 ## Primitive Types
