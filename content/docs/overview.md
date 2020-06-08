@@ -9,6 +9,7 @@ toc: true
 Ink is a functional, general-purpose, interpreted scripting language.
 
 // like the first chapter of Awk
+// reference: https://www.ale-lang.org/intro/
 
 ## Setup and installation
 

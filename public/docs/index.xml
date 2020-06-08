@@ -17,7 +17,7 @@
       
       <guid>https://dotink.co/docs/overview/</guid>
       <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language.
-// like the first chapter of Awk
+// like the first chapter of Awk // reference: https://www.ale-lang.org/intro/
 Setup and installation The repl Writing and running programs Quick start Security and permissions model </description>
     </item>
     
