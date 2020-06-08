@@ -12,3 +12,6 @@ This is my technical blog, and it's named after a programming language I created
 I write here on this blog about programming languages, interpreters and compilers, frameworks, web applications, software architecture, observability and operations, and other things. You can [read them here](/posts/). This website is also home to the [Ink programming language documentation](/docs/), which is a work in progress.
 
 If you want to see other stuff I'm up to, you can find more on my website at [thesephist.com](https://thesephist.com) and on Twitter at [@thesephist](https://twitter.com/thesephist).
+
+<a href="/docs/overview/" class="button">Get started with Ink &rarr;</a>
+<a href="https://github.com/thesephist/ink" class="button">See on GitHub &rarr;</a>
