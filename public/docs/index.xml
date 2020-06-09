@@ -52,11 +52,9 @@ See on GitHub →</description>
       <description>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries on GitHub.
 Standard (std) std is Ink&amp;rsquo;s core library.
 See source on GitHub →
-range(first, second, third) String (str) str contains string manipulation functions.
-See source on GitHub →
-Sort (quicksort) quicksort contains an implementation of Quicksort using Hoare partition.
-See source on GitHub →
-UUID (uuid) uuid generates version 4 UUIDs from the rand() builtin.</description>
+log(val) Prints the string version of val to standard output.
+scan(cb) Opens standard input, and calls cb with the result of the first chunk of input as a string.
+hex(n) Takes a positive integer and returns a lowercase hexadecimal string.</description>
     </item>
     
     <item>
