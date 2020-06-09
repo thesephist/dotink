@@ -279,6 +279,8 @@ addTwo(3) `` -> 5
 addTwo(6) `` -> 8
 ```
 
+A quirk of Ink's syntax is that function invocation syntax `()` takes precedence over the property-access `.` operator. So to call a function that's a property of an object, rathern than `obj.func()`, which will parse to `obj.(func())`, we should write `(obj.func)()`. This isn't particularly great for ergonomics, I admit. But it hasn't been a great paint point in the kind of idiomatic Ink code I write, which is mostly functional and not object-oriented.
+
 ### Composite values
 
 Ink has one kind of a built-in data structure, called the composite value, that does double-duty as a list and a map, depending on usage. List and map forms of composites both have literal syntaxes.

@@ -35,7 +35,7 @@
             <h1>An overview of Ink</h1>
         </div>
         <div class="meta overlay">
-            <div class="meta-item readtime" itemprop="duration">10 mins</div>
+            <div class="meta-item readtime" itemprop="duration">11 mins</div>
         </div>
     </div>
     <article class="overlay">
@@ -238,7 +238,8 @@ addTwo := curriedAdd(2)
 
 addTwo(3) `` -&gt; 5
 addTwo(6) `` -&gt; 8
-</code></pre><h3 id="composite-values">Composite values</h3>
+</code></pre><p>A quirk of Ink&rsquo;s syntax is that function invocation syntax <code>()</code> takes precedence over the property-access <code>.</code> operator. So to call a function that&rsquo;s a property of an object, rathern than <code>obj.func()</code>, which will parse to <code>obj.(func())</code>, we should write <code>(obj.func)()</code>. This isn&rsquo;t particularly great for ergonomics, I admit. But it hasn&rsquo;t been a great paint point in the kind of idiomatic Ink code I write, which is mostly functional and not object-oriented.</p>
+<h3 id="composite-values">Composite values</h3>
 <p>Ink has one kind of a built-in data structure, called the composite value, that does double-duty as a list and a map, depending on usage. List and map forms of composites both have literal syntaxes.</p>
 <pre><code>list := [1, 2, 3, 4, 5]
 map := {
