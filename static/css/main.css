@@ -269,7 +269,7 @@ blockquote {
     box-sizing: border-box;
     text-decoration: none;
     padding: .6em 1em;
-    margin: 1.1em .6em 1.1em 0;
+    margin: 1em .6em 1em 0;
 }
 
 .button:hover {

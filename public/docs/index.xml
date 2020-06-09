@@ -16,9 +16,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/overview/</guid>
-      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language.
-// like the first chapter of Awk // reference: https://www.ale-lang.org/intro/
-Setup and installation The repl Writing and running programs Quick start Security and permissions model </description>
+      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language. It&amp;rsquo;s dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks. Ink is designed to be minimal and simple, first and foremost.
+I made Ink as an experiment to study writing interpreters and compilers in mid-2019. Since then, I&amp;rsquo;ve worked on several other related projects in the programming language space, but continue to write programs and apps in Ink in my day to day work.</description>
     </item>
     
     <item>
@@ -28,8 +27,11 @@ Setup and installation The repl Writing and running programs Quick start Securit
       
       <guid>https://dotink.co/docs/projects/</guid>
       <description>dotink This website is served by a web server written in Ink
+See on GitHub →
 Polyx Polyx is Linus&amp;rsquo;s personal productivity suite
-Codeliner Codeliner generates graphics from program source files</description>
+See on GitHub →
+Codeliner Codeliner generates graphics from program source files
+See on GitHub →</description>
     </item>
     
     <item>
@@ -49,8 +51,11 @@ Codeliner Codeliner generates graphics from program source files</description>
       <guid>https://dotink.co/docs/lib/</guid>
       <description>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries on GitHub.
 Standard (std) std is Ink&amp;rsquo;s core library.
+See source on GitHub →
 String (str) str contains string manipulation functions.
+See source on GitHub →
 Sort (quicksort) quicksort contains an implementation of Quicksort using Hoare partition.
+See source on GitHub →
 UUID (uuid) uuid generates version 4 UUIDs from the rand() builtin.</description>
     </item>
     

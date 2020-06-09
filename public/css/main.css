@@ -10,6 +10,8 @@ body {
     /* default light-mode colors */
     --foreground-default: #222;
     --foreground-light: #555;
+    --foreground-fill: #ddd;
+    --foreground-fill-hover: #ccc;
     --background-default: #f8f8f8;
     --background-block: #eee;
     --background-hero: #222;
@@ -19,6 +21,8 @@ body {
 .type-page header {
     --foreground-default: #f8f8f8;
     --foreground-light: #d8d8d8;
+    --foreground-fill: #666;
+    --foreground-fill-hover: #777;
     --background-default: #222;
     --background-block: #555;
     --background-hero: #eee;
@@ -253,7 +257,23 @@ blockquote {
 
 .type-section a.summaryLink:hover {
     opacity: .7;
-    transform: translate(0, -6px);
+}
+
+.type-section a.summaryLink:hover h2::after {
+    content: ' →';
+}
+
+.button {
+    display: inline-block;
+    background: var(--foreground-fill);
+    box-sizing: border-box;
+    text-decoration: none;
+    padding: .6em 1em;
+    margin: 1em .6em 1em 0;
+}
+
+.button:hover {
+    background: var(--foreground-fill-hover);
 }
 
 /* LOGO IMAGE */
