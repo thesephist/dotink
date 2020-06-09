@@ -12,6 +12,8 @@ The Ink standard library is not current packaged into the distributed binary. Ho
 
 <a href="https://github.com/thesephist/ink/blob/master/samples/std.ink" class="button">See source on GitHub &rarr;</a>
 
+### `range(first, second, third)`
+
 ## String (`str`)
 
 `str` contains string manipulation functions.
