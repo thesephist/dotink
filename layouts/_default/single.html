@@ -10,6 +10,15 @@
         </div>
     </div>
     <article class="overlay">
+        {{ if .Params.Toc }}
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            {{ .TableOfContents }}
+        </details>
+        {{ end }}
+
         {{ .Content }}
         <hr/>
         <p>

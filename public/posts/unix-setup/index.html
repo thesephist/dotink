@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+
+	<title>How I set up my servers | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/unix-setup/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>How I set up my servers</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item readtime" itemprop="duration">6 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#operating-system-and-environment">Operating system and environment</a>
+      <ul>
+        <li><a href="#users">Users</a></li>
+        <li><a href="#firewall">Firewall</a></li>
+        <li><a href="#ssh-and-shell">SSH and shell</a></li>
+      </ul>
+    </li>
+    <li><a href="#language-specific-installations">Language-specific installations</a>
+      <ul>
+        <li><a href="#go">Go</a></li>
+        <li><a href="#nodejs">Node.js</a></li>
+        <li><a href="#ink">Ink</a></li>
+      </ul>
+    </li>
+    <li><a href="#nginx-and-tls">Nginx and TLS</a>
+      <ul>
+        <li><a href="#server-and-proxy-configuration">Server and proxy configuration</a></li>
+      </ul>
+    </li>
+    <li><a href="#dotfiles">Dotfiles</a></li>
+    <li><a href="#nice-to-haves">Nice-to-haves</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>Many of my <a href="https://thesephist.com/projects">projects</a> include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on <a href="https://m.do.co/c/e5c53932f7c5">DigitalOcean</a>, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers.</p>
+<p>In the name of reducing and documenting repetitive tasks, I thought I&rsquo;d write down and share my process for setting up a new Ubuntu web server, and deploying applications to it the way I usually do. As much as a way for me to share my process, this is also a reminder for my future self on how to set up and provision new servers the way I&rsquo;ve done before.</p>
+<h2 id="operating-system-and-environment">Operating system and environment</h2>
+<h3 id="users">Users</h3>
+<p>DigitalOcean, like most VM providers, sets you up with a single <code>root</code> user. I usually create a separate user under which to run my applications, usually <code>thesephist</code>. In most Linux distributions you can do this with <code>adduser</code>:</p>
+<pre><code># create user
+adduser thesephist
+
+# add user to sudoers
+usermod -aG sudo thesephist
+</code></pre><h3 id="firewall">Firewall</h3>
+<p>After this, I&rsquo;ll remote login to the server exclusively from the <code>thesephist</code> user. Before we can make changes to the SSH configuration to enforce these rules, we need to set up the firewall. On Ubuntu, the firewall is controlled with <code>ufw</code>.</p>
+<p>By default, <code>ufw</code> doesn&rsquo;t let any inbound connections through. I usually keep ports open on my servers for ssh (22), http (80), and https (443).</p>
+<pre><code># enable service ports
+ufw allow ssh
+ufw allow http
+ufw allow https
+
+# start firewall and enable it forever
+ufw enable
+
+# check firewall status
+ufw status; to check
+</code></pre><h3 id="ssh-and-shell">SSH and shell</h3>
+<p>When I provision a new server, I usually modify my local SSH configuration (<code>~/.ssh/config</code>) on my development machine to add a new alias:</p>
+<pre><code>Host my-app
+    Port 22
+    User thesephist
+    Hostname my-app.thesephist.com
+</code></pre><p>After this, I can connect to my server with <code>ssh my-app</code>.</p>
+<p>New SSH installations these days come with good defaults. I usually only change a few settings under <code>/etc/ssh/sshd_config</code>:</p>
+<ul>
+<li><code>PermitRootLogin no</code> ensures that the root user cannot login via SSH. Since we&rsquo;ve created a non-root user, setting this adds a layer of security.</li>
+<li><code>PermitEmptyPasswords no</code> should be set if password authentication is on</li>
+<li><code>PubkeyAuthentication yes</code> is the default and allows authentication via SSH public keys, but if it isn&rsquo;t set, I set it</li>
+<li><code>X11Forwarding no</code> turns off <a href="https://wiki.archlinux.org/index.php/OpenSSH#X11_forwarding">X forwarding</a>. Since I never use X forwarding over SSH, keeping this on is a best-practice.</li>
+</ul>
+<p>I use zsh and fish shells, depending on the environment I&rsquo;m setting up. For new servers, I run <code>chsh</code> with <em>no arguments</em> to start an interactive program to set the current user&rsquo;s shell.</p>
+<h2 id="language-specific-installations">Language-specific installations</h2>
+<p>I deploy most of my services as systemd services / daemons. Systemd gives me a declarative way to define services with a single file. For examples of service definitions for my apps, check out <code>*.service</code> files on GitHub under more recent projects.</p>
+<ul>
+<li><a href="https://github.com/thesephist/draw/blob/master/draw.service">draw.service</a></li>
+<li><a href="https://github.com/thesephist/cornelia/blob/master/cornelia.service">cornelia.service</a></li>
+<li><a href="https://github.com/thesephist/dotink/blob/master/dotink.service">dotink.service</a></li>
+</ul>
+<h3 id="go">Go</h3>
+<p>Most of my backend services these days are written in Go. Go is fast (enough for my use cases), has a great standard library of networking building blocks, compiles to a static binary that&rsquo;s easy to distribute, and was easy for me to pick up, coming from dynamic languages. Compared to JavaScript and Node.js, my previous tool of choice, Go is also lighter on resources, which ends up saving me money in the long run.</p>
+<p>I usually deploy Go applications by bundling all necessary assets into a single binary and <code>scp</code>-ing it to the server, then restarting the service. If I do need a local installation of Go, here&rsquo;s a three-liner to get Go set up on a new Linux server.</p>
+<pre><code># Download the latest build of Go
+# (available from https://golang.org/dl/)
+wget 'https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz' -O .
+
+# Un-tar contents into /usr/local
+sudo tar -C /usr/local -xzf go1.14.4.linux-amd64.tar.gz
+
+# Add Go binary paths to $PATH
+echo 'PATH=$PATH:/usr/local/go/bin' &gt;&gt; ~/.profile
+</code></pre><p><a href="https://github.com/thesephist/plume" class="button">Example: Plume.chat →</a></p>
+<h3 id="nodejs">Node.js</h3>
+<p>My older projects up to 2019 are mostly written in Node.js. Node and JavaScript allows for isomorphic code and Node.js in particular has excellent networking primitives and asynchronous programming capabilities through V8 and <a href="https://github.com/libuv/libuv">libuv</a>. I also enjoy the rapid prototyping that a fast, dynamic language like JavaScript makes possible.</p>
+<p>That said, these days I write most of my servers and backend services in Go and my scripts in Ink, because I find that Go codebases age better over time, and I enjoy writing Ink code.</p>
+<p>I used to deploy new Node.js projects with <a href="https://pm2.keymetrics.io">PM2</a>, which is an easy-to-use process manager for Node, and handles much of the responsibilities that systemd handles for my Go projects &ndash; logging, monitoring, auto-restarting, and so on. I still have legacy applications running under PM2, but if I were to deploy new Node.js services today, I&rsquo;d probably write a systemd service instead, for consistency&rsquo;s sake with the other languages I use.</p>
+<p>Running a Node application requires installing the Node runtime and standard libraries. <a href="https://github.com/nodesource/distributions/blob/master/README.md">Nodesource</a> offers a short shell script to install and pull from the appropriate third-party repositories to install Node.js:</p>
+<pre><code># For Ubuntu
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre><p><a href="https://github.com/thesephist/codeframe" class="button">Example: Codeframe →</a></p>
+<h3 id="ink">Ink</h3>
+<p>The Ink interpreter is a <a href="https://github.com/thesephist/ink/releases">single small, static Go binary</a>, so I&rsquo;ll install it onto the server by compiling a Linux binary and copying it onto the remote server, or by including it directly in the project&rsquo;s repository.</p>
+<p>Ink doesn&rsquo;t have a native package manager, so all dependencies are vendored into project repositories. This makes deployment simple, however &ndash; just run the main Ink program file with the <code>ink</code> binary in the systemd service file definition, and the service is up and running.</p>
+<p><a href="https://github.com/thesephist/dotink" class="button">Example: dotink.co →</a></p>
+<h2 id="nginx-and-tls">Nginx and TLS</h2>
+<p>I use Nginx as the static file server and reverse proxy behind all of my self-hosted projects. Nginx is available from the default repositories of most Linux distributions. If I&rsquo;m using Nginx, I&rsquo;m also probably using <a href="https://letsencrypt.org">Let&rsquo;s Encrypt</a> to obtain and auto-renew TLS certificates. Let&rsquo;s Encrypt&rsquo;s CLI tool, <code>certbot</code>, also comes with a plugin to work with Nginx configuration files. To install these tools in one go, you can run</p>
+<pre><code>sudo apt install nginx certbot python3-certbot-nginx
+</code></pre><p>Then running <code>sudo certbot</code> or <code>sudo certbot --nginx</code> will scan through the available domains in the Nginx configuration and run an interactive session to obtain a new TLS certificate.</p>
+<h3 id="server-and-proxy-configuration">Server and proxy configuration</h3>
+<p>My typical Nginx server block looks like this.</p>
+<pre><code>server {
+	# general configs
+	server_name app.thesephist.com;
+	root /var/www/html;
+	index index.html index.htm;
+	try_files $uri $uri/ =404;
+
+	# if default server -- usually omitted
+	listen 80 default_server;
+	listen [::]:80 default_server;
+
+	# if using HTTP auth headers
+	auth_basic &quot;[service] login&quot;;
+	auth_basic_user_file /etc/nginx/conf.d/.htpasswd;
+
+	# if HTTP proxy
+	location / {
+		proxy_pass http://localhost:7800;
+	}
+
+	# websockets path
+	location /connect {
+		proxy_pass http://localhost:7800;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection &quot;Upgrade&quot;;
+	}
+}
+</code></pre><h2 id="dotfiles">Dotfiles</h2>
+<p>I also usually set up my VM user with my configuration files for Vim, Tmux, and a few other utilities, available in the <a href="https://github.com/thesephist/dotfiles">GitHub repository for it</a>.</p>
+<h2 id="nice-to-haves">Nice-to-haves</h2>
+<p>Beyond these bare necessities to deploy and serve my applications, over time, I also end up installing a small collection of other tools that make working in a Linux server environment more efficient.</p>
+<ul>
+<li><code>awk</code>, the venerable UNIX text-processing tool</li>
+<li><code>curl</code> and <code>wget</code> for working with downloads / network requests</li>
+<li><a href="https://beyondgrep.com"><code>ack</code></a> is a grep-like search tool that&rsquo;s simpler to use with source code. I&rsquo;ve also heard many praises for <code>ag</code> (the &ldquo;silver searcher&rdquo;), but haven&rsquo;t had time to explore it, nor felt the need to switch.</li>
+<li><a href="https://en.wikipedia.org/wiki/Tree_(command)"><code>tree</code></a>, often nice for quickly getting an overview of a directory&rsquo;s file structure</li>
+<li><a href="https://hisham.hm/htop/"><code>htop</code></a>, a <code>top</code>-like tool with better visualizations</li>
+<li><a href="https://www.gnu.org/software/make/manual/make.html"><code>make</code></a> for running various build and deployment scripts in a language-agnostic way</li>
+</ul>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+                
+                my previous post,
+                <a href="https://dotink.co/posts/pi-by-riemann-sum/"><em>Computing pi as a Riemann sum</em></a>.
+                
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>
