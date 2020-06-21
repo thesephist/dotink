@@ -4,7 +4,7 @@ date: 2020-06-21T11:44:30-04:00
 toc: true
 ---
 
-Many of my [projects](https://thesephist.com/projects) include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on [DigitalOcean](https://m.do.co/c/e5c53932f7c5), and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers.
+Many of my [projects](https://thesephist.com/projects) include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on [DigitalOcean](https://m.do.co/c/e5c53932f7c5), and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers. I'm currently on DigitalOcean because it hits the right power-to-ergonomics balance for me: fast enough, affordable, with a good UI and documentation. I don't need the power or complexity headroom of larger providers like AWS and GCP for my personal projects, and I appreciate the more pro-sumer touches in the DO experience and interface.
 
 In the name of reducing and documenting repetitive tasks, I thought I'd write down and share my process for setting up a new Ubuntu web server, and deploying applications to it the way I usually do. As much as a way for me to share my process, this is also a reminder for my future self on how to set up and provision new servers the way I've done before.
 
@@ -38,7 +38,7 @@ ufw allow https
 ufw enable
 
 # check firewall status
-ufw status; to check
+ufw status
 ```
 
 ### SSH and shell

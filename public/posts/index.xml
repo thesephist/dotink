@@ -17,8 +17,7 @@
       <pubDate>Sun, 21 Jun 2020 11:44:30 -0400</pubDate>
       
       <guid>https://dotink.co/posts/unix-setup/</guid>
-      <description>Many of my projects include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on DigitalOcean, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers.
-In the name of reducing and documenting repetitive tasks, I thought I&amp;rsquo;d write down and share my process for setting up a new Ubuntu web server, and deploying applications to it the way I usually do.</description>
+      <description>Many of my projects include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on DigitalOcean, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers. I&amp;rsquo;m currently on DigitalOcean because it hits the right power-to-ergonomics balance for me: fast enough, affordable, with a good UI and documentation. I don&amp;rsquo;t need the power or complexity headroom of larger providers like AWS and GCP for my personal projects, and I appreciate the more pro-sumer touches in the DO experience and interface.</description>
     </item>
     
     <item>

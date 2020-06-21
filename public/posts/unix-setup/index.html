@@ -35,7 +35,7 @@
             <h1>How I set up my servers</h1>
         </div>
         <div class="meta overlay">
-            <div class="meta-item readtime" itemprop="duration">6 mins</div>
+            <div class="meta-item readtime" itemprop="duration">7 mins</div>
         </div>
     </div>
     <article class="overlay">
@@ -72,7 +72,7 @@
         </details>
         
 
-        <p>Many of my <a href="https://thesephist.com/projects">projects</a> include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on <a href="https://m.do.co/c/e5c53932f7c5">DigitalOcean</a>, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers.</p>
+        <p>Many of my <a href="https://thesephist.com/projects">projects</a> include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on <a href="https://m.do.co/c/e5c53932f7c5">DigitalOcean</a>, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers. I&rsquo;m currently on DigitalOcean because it hits the right power-to-ergonomics balance for me: fast enough, affordable, with a good UI and documentation. I don&rsquo;t need the power or complexity headroom of larger providers like AWS and GCP for my personal projects, and I appreciate the more pro-sumer touches in the DO experience and interface.</p>
 <p>In the name of reducing and documenting repetitive tasks, I thought I&rsquo;d write down and share my process for setting up a new Ubuntu web server, and deploying applications to it the way I usually do. As much as a way for me to share my process, this is also a reminder for my future self on how to set up and provision new servers the way I&rsquo;ve done before.</p>
 <h2 id="operating-system-and-environment">Operating system and environment</h2>
 <h3 id="users">Users</h3>
@@ -94,7 +94,7 @@ ufw allow https
 ufw enable
 
 # check firewall status
-ufw status; to check
+ufw status
 </code></pre><h3 id="ssh-and-shell">SSH and shell</h3>
 <p>When I provision a new server, I usually modify my local SSH configuration (<code>~/.ssh/config</code>) on my development machine to add a new alias:</p>
 <pre><code>Host my-app
