@@ -1,6 +1,7 @@
 baseURL = "https://dotink.co/"
 languageCode = "en-us"
 title = ".ink"
+summaryLength = 36
 
 [markup.goldmark.renderer]
     unsafe = true

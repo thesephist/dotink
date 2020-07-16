@@ -1,8 +1,8 @@
 ---
 title: "Single-pass abstract syntax tree construction in the Ink recursive descent parser"
 date: 2019-07-07T00:00:00-00:00
-draft: true
 location: "San Francisco, CA"
+draft: true
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
