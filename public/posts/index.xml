@@ -6,10 +6,19 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Jun 2020 11:44:30 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 15 Jul 2020 17:15:01 -0400</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>inkfmt: a self-hosting code formatter for Ink</title>
+      <link>https://dotink.co/posts/inkfmt/</link>
+      <pubDate>Wed, 15 Jul 2020 17:15:01 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/inkfmt/</guid>
+      <description>inkfmt (pronounced &amp;ldquo;ink format&amp;rdquo; or sometimes &amp;ldquo;ink fuh-mt&amp;rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean.</description>
+    </item>
     
     <item>
       <title>How I set up my servers</title>
@@ -17,7 +26,7 @@
       <pubDate>Sun, 21 Jun 2020 11:44:30 -0400</pubDate>
       
       <guid>https://dotink.co/posts/unix-setup/</guid>
-      <description>Many of my projects include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on DigitalOcean, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers. I&amp;rsquo;m currently on DigitalOcean because it hits the right power-to-ergonomics balance for me: fast enough, affordable, with a good UI and documentation. I don&amp;rsquo;t need the power or complexity headroom of larger providers like AWS and GCP for my personal projects, and I appreciate the more pro-sumer touches in the DO experience and interface.</description>
+      <description>Many of my projects include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on DigitalOcean, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers.</description>
     </item>
     
     <item>
@@ -26,9 +35,7 @@
       <pubDate>Fri, 29 May 2020 10:08:59 -0400</pubDate>
       
       <guid>https://dotink.co/posts/pi-by-riemann-sum/</guid>
-      <description>While researching the difference between Intel&amp;rsquo;s various x86 SIMD extensions, I came across this article that demonstrates SSE and AVX performance differences using an algorithm to compute an approximation of pi using a Riemann sum under a curve. Specifically, we can numerically compute the integral
-$$\int_{0}^{1} \frac{4}{1 + x^2} \mathrm{d} x = 4 \tan ^{-1} (x) = \pi $$
-to find a reasonably quickly converging approximation of \( \pi \). This approach to approximating pi was novel to me, and seemed fun, so wrote a little Ink script to compute the integrals numerically for me.</description>
+      <description>While researching the difference between Intel&amp;rsquo;s various x86 SIMD extensions, I came across this article that demonstrates SSE and AVX performance differences using an algorithm to compute an approximation of pi using a Riemann sum under a curve.</description>
     </item>
     
     <item>
@@ -38,7 +45,7 @@ to find a reasonably quickly converging approximation of \( \pi \). This approac
       
       <guid>https://dotink.co/posts/sales-learnings/</guid>
       <description>(This is an archived copy of a post originally published at thesephist.com.)
-As I&amp;rsquo;m diving deeper into my role at Hack Club Bank, I&amp;rsquo;m trying to learn more about sales and working with customers, and I&amp;rsquo;m also learning a lot every week about leading a B2B product. This is a place for me to collect the things I&amp;rsquo;m learning in the process. I&amp;rsquo;m going to keep this up to date over time, and I thought it would be nice to make it publicly available, in case you might find it useful as well.</description>
+As I&amp;rsquo;m diving deeper into my role at Hack Club Bank, I&amp;rsquo;m trying to learn more about sales and working with customers, and I&amp;rsquo;m also learning a lot every week about leading a B2B product.</description>
     </item>
     
     <item>
@@ -49,8 +56,7 @@ As I&amp;rsquo;m diving deeper into my role at Hack Club Bank, I&amp;rsquo;m try
       <guid>https://dotink.co/posts/composing-the-future/</guid>
       <description>(This is an archived copy of a post originally published at thesephist.com.)
 Summer&amp;rsquo;s almost over! It&amp;rsquo;s a change of season, and the season of changes.
-My internship at Repl.it is coming to a close, and I&amp;rsquo;m joining the fantastic team at Hack Club moving forward. I wanted to take a moment to talk about what I learned at Repl.it, and why I&amp;rsquo;m so excited about Hack Club.
-Repl.it: building for builders Today was my last day as an engineering intern at Repl.</description>
+My internship at Repl.it is coming to a close, and I&amp;rsquo;m joining the fantastic team at Hack Club moving forward.</description>
     </item>
     
     <item>
@@ -59,8 +65,7 @@ Repl.it: building for builders Today was my last day as an engineering intern at
       <pubDate>Fri, 26 Jul 2019 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/posts/visualizing-sorting-algorithms/</guid>
-      <description>Until Elon Musk brings his Neuralink gadgets to market, our eyes are the highest-bandwidth way we have of understanding the world around us. We can look at something and immediately take in the hues, the lightness and the darkness, the shapes, and most importantly, the patterns that we wouldn&amp;rsquo;t be able to notice if we couldn&amp;rsquo;t use our vision.
-In fact, our eyes are surprisingly good at pattern recognition, noticing the rhythm in the details that make up the large-scale structure of what&amp;rsquo;s in front of us.</description>
+      <description>Until Elon Musk brings his Neuralink gadgets to market, our eyes are the highest-bandwidth way we have of understanding the world around us. We can look at something and immediately take in the hues, the lightness and the darkness, the shapes, and most importantly, the patterns that we wouldn&amp;rsquo;t be able to notice if we couldn&amp;rsquo;t use our vision.</description>
     </item>
     
     <item>
@@ -71,8 +76,7 @@ In fact, our eyes are surprisingly good at pattern recognition, noticing the rhy
       <guid>https://dotink.co/posts/how-i-side-project/</guid>
       <description>(This is an archived copy of a post originally published at thesephist.com.)
 This post started out as a long-form response to this tweet by Raj Kunkolienkar:
-Question to all the side project machines that I follow (with much respect) : what framework / setup / infrastructure / tools do you use to push out ideas to MVP so quickly?@kognise @thesephist @jajoosam
-&amp;mdash; Raj Kunkolienkar 🚀 (@kunksed) May 21, 2019  &amp;hellip; but then, I got busy, a few weeks passed, and it took a while for me to get back to it.</description>
+Question to all the side project machines that I follow (with much respect) : what framework / setup / infrastructure / tools do you use to push out ideas to MVP so quickly?</description>
     </item>
     
   </channel>

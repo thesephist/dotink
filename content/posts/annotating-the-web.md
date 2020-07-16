@@ -3,6 +3,7 @@ title: "Annotating the dynamic Web in real time"
 date: 2020-07-14T18:01:36-04:00
 location: "West Lafayette, IN"
 toc: true
+draft: true
 ---
 
     Write a dotink post about annotating the web -- the Highlighter class. Two approaches, single interface.

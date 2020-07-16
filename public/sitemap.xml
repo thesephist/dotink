@@ -3,12 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dotink.co/posts/unix-setup/</loc>
-    <lastmod>2020-06-21T11:44:30-04:00</lastmod>
+    <loc>https://dotink.co/posts/inkfmt/</loc>
+    <lastmod>2020-07-15T17:15:01-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://dotink.co/posts/</loc>
+    <lastmod>2020-07-15T17:15:01-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/unix-setup/</loc>
     <lastmod>2020-06-21T11:44:30-04:00</lastmod>
   </url>
   

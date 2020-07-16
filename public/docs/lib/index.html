@@ -45,140 +45,204 @@
                 <div class="toc-title">Contents</div>
             </summary>
             <nav id="TableOfContents">
-  <ul>
-    <li><a href="#standard-std">Standard (<code>std</code>)</a>
-      <ul>
-        <li><a href="#logval"><code>log(val)</code></a></li>
-        <li><a href="#scancb"><code>scan(cb)</code></a></li>
-        <li><a href="#hexn"><code>hex(n)</code></a></li>
-        <li><a href="#xehs"><code>xeh(s)</code></a></li>
-        <li><a href="#minnumbers"><code>min(numbers)</code></a></li>
-        <li><a href="#maxnumbers"><code>max(numbers)</code></a></li>
-        <li><a href="#rangestart-end-step"><code>range(start, end, step)</code></a></li>
-        <li><a href="#clampstart-end-min-max"><code>clamp(start, end, min, max)</code></a></li>
-        <li><a href="#slices-start-end"><code>slice(s, start, end)</code></a></li>
-        <li><a href="#appendbase-child"><code>append(base, child)</code></a></li>
-        <li><a href="#joinbase-child"><code>join(base, child)</code></a></li>
-        <li><a href="#clonex"><code>clone(x)</code></a></li>
-        <li><a href="#stringlistlist"><code>stringList(list)</code></a></li>
-        <li><a href="#reverselist"><code>reverse(list)</code></a></li>
-        <li><a href="#maplist-f"><code>map(list, f)</code></a></li>
-        <li><a href="#filterlist-f"><code>filter(list, f)</code></a></li>
-        <li><a href="#reducelist-f-acc"><code>reduce(list, f, acc)</code></a></li>
-        <li><a href="#reducebacklist-f-acc"><code>reduceBack(list, f, acc)</code></a></li>
-        <li><a href="#flattenlist"><code>flatten(list)</code></a></li>
-        <li><a href="#somelist"><code>some(list)</code></a></li>
-        <li><a href="#everylist"><code>every(list)</code></a></li>
-        <li><a href="#catlist-joiner"><code>cat(list, joiner)</code></a></li>
-        <li><a href="#eachlist-f"><code>each(list, f)</code></a></li>
-        <li><a href="#encodestr"><code>encode(str)</code></a></li>
-        <li><a href="#decodedata"><code>decode(data)</code></a></li>
-        <li><a href="#readfilepath-cb"><code>readFile(path, cb)</code></a></li>
-        <li><a href="#writefilepath-data-cb"><code>writeFile(path, data, cb)</code></a></li>
-        <li><a href="#formatraw-values"><code>format(raw, values)</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#string-str">String (<code>str</code>)</a>
-      <ul>
-        <li><a href="#upperc"><code>upper?(c)</code></a></li>
-        <li><a href="#lowerc"><code>lower?(c)</code></a></li>
-        <li><a href="#digitc"><code>digit?(c)</code></a></li>
-        <li><a href="#letterc"><code>letter?(c)</code></a></li>
-        <li><a href="#wsc"><code>ws?(c)</code></a></li>
-        <li><a href="#hasprefixs-prefix"><code>hasPrefix?(s, prefix)</code></a></li>
-        <li><a href="#hassuffixs-suffix"><code>hasSuffix?(s, suffix)</code></a></li>
-        <li><a href="#indexs-substring"><code>index(s, substring)</code></a></li>
-        <li><a href="#containss-substring"><code>contains?(s, substring)</code></a></li>
-        <li><a href="#lowers"><code>lower(s)</code></a></li>
-        <li><a href="#uppers"><code>upper(s)</code></a></li>
-        <li><a href="#titles"><code>title(s)</code></a></li>
-        <li><a href="#replaces-old-new"><code>replace(s, old, new)</code></a></li>
-        <li><a href="#splits-delim"><code>split(s, delim)</code></a></li>
-        <li><a href="#trimprefixs-prefix"><code>trimPrefix(s, prefix)</code></a></li>
-        <li><a href="#trimsuffixs-suffix"><code>trimSuffix(s, suffix)</code></a></li>
-        <li><a href="#trims-ss"><code>trim(s, ss)</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#sort-quicksort">Sort (<code>quicksort</code>)</a>
-      <ul>
-        <li><a href="#sortbyv-pred"><code>sortBy(v, pred)</code></a></li>
-        <li><a href="#sortv"><code>sort!(v)</code></a></li>
-        <li><a href="#sortv-1"><code>sort(v)</code></a></li>
-      </ul>
-    </li>
-    <li><a href="#uuid-uuid">UUID (<code>uuid</code>)</a>
-      <ul>
-        <li><a href="#uuid"><code>uuid()</code></a></li>
-      </ul>
-    </li>
-  </ul>
+<ul>
+<li>
+<ul>
+<li><a href="#standard-std">Standard (<code>std</code>)</a>
+<ul>
+<li><a href="#log-val"><code>log(val)</code></a></li>
+<li><a href="#scan-cb"><code>scan(cb)</code></a></li>
+<li><a href="#hex-n"><code>hex(n)</code></a></li>
+<li><a href="#xeh-s"><code>xeh(s)</code></a></li>
+<li><a href="#min-numbers"><code>min(numbers)</code></a></li>
+<li><a href="#max-numbers"><code>max(numbers)</code></a></li>
+<li><a href="#range-start-end-step"><code>range(start, end, step)</code></a></li>
+<li><a href="#clamp-start-end-min-max"><code>clamp(start, end, min, max)</code></a></li>
+<li><a href="#slice-s-start-end"><code>slice(s, start, end)</code></a></li>
+<li><a href="#append-base-child"><code>append(base, child)</code></a></li>
+<li><a href="#join-base-child"><code>join(base, child)</code></a></li>
+<li><a href="#clone-x"><code>clone(x)</code></a></li>
+<li><a href="#stringlist-list"><code>stringList(list)</code></a></li>
+<li><a href="#reverse-list"><code>reverse(list)</code></a></li>
+<li><a href="#map-list-f"><code>map(list, f)</code></a></li>
+<li><a href="#filter-list-f"><code>filter(list, f)</code></a></li>
+<li><a href="#reduce-list-f-acc"><code>reduce(list, f, acc)</code></a></li>
+<li><a href="#reduceback-list-f-acc"><code>reduceBack(list, f, acc)</code></a></li>
+<li><a href="#flatten-list"><code>flatten(list)</code></a></li>
+<li><a href="#some-list"><code>some(list)</code></a></li>
+<li><a href="#every-list"><code>every(list)</code></a></li>
+<li><a href="#cat-list-joiner"><code>cat(list, joiner)</code></a></li>
+<li><a href="#each-list-f"><code>each(list, f)</code></a></li>
+<li><a href="#encode-str"><code>encode(str)</code></a></li>
+<li><a href="#decode-data"><code>decode(data)</code></a></li>
+<li><a href="#readfile-path-cb"><code>readFile(path, cb)</code></a></li>
+<li><a href="#writefile-path-data-cb"><code>writeFile(path, data, cb)</code></a></li>
+<li><a href="#format-raw-values"><code>format(raw, values)</code></a></li>
+</ul></li>
+<li><a href="#string-str">String (<code>str</code>)</a>
+<ul>
+<li><a href="#upper-c"><code>upper?(c)</code></a></li>
+<li><a href="#lower-c"><code>lower?(c)</code></a></li>
+<li><a href="#digit-c"><code>digit?(c)</code></a></li>
+<li><a href="#letter-c"><code>letter?(c)</code></a></li>
+<li><a href="#ws-c"><code>ws?(c)</code></a></li>
+<li><a href="#hasprefix-s-prefix"><code>hasPrefix?(s, prefix)</code></a></li>
+<li><a href="#hassuffix-s-suffix"><code>hasSuffix?(s, suffix)</code></a></li>
+<li><a href="#index-s-substring"><code>index(s, substring)</code></a></li>
+<li><a href="#contains-s-substring"><code>contains?(s, substring)</code></a></li>
+<li><a href="#lower-s"><code>lower(s)</code></a></li>
+<li><a href="#upper-s"><code>upper(s)</code></a></li>
+<li><a href="#title-s"><code>title(s)</code></a></li>
+<li><a href="#replace-s-old-new"><code>replace(s, old, new)</code></a></li>
+<li><a href="#split-s-delim"><code>split(s, delim)</code></a></li>
+<li><a href="#trimprefix-s-prefix"><code>trimPrefix(s, prefix)</code></a></li>
+<li><a href="#trimsuffix-s-suffix"><code>trimSuffix(s, suffix)</code></a></li>
+<li><a href="#trim-s-ss"><code>trim(s, ss)</code></a></li>
+</ul></li>
+<li><a href="#sort-quicksort">Sort (<code>quicksort</code>)</a>
+<ul>
+<li><a href="#sortby-v-pred"><code>sortBy(v, pred)</code></a></li>
+<li><a href="#sort-v"><code>sort!(v)</code></a></li>
+<li><a href="#sort-v-1"><code>sort(v)</code></a></li>
+</ul></li>
+<li><a href="#uuid-uuid">UUID (<code>uuid</code>)</a>
+<ul>
+<li><a href="#uuid"><code>uuid()</code></a></li>
+</ul></li>
+</ul></li>
+</ul>
 </nav>
         </details>
         
 
-        <p>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries <a href="https://github.com/thesephist/ink/tree/master/samples">on GitHub</a>.</p>
+        
+
+<p>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries <a href="https://github.com/thesephist/ink/tree/master/samples">on GitHub</a>.</p>
+
 <h2 id="standard-std">Standard (<code>std</code>)</h2>
+
 <p><code>std</code> is Ink&rsquo;s core library.</p>
-<p><a href="https://github.com/thesephist/ink/blob/master/samples/std.ink" class="button">See source on GitHub →</a></p>
-<h3 id="logval"><code>log(val)</code></h3>
+
+<p><a href="https://github.com/thesephist/ink/blob/master/samples/std.ink" class="button">See source on GitHub &rarr;</a></p>
+
+<h3 id="log-val"><code>log(val)</code></h3>
+
 <p>Prints the string version of <code>val</code> to standard output.</p>
-<h3 id="scancb"><code>scan(cb)</code></h3>
+
+<h3 id="scan-cb"><code>scan(cb)</code></h3>
+
 <p>Opens standard input, and calls <code>cb</code> with the result of the first chunk of input as a string.</p>
-<h3 id="hexn"><code>hex(n)</code></h3>
+
+<h3 id="hex-n"><code>hex(n)</code></h3>
+
 <p>Takes a positive integer and returns a lowercase hexadecimal string.</p>
-<h3 id="xehs"><code>xeh(s)</code></h3>
+
+<h3 id="xeh-s"><code>xeh(s)</code></h3>
+
 <p>Takes a lowercase hexadecimal string and returns its value as a number.</p>
-<h3 id="minnumbers"><code>min(numbers)</code></h3>
+
+<h3 id="min-numbers"><code>min(numbers)</code></h3>
+
 <p>Returns minimum of a list of numbers.</p>
-<h3 id="maxnumbers"><code>max(numbers)</code></h3>
+
+<h3 id="max-numbers"><code>max(numbers)</code></h3>
+
 <p>Returns a maximum of a list of numbers</p>
-<h3 id="rangestart-end-step"><code>range(start, end, step)</code></h3>
+
+<h3 id="range-start-end-step"><code>range(start, end, step)</code></h3>
+
 <p>Returns a list of numbers starting at <code>start</code>, going up by <code>step</code> until and excluding when it equals or exceeds <code>end</code>.</p>
+
 <p>For example, <code>range(0, 5, 1)</code> returns <code>[0, 1, 2, 3, 4]</code>. <code>range(0, n, 1)</code> is a common idiom to generate a list <code>n</code> elements long.</p>
-<h3 id="clampstart-end-min-max"><code>clamp(start, end, min, max)</code></h3>
+
+<h3 id="clamp-start-end-min-max"><code>clamp(start, end, min, max)</code></h3>
+
 <p>Clamps a given numeric range, <code>[start, end]</code>, to the range <code>[min, max]</code>. The resulting range, if possible, is the intersection of those two ranges. If that intersection is an empty set, it returns <code>[min, min]</code> or <code>[max, max]</code>, both empty ranges.</p>
-<h3 id="slices-start-end"><code>slice(s, start, end)</code></h3>
+
+<h3 id="slice-s-start-end"><code>slice(s, start, end)</code></h3>
+
 <p>Returns a sub-slice of a list from and including <code>start</code>, to and excluding <code>end</code>. If <code>start</code> is an index out of bounds, it returns an empty list.</p>
+
 <p><code>slice</code> works much like the slice operator <code>[a:b]</code> of Go and Python.</p>
-<h3 id="appendbase-child"><code>append(base, child)</code></h3>
+
+<h3 id="append-base-child"><code>append(base, child)</code></h3>
+
 <p>Appends the list <code>child</code> to the end of the list <code>base</code>, mutating <code>base</code>.</p>
-<h3 id="joinbase-child"><code>join(base, child)</code></h3>
+
+<h3 id="join-base-child"><code>join(base, child)</code></h3>
+
 <p>Appends the list <code>child</code> to the end of the list <code>base</code>, while leaving <code>base</code>. In other words, <code>join</code> is the immutable counterpart to <code>append</code>.</p>
-<h3 id="clonex"><code>clone(x)</code></h3>
+
+<h3 id="clone-x"><code>clone(x)</code></h3>
+
 <p>Shallow-clones a composite value or a string, so that mutating its return value will not mutate the original. <code>clone</code> is useful for using a mutable function against a variable that should be immutable.</p>
-<h3 id="stringlistlist"><code>stringList(list)</code></h3>
+
+<h3 id="stringlist-list"><code>stringList(list)</code></h3>
+
 <p>Returns a string representation of a composite value as a list. <code>stringList</code> is useful for diagnostic purposes, for logging list values to output.</p>
+
 <p><code>stringList([1, 2, [3, 4]])</code> returns <code>'[1, 2, {0: 3, 1: 4}]'</code>.</p>
-<h3 id="reverselist"><code>reverse(list)</code></h3>
+
+<h3 id="reverse-list"><code>reverse(list)</code></h3>
+
 <p>Reverses a list, and returns the result as a new list without mutating the input.</p>
-<h3 id="maplist-f"><code>map(list, f)</code></h3>
+
+<h3 id="map-list-f"><code>map(list, f)</code></h3>
+
 <p>Maps over a list and creates a new list, applying <code>f</code> to each item. <code>f</code> is passed the arguments <code>(item, index)</code>.</p>
-<h3 id="filterlist-f"><code>filter(list, f)</code></h3>
+
+<h3 id="filter-list-f"><code>filter(list, f)</code></h3>
+
 <p>Filters a list and creates a new list that only includes items from <code>list</code> for which <code>f(item)</code> returns true. <code>f</code> is passed the arguments <code>(item, index)</code>.</p>
-<h3 id="reducelist-f-acc"><code>reduce(list, f, acc)</code></h3>
+
+<h3 id="reduce-list-f-acc"><code>reduce(list, f, acc)</code></h3>
+
 <p>Reduces over the list from left to right, in ascending index order, starting with accumulator <code>acc</code>, applying <code>f</code> to the arguments <code>(acc, item, index)</code>.</p>
-<h3 id="reducebacklist-f-acc"><code>reduceBack(list, f, acc)</code></h3>
+
+<h3 id="reduceback-list-f-acc"><code>reduceBack(list, f, acc)</code></h3>
+
 <p>Like <code>reduce</code>, but traverses the list from the end, in decreasing-index order.</p>
-<h3 id="flattenlist"><code>flatten(list)</code></h3>
+
+<h3 id="flatten-list"><code>flatten(list)</code></h3>
+
 <p>Flattens a list of lists into a single list containing the sublists&rsquo; items in order. <code>flatten</code> only flattens a list one-level deep.</p>
-<h3 id="somelist"><code>some(list)</code></h3>
+
+<h3 id="some-list"><code>some(list)</code></h3>
+
 <p>Returns true if <code>list</code> contains at least one <code>true</code>.</p>
-<h3 id="everylist"><code>every(list)</code></h3>
+
+<h3 id="every-list"><code>every(list)</code></h3>
+
 <p>Returns true if <code>list</code> contains no <code>false</code>.</p>
-<h3 id="catlist-joiner"><code>cat(list, joiner)</code></h3>
+
+<h3 id="cat-list-joiner"><code>cat(list, joiner)</code></h3>
+
 <p>Concatenates a list of strings into a single string, with <code>joiner</code> in between each pair.</p>
-<h3 id="eachlist-f"><code>each(list, f)</code></h3>
+
+<h3 id="each-list-f"><code>each(list, f)</code></h3>
+
 <p>Loops over <code>list</code>, calling <code>f(item, index)</code> on each item. Its return value is to be discarded.</p>
-<h3 id="encodestr"><code>encode(str)</code></h3>
+
+<h3 id="encode-str"><code>encode(str)</code></h3>
+
 <p>Encodes a string buffer into a list of numbers, each byte being a number entry in the list. <code>encode</code> is useful for converting between ASCII numeric and string representations of a string, or for doing arithmetic with byte values in a string.</p>
-<h3 id="decodedata"><code>decode(data)</code></h3>
+
+<h3 id="decode-data"><code>decode(data)</code></h3>
+
 <p>Reverse of <code>encode</code>, <code>decode</code> takes a list of numbers less than 256 and returns a string where each character (byte) has the byte value of the corresponding number from the list. <code>decode</code> will simply skip over any numbers in the list greater than <code>255</code>.</p>
-<h3 id="readfilepath-cb"><code>readFile(path, cb)</code></h3>
+
+<h3 id="readfile-path-cb"><code>readFile(path, cb)</code></h3>
+
 <p>Reads file from a given path completely, and calls <code>cb</code> with the the read string buffer as the argument. If the read fails for one reason or another, the null value <code>()</code> is sent instead to the callback.</p>
-<h3 id="writefilepath-data-cb"><code>writeFile(path, data, cb)</code></h3>
+
+<h3 id="writefile-path-data-cb"><code>writeFile(path, data, cb)</code></h3>
+
 <p>Writes a string buffer, given as <code>data</code>, to the file at <code>path</code>. If a file is already present, <code>writeFile</code> truncates the existing file. If the file is not there, <code>writeFile</code> creates it. If write is successful, <code>cb</code> is called with <code>tru</code>. On any error, <code>()</code> is passed instead to the callback.</p>
-<h3 id="formatraw-values"><code>format(raw, values)</code></h3>
+
+<h3 id="format-raw-values"><code>format(raw, values)</code></h3>
+
 <p>Returns a format string with the string formatting substrings replaced with their referenced values from <code>values</code>, which can be a map or a list. For example:</p>
+
 <pre><code>format('{{ 0 }} {{ 1 }} {{ 0 }}', ['A', 'B'])
 `` -&gt; 'A B A'
 
@@ -187,56 +251,108 @@ format('{{ steve }} met {{ jony }}', {
     jony: 'Jony Ive'
 })
 `` -&gt; 'Steve Jobs met Jony Ive'
-</code></pre><h2 id="string-str">String (<code>str</code>)</h2>
+</code></pre>
+
+<h2 id="string-str">String (<code>str</code>)</h2>
+
 <p><code>str</code> contains string manipulation functions.</p>
-<p><a href="https://github.com/thesephist/ink/blob/master/samples/str.ink" class="button">See source on GitHub →</a></p>
-<h3 id="upperc"><code>upper?(c)</code></h3>
+
+<p><a href="https://github.com/thesephist/ink/blob/master/samples/str.ink" class="button">See source on GitHub &rarr;</a></p>
+
+<h3 id="upper-c"><code>upper?(c)</code></h3>
+
 <p>Reports whether the given character is an ASCII uppercase character.</p>
-<h3 id="lowerc"><code>lower?(c)</code></h3>
+
+<h3 id="lower-c"><code>lower?(c)</code></h3>
+
 <p>Reports whether the given character is an ASCII lowercase character.</p>
-<h3 id="digitc"><code>digit?(c)</code></h3>
+
+<h3 id="digit-c"><code>digit?(c)</code></h3>
+
 <p>Reports whether the given character is an ASCII number character.</p>
-<h3 id="letterc"><code>letter?(c)</code></h3>
+
+<h3 id="letter-c"><code>letter?(c)</code></h3>
+
 <p>Reports whether the given character is an ASCII Latin letter.</p>
-<h3 id="wsc"><code>ws?(c)</code></h3>
+
+<h3 id="ws-c"><code>ws?(c)</code></h3>
+
 <p>Reports whether the given character is an ASCII whitespace character.</p>
-<h3 id="hasprefixs-prefix"><code>hasPrefix?(s, prefix)</code></h3>
+
+<h3 id="hasprefix-s-prefix"><code>hasPrefix?(s, prefix)</code></h3>
+
 <p>Reports whether <code>prefix</code> is a prefix of <code>s</code>, i.e. whether <code>s</code> starts with <code>prefix</code>.</p>
-<h3 id="hassuffixs-suffix"><code>hasSuffix?(s, suffix)</code></h3>
+
+<h3 id="hassuffix-s-suffix"><code>hasSuffix?(s, suffix)</code></h3>
+
 <p>Counterpart to <code>hasPrefix?</code>, reports whether <code>suffix</code> is a suffix of <code>s</code>, i.e. whether <code>s</code> ends with <code>suffix</code>.</p>
-<h3 id="indexs-substring"><code>index(s, substring)</code></h3>
+
+<h3 id="index-s-substring"><code>index(s, substring)</code></h3>
+
 <p>If <code>substring</code> is a substring of <code>s</code>, returns the index of its first occurrence. Otherwise, returns <code>~1</code>.</p>
-<h3 id="containss-substring"><code>contains?(s, substring)</code></h3>
+
+<h3 id="contains-s-substring"><code>contains?(s, substring)</code></h3>
+
 <p>Reports whether <code>substring</code> is a substring of <code>s</code>.</p>
-<h3 id="lowers"><code>lower(s)</code></h3>
+
+<h3 id="lower-s"><code>lower(s)</code></h3>
+
 <p>Converts all ASCII uppercase characters in <code>s</code> to their lowercase counterparts.</p>
-<h3 id="uppers"><code>upper(s)</code></h3>
+
+<h3 id="upper-s"><code>upper(s)</code></h3>
+
 <p>Converts all ASCII lowercase characters in <code>s</code> to their uppercase counterparts.</p>
-<h3 id="titles"><code>title(s)</code></h3>
+
+<h3 id="title-s"><code>title(s)</code></h3>
+
 <p>Converts <code>s</code> to &ldquo;title case&rdquo;, which in this case simply means capitalizing the first character and lowercasing the rest.</p>
-<h3 id="replaces-old-new"><code>replace(s, old, new)</code></h3>
+
+<h3 id="replace-s-old-new"><code>replace(s, old, new)</code></h3>
+
 <p>Replaces all occurrences of <code>old</code> with <code>new</code> in <code>s</code>. Only non-overlapping sections of overlapping matches will be replaced.</p>
-<h3 id="splits-delim"><code>split(s, delim)</code></h3>
+
+<h3 id="split-s-delim"><code>split(s, delim)</code></h3>
+
 <p>Splits <code>s</code> by occurrences of <code>delim</code> into a list of strings. If <code>s</code> begins or ends in <code>delim</code>, the first or last item of the list, respectively will be the empty string.</p>
-<h3 id="trimprefixs-prefix"><code>trimPrefix(s, prefix)</code></h3>
+
+<h3 id="trimprefix-s-prefix"><code>trimPrefix(s, prefix)</code></h3>
+
 <p>If <code>prefix</code> is a prefix of <code>s</code>, returns <code>s</code> without that prefix. This is done repeatedly until <code>prefix</code> is no longer at the start of <code>s</code>.</p>
-<h3 id="trimsuffixs-suffix"><code>trimSuffix(s, suffix)</code></h3>
+
+<h3 id="trimsuffix-s-suffix"><code>trimSuffix(s, suffix)</code></h3>
+
 <p>If <code>suffix</code> is a suffix of <code>s</code>, returns <code>s</code> without that suffix. This is done repeatedly until <code>suffix</code> is no longer at the end of <code>s</code>.</p>
-<h3 id="trims-ss"><code>trim(s, ss)</code></h3>
+
+<h3 id="trim-s-ss"><code>trim(s, ss)</code></h3>
+
 <p>Trims all instances of <code>ss</code> at either the start or end of <code>s</code>.</p>
+
 <h2 id="sort-quicksort">Sort (<code>quicksort</code>)</h2>
+
 <p><code>quicksort</code> contains an implementation of Quicksort using Hoare partition.</p>
-<p><a href="https://github.com/thesephist/ink/blob/master/samples/quicksort.ink" class="button">See source on GitHub →</a></p>
-<h3 id="sortbyv-pred"><code>sortBy(v, pred)</code></h3>
+
+<p><a href="https://github.com/thesephist/ink/blob/master/samples/quicksort.ink" class="button">See source on GitHub &rarr;</a></p>
+
+<h3 id="sortby-v-pred"><code>sortBy(v, pred)</code></h3>
+
 <p>Sorts list <code>v</code> by the result of the given predicate. <em>i.e.</em> the list is sorted via quicksort according to the value of <code>pred(item)</code> for each item in <code>v</code>.</p>
-<h3 id="sortv"><code>sort!(v)</code></h3>
+
+<h3 id="sort-v"><code>sort!(v)</code></h3>
+
 <p>Sorts the list in-place. If the list is of numbers, the sort is ascending numerical order. If the list is of strings, the sort is in ascending lexicographical order. In all other cases, the sort is ambiguous.</p>
-<h3 id="sortv-1"><code>sort(v)</code></h3>
+
+<h3 id="sort-v-1"><code>sort(v)</code></h3>
+
 <p>The counterpart to <code>sort!(v)</code> that does not mutate the given list.</p>
+
 <h2 id="uuid-uuid">UUID (<code>uuid</code>)</h2>
+
 <p><code>uuid</code> generates UUIDs.</p>
-<p><a href="https://github.com/thesephist/ink/blob/master/samples/uuid.ink" class="button">See source on GitHub →</a></p>
+
+<p><a href="https://github.com/thesephist/ink/blob/master/samples/uuid.ink" class="button">See source on GitHub &rarr;</a></p>
+
 <h3 id="uuid"><code>uuid()</code></h3>
+
 <p>Returns a cryptographically random UUID compliant with UUID version 4.</p>
 
     </article>

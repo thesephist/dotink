@@ -16,8 +16,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/overview/</guid>
-      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language. It&amp;rsquo;s dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks. Ink is designed to be minimal and simple, first and foremost.
-I made Ink as an experiment to study writing interpreters and compilers in mid-2019. Since then, I&amp;rsquo;ve worked on several other related projects in the programming language space, but continue to write programs and apps in Ink in my day to day work.</description>
+      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language. It&amp;rsquo;s dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks. Ink is designed to be minimal and simple, first and foremost.</description>
     </item>
     
     <item>
@@ -26,12 +25,10 @@ I made Ink as an experiment to study writing interpreters and compilers in mid-2
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/projects/</guid>
-      <description>dotink This website is served by a web server written in Ink
-See on GitHub →
-Polyx Polyx is Linus&amp;rsquo;s personal productivity suite
-See on GitHub →
-Codeliner Codeliner generates graphics from program source files
-See on GitHub →</description>
+      <description>dotink This website is served by a web server written in Ink.
+See on GitHub &amp;rarr;
+inkfmt inkfmt is a self-hosting code formatter for Ink. I wrote about building inkfmt here.
+See on GitHub &amp;rarr;</description>
     </item>
     
     <item>
@@ -40,9 +37,7 @@ See on GitHub →</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/runtime/</guid>
-      <description>Operating system interfaces Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response. Such an event object is of a semi-standard form, on success
-{ type: &#39;data&#39; data: [... some data] } and on error, frequently the error interface
-{ type: &#39;error&#39; message: &amp;lt;string&amp;gt; } When a system-interface builtin is capable of returning such an error event, we&amp;rsquo;ll simply state so, without repeating the shape of the object again every time.</description>
+      <description>Operating system interfaces Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response. Such an event object is of a semi-standard form, on success</description>
     </item>
     
     <item>
@@ -53,10 +48,7 @@ See on GitHub →</description>
       <guid>https://dotink.co/docs/lib/</guid>
       <description>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries on GitHub.
 Standard (std) std is Ink&amp;rsquo;s core library.
-See source on GitHub →
-log(val) Prints the string version of val to standard output.
-scan(cb) Opens standard input, and calls cb with the result of the first chunk of input as a string.
-hex(n) Takes a positive integer and returns a lowercase hexadecimal string.</description>
+See source on GitHub &amp;rarr;</description>
     </item>
     
   </channel>

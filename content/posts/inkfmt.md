@@ -5,9 +5,11 @@ location: "West Lafayette, IN"
 toc: true
 ---
 
-[inkfmt](https://github.com/thesephist/inkfmt) (pronounced "ink format") is a self-hosting code formatter for the Ink language. That means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean. inkfmt is itself an Ink program, and inkfmt uses itself to format its source code. (This is the "self-hosting" bit.)
+[inkfmt](https://github.com/thesephist/inkfmt) (pronounced "ink format" or sometimes "ink fuh-mt") is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean. inkfmt is itself an Ink program, and inkfmt uses itself to format its own source code. (This is the "self-hosting" bit.)
 
 inkfmt isn't perfect yet -- it's a work in progress -- but it currently produces the correct output about 95% of the time with idiomatic Ink code. Code formatters in general are fascinating, and inkfmt specifically was one of the most interesting technical projects I've worked on recently (I had to switch from pen-and-paper to my whiteboard for the first time in a while!), so I wanted to share what I've encountered so far.
+
+<a href="https://github.com/thesephist/inkfmt" class="button">See inkfmt on GitHub &rarr;</a>
 
 ![inkfmt screenshot](/img/inkfmt.jpg)
 
@@ -19,7 +21,7 @@ If a team of developers all do this over the same body of source code, you'll of
 
 A code formatter, sometimes called a "pretty printer", takes a bit of source code and makes small transformations to it to produce a more readable, visually clean version of the same program, and in the process, removes any frivolous changes in whitespace, indentation, and more. It helps team members settle on a single style of code formatting, makes code more readable, and usually saves time, too.
 
-For this reason, most popular languages that emerged in the last decade ship with code formatters. Go popularized this trend with [gofmt](https://golang.org/cmd/gofmt/), Rust has [Rustfmt](https://github.com/rust-lang/rustfmt), Zig has [zig fmt](https://ziglang.org/download/0.6.0/release-notes.html#zig-fmt), Dart has [dartfmt](https://dart.dev/tools/dartfmt), and JavaScript is rich with many alternatives like [Prettier](https://prettier.io) and [Standard](https://standardjs.com). They not only format the code, but provide a single, _canonical_ formatting for a program so we programmers don't spend time mentally litigating the various ways a particular expression or function could be written out.
+For this reason, most popular languages that emerged in the last decade ship with code formatters. Go popularized this trend with [gofmt](https://golang.org/cmd/gofmt/), Rust has [Rustfmt](https://github.com/rust-lang/rustfmt), Zig has [zig fmt](https://ziglang.org/download/0.6.0/release-notes.html#zig-fmt), Dart has [dartfmt](https://dart.dev/tools/dartfmt), and JavaScript is rich with many alternatives like [Prettier](https://prettier.io) and [Standard](https://standardjs.com). They not only clean up the code, but provide a single, _canonical_ formatting for a program so we programmers don't spend time mentally litigating the various ways a particular expression or function could be written out.
 
 Developers use code formatters in two major ways, either integrated into their text editor/IDE, to format on save or a keyboard shortcut; or integrated into their change control workflow, so code changes are formatted before they're shared with the team and the world. But in order for a language to support any of these use cases, it needs a code formatter, a _program that takes some bit of source code and produces a correctly formatted version of it_.
 
@@ -35,7 +37,7 @@ inkfmt < input.ink > output.ink
 
 Eventually, I want to build out a command-line tool that allows me to do this for a large tree of files and format code in-place.
 
-In the process, inkfmt currently makes four types of code transformations.
+inkfmt currently makes four types of code transformations.
 
 1. **Remove trailing commas at line endings**. In C-like programs, statements are terminated with the semicolon. Ink's analogous line terminator is the comma. But this isn't enforced at the source-code level, only in the language grammar. The Ink interpreter uses automatic comma insertion (like JavaScript's [ASI](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion)) to insert missing commas where appropriate. This means in idiomatic Ink code, lines don't end with commas. inkfmt removes such trailing commas at line endings.
 2. **Remove trailing commas in lists**. Ink also allows commas to follow a list of items:
@@ -51,11 +53,11 @@ In such lists, well-formatted code should omit the last comma for visual consist
 
 Like parsers and compilers, pretty printers come from a long and rich historical and academic context. My favorite read on the topic so far is [A prettier printer](https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf) by [Phil Wadler](http://homepages.inf.ed.ac.uk/wadler/) from the University of Edinburgh. It's an academic investigation into the theoretical problem of pretty-printing text. The paper is heavy on functional programming concepts, so it might be unwieldy to some as it was for me at first.
 
-From the other side of the industry, a more accessible and interesting deep-dive into the code formatting problem is [The Hardest Program I've Ever Written](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/) by [Bob Nystrom](https://journal.stuffwithstuff.com/), on the Dart language formatter, dartfmt. (Coindentally, he also wrote [Crafting Interpreters](http://craftinginterpreters.com/contents.html), one of my favorite resources for hacking on interpreters and compilers.)
+From the other side of the industry, a more accessible and interesting deep-dive into the code formatting problem is [The Hardest Program I've Ever Written](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/) by [Bob Nystrom](https://journal.stuffwithstuff.com/), about the Dart language formatter, dartfmt. (Coincidentally, he also wrote [Crafting Interpreters](http://craftinginterpreters.com/contents.html), one of my favorite resources for hacking on interpreters and compilers.)
 
-Another bank of inspiration is the wealth of currently available open-source code formatters for different languages, many of which I've outlined above. The code formatting problem rapidly becomes a formidable beast the more we want complete coverage of edge cases, and beyond studying the algorithms and experiments implemented in these formatters, it's worth studying what previous edge cases and problems existing code formatters have encountered, and how we achieved consensus on what the formatter should do.
+Another bank of inspiration is the wealth of currently available open-source code formatters for different languages, many of which I've outlined above. The code formatting problem rapidly becomes a formidable beast the more we want complete coverage of edge cases, and beyond studying the algorithms and experiments implemented in these formatters, it's worth knowing what previous edge cases and problems existing code formatters have encountered, and how we achieved consensus on what the formatter should do.
 
-As an example of the kinds of subjective discussions and edge cases code formatting creates, [here's a conversation about rustfmt](https://github.com/rust-lang/rustfmt/issues/2924), and whether the formatter should try to produce consistent line breaks, potentially at conflict with any meaning the programmer may have placed into their own formatting.
+As an example of the kinds of subjective discussions and edge cases code formatting creates, [here's a conversation about rustfmt](https://github.com/rust-lang/rustfmt/issues/2924), and whether the formatter should try to produce consistent line breaks, potentially at conflict with any meaning the programmer may have placed into their own style.
 
 ## Building inkfmt
 
@@ -79,15 +81,15 @@ Indeed, the current version of the formatter program does [exactly that](https:/
 
 ### Tokenizers vs. parsers
 
-A tokenizer produces a flat list of symbols, but often, analyzing a program requires something more structured than a list of symbols. Source code usually represents nested, recursive structure -- functions and expressions inside other functions and expressions. It's often useful to have a more complex data structure to represent these nested groups of symbols in programs. We call this next level of representation a _syntax tree_. A syntax tree describes the nested relationships between different parts of a program. We call the program that generates a syntax tree from a token stream a _parser_.
+A tokenizer produces a flat list of symbols, but often, analyzing a program requires something more structured than a list of symbols. Source code usually represents nested, recursive structures -- functions and expressions inside other functions and expressions. It's often useful to have a more complex data structure to represent these nested groups of symbols in programs. We call this next level of representation a _syntax tree_. A syntax tree describes the nested relationships between different parts of a program. We call the program that generates a syntax tree a _parser_.
 
-Unlike inkfmt, where the token stream is the core data structure, most code formatters use an [abstract syntax tree](https://craftinginterpreters.com/representing-code.html#implementing-syntax-trees) as the core data structure. I knew this additional complexity was for good reason, especially for languages with richer syntax. The process of building inkfmt's MVP has been in part a process of discovering exactly why most pretty-printers operate on ASTs. Like many other problems in code formatting, better addressing edge cases requires more complexity.
+Unlike inkfmt, where the token stream is the core data structure, most code formatters use an [abstract syntax tree](https://craftinginterpreters.com/representing-code.html#implementing-syntax-trees) as the core data structure. I knew this additional complexity was for good reason, especially for languages with richer syntax. The process of building inkfmt's MVP has been in part a process of discovering exactly why most pretty-printers operate on ASTs and not tokens. Like many other problems in code formatting, _better addressing edge cases requires more complexity_.
 
 In the beginning, I opted to avoid writing a full parser and AST for inkfmt for a few reasons.
 
-1. **Potentially wasteful complexity.** Ink's current only parser exists in the [Ink interpreter](https://github.com/thesephist/ink), written in Go. I was set on writing inkfmt in Ink itself, which meant if I wanted an AST-based formatter, I'd at the very least have to port the AST implementation from Go to Ink.
+1. **Potentially wasteful complexity.** Ink's current only parser exists in the [Ink interpreter](https://github.com/thesephist/ink), written in Go. I was set on writing inkfmt in Ink itself, which meant if I wanted an AST-based formatter, I'd at the very least have to port the AST implementation from Go to Ink. I wasn't sure what other use cases I would have for a self hosting Ink parser, so I wanted to reduce the amount of work I put on myself if possible.
 2. **Ink's grammar is very simple.** Ink's syntax is modeled after Lisp and JavaScript, but Ink uses very few concepts and special syntax to keep the language small. This means there's fewer syntax rules and edge cases to think about. I thought Ink's extreme simplicity would allow a full formatter to be written without having to construct a full syntax tree for a program. It turns out we can get really close, but not perfect, and it requires some clever hacks.
-3. **Prototyping speed.** I [prefer to get projects to a working state within a day of work](https://thesephist.com/posts/how-i-side-project/#start-when-the-motivations-high) if possible, and writing a full AST implementation in addition to the formatting algorithm and tokenizer would probably have pushed this MVP into weekend-project territory. I didn't want to make a longer bet on my motivation lasting than I had to.
+3. **Prototyping speed.** I [prefer to get projects to a working state within a day of work](https://thesephist.com/posts/how-i-side-project/#start-when-the-motivations-high) if possible, and writing a full AST implementation in addition to the formatting algorithm and tokenizer would probably have pushed this MVP into two-days-or-more territory. I didn't want to make a longer bet on my motivation lasting than I had to.
 
 ### Constraints of running without the AST
 
@@ -104,7 +106,7 @@ As an example, take this bit of Ink code.
 5  ))
 ```
 
-Two places for us to indent the code, contained within two nested pairs of parentheses. It seems like we could keep track of how deeply nested we are in parentheses at each line of code, and use that to tell us how far to indent each line. But this doesn't quite get us to the formatting above, which is the desired output.
+There are two places for us to indent the code, contained within two nested pairs of parentheses. It seems like we could keep track of how deeply nested we are in parentheses at each line of code, and use that to tell us how far to indent each line. But this doesn't quite get us to the formatting above, which is the desired output.
 
 If we indent each line simply by keeping track of open and closed parentheses, line 3 shouldn't be indented any differently than line 2. In line 3, we open two parentheses, and close two parentheses. So we've opened net-zero parentheses, and we should keep the previous line's indentation, which is a sensible thing to do in `(B)` here:
 
@@ -112,12 +114,12 @@ If we indent each line simply by keeping track of open and closed parentheses, l
 (B)
 1  doSomething(request => (
 2      returnResponse(request)
-3  )).then(data => (
+3      data := otherThing(f(request))
 4      doOtherthing(data)
 5  ))
 ```
 
-but not in `(A)` above. In `(A)`, we want the algorithm to realize that this line closes a previous group of expressions, and opens another one. We can't infer this kind of extra nuance simply by iterating through a stream of tokens. We need to keep track of the order in which expressions are opened and closed, and at that point, we're effectively building a messy parser.
+but not in `(A)` above. In `(A)`, we want the algorithm to realize that this line closes a previous group of expressions, and opens another one. We can't infer this kind of extra nuance simply by iterating through a stream of tokens. We need to keep track of the order in which expressions are opened and closed, and at that point, _we're effectively building a messy parser_.
 
 These issues aren't very common, but they come up here and there in medium and large codebases, and I think a simple token stream-based formatter will have trouble adapting to these edge cases, even if I can work around some of them today.
 
@@ -156,6 +158,8 @@ Okay, what if we only indent a group-closing line if it doesn't start with some 
 
 I can't go through every single issue I faced building inkfmt's indentation algorithm, but I want to explore two more particularly interesting cases with you, if you want to dive deeper.
 
+If you'd rather skip to the conclusion, you can [click here](#code-formatting-is-complicated-because-it-s-a-human-problem).
+
 ### Case study: indentation collapsing
 
 Indentation collapsing is a phrase I made up for a particular condition where the indentation _style_ matches what we want, but some blocks are indented much farther in that we would like. Take this fairly common pattern of passing callbacks into a function.
@@ -168,7 +172,7 @@ Indentation collapsing is a phrase I made up for a particular condition where th
 
 Let's continue with our earlier rule of adding an indent level when we enter a parenthesized or bracketed group. That rule tells us that line 2 should be indented twice inwards, because line 2 is contained by two nested groups. First, the `readFile(...)` group, and then the `data => (...)` group. But that's obviously not what we want. We want to indent exactly once for these two nested groups.
 
-So perhaps we can enforce a rule that each line can indent at most one level than the previous line? Not so fast. Consider these more thorny edge cases:
+So perhaps we can enforce a rule that each line can indent at most one level from the previous line? Not so fast. Consider these more thorny edge cases:
 
 ```
 (A)
@@ -252,13 +256,13 @@ Of them all, I personally think `(A)` makes the most sense. We keep the second h
 
 inkfmt currently produces none of these three, but the original indentation with which I started this example. I think it's fine, but not ideal. This is another consequence of the limitations of a token stream-based formatter.
 
-This example also illustrates why sometimes code formatting is a matter of taste and personal preferences. This code wouldn't look great indented in any way, and if I saw this in a real codebase, I'd probably refactor it or restructure it to be more readable and structured, making it also easier to format. But writing a code formatter, we need to consider these stranger edge cases.
+This example also illustrates why sometimes code formatting is a matter of taste and personal preferences. This code wouldn't look great indented in any way, and if I saw this in a real codebase, I'd probably refactor it or restructure it to be more readable and structured, also making it easier to format. But writing a code formatter, we need to consider these stranger edge cases.
 
 ## Code formatting is complicated because it's a human problem
 
 Code formatting is different from many other hard computer science problems because the metric that we optimize for isn't a well-defined measure. Instead, we look for readable, aesthetically satisfying, and useful outputs, and those goals leave a lot of room for subjectivity and taste. I think that's a big part of the challenge of code formatting.
 
-One of the primary benefits of a code formatter is that it inherits the responsibility of coding style decisions that are normally given to developers. As a result, writing a formatter is a bit like having those tricky formatting and style discussions all at once, with everyone who might use the formatter, while reaching for a solution with as much generality as we can afford. In subjective problems like this, the cost of generality is increasing complexity, and I hope you enjoyed witnessing some of that complexity behind the curtain in this post.
+One of the primary benefits of a code formatter is that it shoulders the responsibility of coding style decisions that are normally given to developers. As a result, writing a formatter is a bit like having those tricky formatting and style discussions all at once, with everyone who might use the formatter, while reaching for a solution with as much generality as we can afford. In subjective problems like this, the cost of this generality is increasing complexity, and I hope you enjoyed witnessing some of that complexity behind the curtain in this post.
 
 ## Future work
 
@@ -268,8 +272,6 @@ On the inkfmt tool, I'd like to come back to it soon to either find clean workar
 
 Ink isn't a particularly fast language, but I think inkfmt should be able to format tens of thousands of lines of code in under a second. inkfmt can currently format about 1000 lines of Ink code per second, so we have some work to do there in using more efficient data structures and reducing redundant work.
 
-Finally, I want to investigate real-world implementations of code formatters further. Formatters in the real world face a class of challenges that we don't study as often in academia. Questions like, what should the formatter do when encountering a syntax error? Should it format what it can, or give up? What kinds of hints can the formatter take from comments surrounding a code block to ensure it doesn't break the author's original intent? Real-world formatters also have to work incrementally. Large production codebases can range up to tens of milliions of lines of code, and formatting any meaningful part of it repeatedly during a work session is going to be slow. Fast formatters only work on pieces of code that have recently changed, and I want to understand incremental parsing and formatting better.
+Finally, I want to investigate real-world implementations of code formatters further. Formatters in the wild face a class of challenges that we don't study as often in academia. Questions like, what should the formatter do when encountering a syntax error? Should it format what it can, or give up? What kinds of hints can the formatter take from comments surrounding a code block to ensure it doesn't break the author's original intent? Real-world formatters also have to work incrementally. Large production codebases can range up to tens of millions of lines of code, and formatting any meaningful part of it repeatedly during a work session is going to be slow. Fast formatters only work on pieces of code that have recently changed, and I want to understand incremental parsing and formatting better.
 
-There's good room for improvements in inkfmt, but working through code formatting as a problem has been one of the most interesting programming exercise I've found in a while, with plenty of room to explore further. Importantly, since the formatter is now at a place where I can use it in my day to day development (albeit through an awkward command-line interface), I hope to keep hacking on it as I learn more.
-
-// I wrote a code formatter for my programming language in my programming language, and used it to format my code formatter for my programming language.
+There's good room for improvements in inkfmt, but working through code formatting as a problem has been one of the most interesting programming exercises I've found in a while, with plenty of room to explore further. Importantly, since the formatter is now at a place where I can use it in my day to day development (albeit through an awkward command-line interface), I hope to keep hacking on it as I learn more.
