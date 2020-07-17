@@ -41,11 +41,11 @@ inkfmt currently makes four types of code transformations.
 
 1. **Remove trailing commas at line endings**. In C-like programs, statements are terminated with the semicolon. Ink's analogous line terminator is the comma. But this isn't enforced at the source-code level, only in the language grammar. The Ink interpreter uses automatic comma insertion (like JavaScript's [ASI](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion)) to insert missing commas where appropriate. This means in idiomatic Ink code, lines don't end with commas. inkfmt removes such trailing commas at line endings.
 2. **Remove trailing commas in lists**. Ink also allows commas to follow a list of items:
-```
-list := [1, 2, 3, 4, ]
-object := { key: 'value', apple: 'fruit', }
-```
-In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.
+    ```
+    list := [1, 2, 3, 4, ]
+    object := { key: 'value', apple: 'fruit', }
+    ```
+    In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.
 3. **Re-indent code**. Indentation is one of the main ways we visually make sense of code before diving into it. inkfmt uses a deterministic algorithm to calculate a single correct indentation for a source file and applies it to the code. The current algorithm isn't perfect, but gets us 90% there.
 4. **Canonicalize whitespace between symbols**. Within each line, whitespace (and the lack thereof) between expressions help readability. Ink also deterministically adds and removes whitespace between symbols on the same line to settle on a single correct format, opting for spaces between binary operations like `+` and `&`, and no spaces within parentheses and brackets.
 
