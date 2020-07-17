@@ -3,9 +3,14 @@
 <head>
 	<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-
 <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
 
 
 	<title>inkfmt: a self-hosting code formatter for Ink | Ink</title>
@@ -46,164 +51,101 @@
                 <div class="toc-title">Contents</div>
             </summary>
             <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#what-s-a-code-formatter">What&rsquo;s a code formatter?</a>
-<ul>
-<li><a href="#what-inkfmt-does">What inkfmt does</a></li>
-<li><a href="#prior-art">Prior art</a></li>
-</ul></li>
-<li><a href="#building-inkfmt">Building inkfmt</a>
-<ul>
-<li><a href="#tokenizers-vs-parsers">Tokenizers vs. parsers</a></li>
-<li><a href="#constraints-of-running-without-the-ast">Constraints of running without the AST</a></li>
-<li><a href="#the-hard-thing-about-indentation">The hard thing about indentation</a></li>
-<li><a href="#case-study-indentation-collapsing">Case study: indentation collapsing</a></li>
-<li><a href="#case-study-hanging-indents">Case study: hanging indents</a></li>
-</ul></li>
-<li><a href="#code-formatting-is-complicated-because-it-s-a-human-problem">Code formatting is complicated because it&rsquo;s a human problem</a></li>
-<li><a href="#future-work">Future work</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#whats-a-code-formatter">What&rsquo;s a code formatter?</a>
+      <ul>
+        <li><a href="#what-inkfmt-does">What inkfmt does</a></li>
+        <li><a href="#prior-art">Prior art</a></li>
+      </ul>
+    </li>
+    <li><a href="#building-inkfmt">Building inkfmt</a>
+      <ul>
+        <li><a href="#tokenizers-vs-parsers">Tokenizers vs. parsers</a></li>
+        <li><a href="#constraints-of-running-without-the-ast">Constraints of running without the AST</a></li>
+        <li><a href="#the-hard-thing-about-indentation">The hard thing about indentation</a></li>
+        <li><a href="#case-study-indentation-collapsing">Case study: indentation collapsing</a></li>
+        <li><a href="#case-study-hanging-indents">Case study: hanging indents</a></li>
+      </ul>
+    </li>
+    <li><a href="#code-formatting-is-complicated-because-its-a-human-problem">Code formatting is complicated because it&rsquo;s a human problem</a></li>
+    <li><a href="#future-work">Future work</a></li>
+  </ul>
 </nav>
         </details>
         
 
-        
-
-<p><a href="https://github.com/thesephist/inkfmt">inkfmt</a> (pronounced &ldquo;ink format&rdquo; or sometimes &ldquo;ink fuh-mt&rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean. inkfmt is itself an Ink program, and inkfmt uses itself to format its own source code. (This is the &ldquo;self-hosting&rdquo; bit.)</p>
-
+        <p><a href="https://github.com/thesephist/inkfmt">inkfmt</a> (pronounced &ldquo;ink format&rdquo; or sometimes &ldquo;ink fuh-mt&rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean. inkfmt is itself an Ink program, and inkfmt uses itself to format its own source code. (This is the &ldquo;self-hosting&rdquo; bit.)</p>
 <p>inkfmt isn&rsquo;t perfect yet &ndash; it&rsquo;s a work in progress &ndash; but it currently produces the correct output about 95% of the time with idiomatic Ink code. Code formatters in general are fascinating, and inkfmt specifically was one of the most interesting technical projects I&rsquo;ve worked on recently (I had to switch from pen-and-paper to my whiteboard for the first time in a while!), so I wanted to share what I&rsquo;ve encountered so far.</p>
-
-<p><a href="https://github.com/thesephist/inkfmt" class="button">See inkfmt on GitHub &rarr;</a></p>
-
-<p><img src="/img/inkfmt.jpg" alt="inkfmt screenshot" /></p>
-
-<h2 id="what-s-a-code-formatter">What&rsquo;s a code formatter?</h2>
-
+<p><a href="https://github.com/thesephist/inkfmt" class="button">See inkfmt on GitHub →</a></p>
+<p><img src="/img/inkfmt.jpg" alt="inkfmt screenshot"></p>
+<h2 id="whats-a-code-formatter">What&rsquo;s a code formatter?</h2>
 <p>In the course of programming, we add and remove pieces of text from our program source code many thousands of times. This process of exploration usually also leads to the shape of our program changing over time, as you try to lay out your code in a way that&rsquo;s readable to you, and makes sense to others.</p>
-
 <p>If a team of developers all do this over the same body of source code, you&rsquo;ll often come across changes in code that don&rsquo;t really change what the program does or how it behaves, but changes the layout of the code. Sometimes they&rsquo;re meaningful, but most of the time, these changes like changing the amount of whitespace, re-indenting code, and converting <a href="https://www.youtube.com/watch?v=SsoOG6ZeyUI">tabs to spaces</a> are more distracting than useful.</p>
-
 <p>A code formatter, sometimes called a &ldquo;pretty printer&rdquo;, takes a bit of source code and makes small transformations to it to produce a more readable, visually clean version of the same program, and in the process, removes any frivolous changes in whitespace, indentation, and more. It helps team members settle on a single style of code formatting, makes code more readable, and usually saves time, too.</p>
-
 <p>For this reason, most popular languages that emerged in the last decade ship with code formatters. Go popularized this trend with <a href="https://golang.org/cmd/gofmt/">gofmt</a>, Rust has <a href="https://github.com/rust-lang/rustfmt">Rustfmt</a>, Zig has <a href="https://ziglang.org/download/0.6.0/release-notes.html#zig-fmt">zig fmt</a>, Dart has <a href="https://dart.dev/tools/dartfmt">dartfmt</a>, and JavaScript is rich with many alternatives like <a href="https://prettier.io">Prettier</a> and <a href="https://standardjs.com">Standard</a>. They not only clean up the code, but provide a single, <em>canonical</em> formatting for a program so we programmers don&rsquo;t spend time mentally litigating the various ways a particular expression or function could be written out.</p>
-
 <p>Developers use code formatters in two major ways, either integrated into their text editor/IDE, to format on save or a keyboard shortcut; or integrated into their change control workflow, so code changes are formatted before they&rsquo;re shared with the team and the world. But in order for a language to support any of these use cases, it needs a code formatter, a <em>program that takes some bit of source code and produces a correctly formatted version of it</em>.</p>
-
 <p>That is what inkfmt does today.</p>
-
 <h3 id="what-inkfmt-does">What inkfmt does</h3>
-
 <p>inkfmt is currently just an MVP, and does exactly one thing. It takes a single input file, formats the code inside, and returns the output. And it does that job reasonably well, though there still definitely are <a href="#case-study-hanging-indents">rough edges</a>. It takes input from <code>/dev/stdin</code> and outputs to <code>/dev/stdout</code>. This means we can run inkfmt on a file like this in the shell.</p>
-
 <pre><code>inkfmt &lt; input.ink &gt; output.ink
-</code></pre>
-
-<p>Eventually, I want to build out a command-line tool that allows me to do this for a large tree of files and format code in-place.</p>
-
+</code></pre><p>Eventually, I want to build out a command-line tool that allows me to do this for a large tree of files and format code in-place.</p>
 <p>inkfmt currently makes four types of code transformations.</p>
-
 <ol>
 <li><strong>Remove trailing commas at line endings</strong>. In C-like programs, statements are terminated with the semicolon. Ink&rsquo;s analogous line terminator is the comma. But this isn&rsquo;t enforced at the source-code level, only in the language grammar. The Ink interpreter uses automatic comma insertion (like JavaScript&rsquo;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion">ASI</a>) to insert missing commas where appropriate. This means in idiomatic Ink code, lines don&rsquo;t end with commas. inkfmt removes such trailing commas at line endings.</li>
-
-<li><p><strong>Remove trailing commas in lists</strong>. Ink also allows commas to follow a list of items:</p>
-
+<li><strong>Remove trailing commas in lists</strong>. Ink also allows commas to follow a list of items:</li>
+</ol>
 <pre><code>list := [1, 2, 3, 4, ]
 object := { key: 'value', apple: 'fruit', }
-</code></pre>
-
-<p>In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.</p></li>
-
-<li><p><strong>Re-indent code</strong>. Indentation is one of the main ways we visually make sense of code before diving into it. inkfmt uses a deterministic algorithm to calculate a single correct indentation for a source file and applies it to the code. The current algorithm isn&rsquo;t perfect, but gets us 90% there.</p></li>
-
-<li><p><strong>Canonicalize whitespace between symbols</strong>. Within each line, whitespace (and the lack thereof) between expressions help readability. Ink also deterministically adds and removes whitespace between symbols on the same line to settle on a single correct format, opting for spaces between binary operations like <code>+</code> and <code>&amp;</code>, and no spaces within parentheses and brackets.</p></li>
-</ol>
-
+</code></pre><p>In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.
+3. <strong>Re-indent code</strong>. Indentation is one of the main ways we visually make sense of code before diving into it. inkfmt uses a deterministic algorithm to calculate a single correct indentation for a source file and applies it to the code. The current algorithm isn&rsquo;t perfect, but gets us 90% there.
+4. <strong>Canonicalize whitespace between symbols</strong>. Within each line, whitespace (and the lack thereof) between expressions help readability. Ink also deterministically adds and removes whitespace between symbols on the same line to settle on a single correct format, opting for spaces between binary operations like <code>+</code> and <code>&amp;</code>, and no spaces within parentheses and brackets.</p>
 <h3 id="prior-art">Prior art</h3>
-
 <p>Like parsers and compilers, pretty printers come from a long and rich historical and academic context. My favorite read on the topic so far is <a href="https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf">A prettier printer</a> by <a href="http://homepages.inf.ed.ac.uk/wadler/">Phil Wadler</a> from the University of Edinburgh. It&rsquo;s an academic investigation into the theoretical problem of pretty-printing text. The paper is heavy on functional programming concepts, so it might be unwieldy to some as it was for me at first.</p>
-
 <p>From the other side of the industry, a more accessible and interesting deep-dive into the code formatting problem is <a href="https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/">The Hardest Program I&rsquo;ve Ever Written</a> by <a href="https://journal.stuffwithstuff.com/">Bob Nystrom</a>, about the Dart language formatter, dartfmt. (Coincidentally, he also wrote <a href="http://craftinginterpreters.com/contents.html">Crafting Interpreters</a>, one of my favorite resources for hacking on interpreters and compilers.)</p>
-
 <p>Another bank of inspiration is the wealth of currently available open-source code formatters for different languages, many of which I&rsquo;ve outlined above. The code formatting problem rapidly becomes a formidable beast the more we want complete coverage of edge cases, and beyond studying the algorithms and experiments implemented in these formatters, it&rsquo;s worth knowing what previous edge cases and problems existing code formatters have encountered, and how we achieved consensus on what the formatter should do.</p>
-
 <p>As an example of the kinds of subjective discussions and edge cases code formatting creates, <a href="https://github.com/rust-lang/rustfmt/issues/2924">here&rsquo;s a conversation about rustfmt</a>, and whether the formatter should try to produce consistent line breaks, potentially at conflict with any meaning the programmer may have placed into their own style.</p>
-
 <h2 id="building-inkfmt">Building inkfmt</h2>
-
 <p>I had set up the inkfmt project long ago, because I wanted my text editor (vim) to be able to auto-indent my Ink code on save. Ink&rsquo;s syntax is unique and we can&rsquo;t simply use a C-style formatter, so I thought I&rsquo;d write one myself. And then the project sat and gathered dust without much work.</p>
-
 <p>I&rsquo;ve started to write more Ink programs recently, so the need arose again, and I thought I&rsquo;d take a day to bring the project to an MVP level where I could start using it with real projects. I scrapped the boilerplate I had and started over, so inkfmt <a href="https://github.com/thesephist/inkfmt/tree/add6724e715079d4d89b18b2bd48e3fca57ce4d3">as of today</a> is about a day&rsquo;s work, from noon to night.</p>
-
 <p>inkfmt is a little under 250 lines of liberally commented Ink code atop the standard library, and split into two parts: the <strong>lexer</strong> and the <strong>renderer</strong>.</p>
-
 <p>The <a href="https://github.com/thesephist/inkfmt/blob/master/lex.ink"><strong>lexer</strong></a> takes a single string of source code and cuts it up into meaningful pieces called <a href="https://craftinginterpreters.com/scanning.html">tokens</a>. This is sometimes called <em>tokenization</em> or <em>scanning</em> or <em>lexing</em>, but they all mean the same thing. We want to take a single string and cut it up into only meaningful pieces. This tokenization step is also a critical part of most compilers.</p>
-
 <p>the <a href="https://github.com/thesephist/inkfmt/blob/master/render.ink"><strong>renderer</strong></a> is the inverse of the lexer: it takes a stream of tokens and joins them back together into a single string of source code, albeit one where all the formatting inconsistencies have been ripped out and replaced with what inkfmt thinks is the best solution. inkfmt&rsquo;s renderer does this by first assembling tokens into lines of text, and then joining those lines together while paying close attention to the indentation between lines.</p>
-
 <p>inkfmt can aptly be described as a program that does the following</p>
-
 <pre><code>print(render(lex(getInput())))
-</code></pre>
-
-<p>Indeed, the current version of the formatter program does <a href="https://github.com/thesephist/inkfmt/blob/8763529b7f677c419e1c3bbfa1170d245301f13c/fmt.ink#L15">exactly that</a> and little else.</p>
-
+</code></pre><p>Indeed, the current version of the formatter program does <a href="https://github.com/thesephist/inkfmt/blob/8763529b7f677c419e1c3bbfa1170d245301f13c/fmt.ink#L15">exactly that</a> and little else.</p>
 <h3 id="tokenizers-vs-parsers">Tokenizers vs. parsers</h3>
-
 <p>A tokenizer produces a flat list of symbols, but often, analyzing a program requires something more structured than a list of symbols. Source code usually represents nested, recursive structures &ndash; functions and expressions inside other functions and expressions. It&rsquo;s often useful to have a more complex data structure to represent these nested groups of symbols in programs. We call this next level of representation a <em>syntax tree</em>. A syntax tree describes the nested relationships between different parts of a program. We call the program that generates a syntax tree a <em>parser</em>.</p>
-
 <p>Unlike inkfmt, where the token stream is the core data structure, most code formatters use an <a href="https://craftinginterpreters.com/representing-code.html#implementing-syntax-trees">abstract syntax tree</a> as the core data structure. I knew this additional complexity was for good reason, especially for languages with richer syntax. The process of building inkfmt&rsquo;s MVP has been in part a process of discovering exactly why most pretty-printers operate on ASTs and not tokens. Like many other problems in code formatting, <em>better addressing edge cases requires more complexity</em>.</p>
-
 <p>In the beginning, I opted to avoid writing a full parser and AST for inkfmt for a few reasons.</p>
-
 <ol>
 <li><strong>Potentially wasteful complexity.</strong> Ink&rsquo;s current only parser exists in the <a href="https://github.com/thesephist/ink">Ink interpreter</a>, written in Go. I was set on writing inkfmt in Ink itself, which meant if I wanted an AST-based formatter, I&rsquo;d at the very least have to port the AST implementation from Go to Ink. I wasn&rsquo;t sure what other use cases I would have for a self hosting Ink parser, so I wanted to reduce the amount of work I put on myself if possible.</li>
 <li><strong>Ink&rsquo;s grammar is very simple.</strong> Ink&rsquo;s syntax is modeled after Lisp and JavaScript, but Ink uses very few concepts and special syntax to keep the language small. This means there&rsquo;s fewer syntax rules and edge cases to think about. I thought Ink&rsquo;s extreme simplicity would allow a full formatter to be written without having to construct a full syntax tree for a program. It turns out we can get really close, but not perfect, and it requires some clever hacks.</li>
 <li><strong>Prototyping speed.</strong> I <a href="https://thesephist.com/posts/how-i-side-project/#start-when-the-motivations-high">prefer to get projects to a working state within a day of work</a> if possible, and writing a full AST implementation in addition to the formatting algorithm and tokenizer would probably have pushed this MVP into two-days-or-more territory. I didn&rsquo;t want to make a longer bet on my motivation lasting than I had to.</li>
 </ol>
-
 <h3 id="constraints-of-running-without-the-ast">Constraints of running without the AST</h3>
-
 <p>My choice to forego writing a full parser came with some consequences later on in the process. Ones that I&rsquo;ve mostly worked around, but issues nonetheless. There are a class of small problems in code formatting that are difficult to solve without constructing a syntax tree for a program. Some of these problems can be hacked around, others can&rsquo;t.</p>
-
 <p>As an example, take this bit of Ink code.</p>
-
 <pre><code>(A)
 1  doSomething(request =&gt; (
 2      returnResponse(request)
 3  )).then(data =&gt; (
 4      doOtherthing(data)
 5  ))
-</code></pre>
-
-<p>There are two places for us to indent the code, contained within two nested pairs of parentheses. It seems like we could keep track of how deeply nested we are in parentheses at each line of code, and use that to tell us how far to indent each line. But this doesn&rsquo;t quite get us to the formatting above, which is the desired output.</p>
-
+</code></pre><p>There are two places for us to indent the code, contained within two nested pairs of parentheses. It seems like we could keep track of how deeply nested we are in parentheses at each line of code, and use that to tell us how far to indent each line. But this doesn&rsquo;t quite get us to the formatting above, which is the desired output.</p>
 <p>If we indent each line simply by keeping track of open and closed parentheses, line 3 shouldn&rsquo;t be indented any differently than line 2. In line 3, we open two parentheses, and close two parentheses. So we&rsquo;ve opened net-zero parentheses, and we should keep the previous line&rsquo;s indentation, which is a sensible thing to do in <code>(B)</code> here:</p>
-
 <pre><code>(B)
 1  doSomething(request =&gt; (
 2      returnResponse(request)
 3      data := otherThing(f(request))
 4      doOtherthing(data)
 5  ))
-</code></pre>
-
-<p>but not in <code>(A)</code> above. In <code>(A)</code>, we want the algorithm to realize that this line closes a previous group of expressions, and opens another one. We can&rsquo;t infer this kind of extra nuance simply by iterating through a stream of tokens. We need to keep track of the order in which expressions are opened and closed, and at that point, <em>we&rsquo;re effectively building a messy parser</em>.</p>
-
+</code></pre><p>but not in <code>(A)</code> above. In <code>(A)</code>, we want the algorithm to realize that this line closes a previous group of expressions, and opens another one. We can&rsquo;t infer this kind of extra nuance simply by iterating through a stream of tokens. We need to keep track of the order in which expressions are opened and closed, and at that point, <em>we&rsquo;re effectively building a messy parser</em>.</p>
 <p>These issues aren&rsquo;t very common, but they come up here and there in medium and large codebases, and I think a simple token stream-based formatter will have trouble adapting to these edge cases, even if I can work around some of them today.</p>
-
 <h3 id="the-hard-thing-about-indentation">The hard thing about indentation</h3>
-
 <p>I spent the most time and energy writing inkfmt on the problem of indenting code correctly.</p>
-
 <p>What looks like &ldquo;good&rdquo; indentation, it turns out, is a fairly complicated question. This is because there&rsquo;s a mismatch between the data we&rsquo;re trying to understand, and the format in which we&rsquo;d like to have it displayed. Source code is one-dimensional, a single string of text. But displayed on your screen, well-formatted code takes a rich two-dimensional form, and the purpose of indentation is to separate and place these chunks of one-dimensional text in a two-dimensional space, so it&rsquo;s most readable.</p>
-
 <p>This mismatch means that there isn&rsquo;t a single simple algorithm to compute how far we should indent every line.</p>
-
 <p>Let&rsquo;s start with the basics. The first and most obvious rule I implemented was that lines of code inside parentheses and brackets should be indented one level deeper that its surrounding lines. Seems sensible enough. Let&rsquo;s try to apply it to this snippet.</p>
-
 <pre><code>1  user := {
 2      name: 'Linus'
 3      place: {
@@ -211,37 +153,21 @@ object := { key: 'value', apple: 'fruit', }
 5          state: 'California'
 6      }
 7  }
-</code></pre>
-
-<p>Lines 2 - 6 are easy to think about. We&rsquo;re inside the curly braces of <code>user := {...}</code>, so we should indent the block one level deeper. But what about line 7? When we reach the start of line 7, we are still inside the curly braces. But we intuitively want line 7 not to be indented, because line 7 <em>closes</em> the group we&rsquo;ve been indented by.</p>
-
+</code></pre><p>Lines 2 - 6 are easy to think about. We&rsquo;re inside the curly braces of <code>user := {...}</code>, so we should indent the block one level deeper. But what about line 7? When we reach the start of line 7, we are still inside the curly braces. But we intuitively want line 7 not to be indented, because line 7 <em>closes</em> the group we&rsquo;ve been indented by.</p>
 <p>Okay, I thought, we can simply indent each line after fully processing it, with knowledge of all opening and closing symbols inside it. I then came across this test case.</p>
-
 <pre><code>1  longFunc := (a, b, c
 2      d, e) =&gt; a + b + c + d + e
-</code></pre>
-
-<p>Here, we intuitively want line 2 to be indented, because at the end of line 1, our list of arguments is incomplete. But by our rule we just agreed on above, line 2 shouldn&rsquo;t be indented, because line 2 contains the parenthesis that closes the group it&rsquo;s indented by.</p>
-
+</code></pre><p>Here, we intuitively want line 2 to be indented, because at the end of line 1, our list of arguments is incomplete. But by our rule we just agreed on above, line 2 shouldn&rsquo;t be indented, because line 2 contains the parenthesis that closes the group it&rsquo;s indented by.</p>
 <p>Okay, what if we only indent a group-closing line if it doesn&rsquo;t start with some list of values? It&rsquo;s at this point I started to realize that indentation was a messier problem than I had initially expected.</p>
-
 <p>I can&rsquo;t go through every single issue I faced building inkfmt&rsquo;s indentation algorithm, but I want to explore two more particularly interesting cases with you, if you want to dive deeper.</p>
-
 <p>If you&rsquo;d rather skip to the conclusion, you can <a href="#code-formatting-is-complicated-because-it-s-a-human-problem">click here</a>.</p>
-
 <h3 id="case-study-indentation-collapsing">Case study: indentation collapsing</h3>
-
 <p>Indentation collapsing is a phrase I made up for a particular condition where the indentation <em>style</em> matches what we want, but some blocks are indented much farther in that we would like. Take this fairly common pattern of passing callbacks into a function.</p>
-
 <pre><code>1  readFile('/my-file', data =&gt; (
 2      doSomething(data)
 3  ))
-</code></pre>
-
-<p>Let&rsquo;s continue with our earlier rule of adding an indent level when we enter a parenthesized or bracketed group. That rule tells us that line 2 should be indented twice inwards, because line 2 is contained by two nested groups. First, the <code>readFile(...)</code> group, and then the <code>data =&gt; (...)</code> group. But that&rsquo;s obviously not what we want. We want to indent exactly once for these two nested groups.</p>
-
+</code></pre><p>Let&rsquo;s continue with our earlier rule of adding an indent level when we enter a parenthesized or bracketed group. That rule tells us that line 2 should be indented twice inwards, because line 2 is contained by two nested groups. First, the <code>readFile(...)</code> group, and then the <code>data =&gt; (...)</code> group. But that&rsquo;s obviously not what we want. We want to indent exactly once for these two nested groups.</p>
 <p>So perhaps we can enforce a rule that each line can indent at most one level from the previous line? Not so fast. Consider these more thorny edge cases:</p>
-
 <pre><code>(A)
 1  [[
 2      a, b, c,
@@ -266,42 +192,28 @@ object := { key: 'value', apple: 'fruit', }
 3          d, e, f]
 4      g, h
 5  ]
-</code></pre>
-
-<ul>
+</code></pre><ul>
 <li>In <code>(A)</code>, we want lines 2 and 3 to be indented in exactly once, even if nested in 2 groups of <code>[[...]]</code>.</li>
 <li>In <code>(B1)</code>, however, we want line 2 to be indented in twice, because if we indent it only once as in <code>(B2)</code>, it looks like <code>d, e, f</code> and <code>g, h</code> are all in the same level of hierarchy, which is misleading.</li>
 <li><code>(C)</code> looks obviously correct to me, and among the choices for our solution to <code>(B)</code>, <code>(B1)</code> looks more consistent with it than <code>(B2)</code>.</li>
 </ul>
-
 <p>If you, like me, prefer the indentation in <code>(B1)</code>, we can&rsquo;t simply enforce that lines must indent one level at a time. Sometimes, a line should indent two levels at once. So what to do?</p>
-
 <p>My solution to this problem is what I call <em>indentation collapsing</em>. Indent collapsing is one of the last steps of my indenting algorithm. After all other indents have been computed, I scan the prepared output to see if there are any ranges of lines that are indented by more than one level at a time, and then de-indented again by the same amount. In <code>(A)</code> above, for example, line 2 would be indented by 2, and then line 3 would de-indent by 2 again. For these ranges, I trim the indentation to be exactly one level deep.</p>
-
 <p>This additional step in the algorithm turns out to effectively &ldquo;collapse&rdquo; deep indents that are visually unnecessary, while allowing the indentation algorithm itself to still think in terms of nested groups of expressions.</p>
-
 <h3 id="case-study-hanging-indents">Case study: hanging indents</h3>
-
 <p>Hanging indents is the most challenging edge case I&rsquo;ve had to solve today. I&rsquo;m not completely happy with my current solution, but it works well enough to pass for code that occurs in the wild.</p>
-
 <p>How should we indent this piece of rather gnarly code?</p>
-
 <pre><code>1  addManyNumbers := (a, b, c
 2      d, e, f) =&gt; 
 3      a + b + c + d +
 4      e + f
-</code></pre>
-
-<p>This code is tricky to indent because the particular indentation we probably want isn&rsquo;t purely a result of any explicit nesting relationships between parts of the syntax.</p>
-
+</code></pre><p>This code is tricky to indent because the particular indentation we probably want isn&rsquo;t purely a result of any explicit nesting relationships between parts of the syntax.</p>
 <ul>
 <li>We want to indent line 2, because it&rsquo;s a part of an unclosed list of values.</li>
 <li>We want to indent line 3, the body of the function, because function bodies are generally indented to show nesting.</li>
 <li>We want to indent the last line, <code>e + f</code>, because it follows an incomplete addition expression from the line above.</li>
 </ul>
-
 <p>Let&rsquo;s check out our options.</p>
-
 <pre><code>(A)
 1  addManyNumbers := (a, b, c
 2      d, e, f) =&gt;
@@ -319,30 +231,17 @@ object := { key: 'value', apple: 'fruit', }
 2      d, e, f) =&gt;
 3          a + b + c + d +
 4              e + f
-</code></pre>
-
-<p>Of them all, I personally think <code>(A)</code> makes the most sense. We keep the second halves of incomplete expressions indented in, but also make sure the function body starts where most function bodies start, at the first indent level. But you&rsquo;re free to disagree with me on which looks best or is most readable. This is a tricky and sometimes subjective question. I think <code>(B)</code> doesn&rsquo;t look much worse, though <code>(C)</code> has a little too much going on for my taste.</p>
-
+</code></pre><p>Of them all, I personally think <code>(A)</code> makes the most sense. We keep the second halves of incomplete expressions indented in, but also make sure the function body starts where most function bodies start, at the first indent level. But you&rsquo;re free to disagree with me on which looks best or is most readable. This is a tricky and sometimes subjective question. I think <code>(B)</code> doesn&rsquo;t look much worse, though <code>(C)</code> has a little too much going on for my taste.</p>
 <p>inkfmt currently produces none of these three, but the original indentation with which I started this example. I think it&rsquo;s fine, but not ideal. This is another consequence of the limitations of a token stream-based formatter.</p>
-
 <p>This example also illustrates why sometimes code formatting is a matter of taste and personal preferences. This code wouldn&rsquo;t look great indented in any way, and if I saw this in a real codebase, I&rsquo;d probably refactor it or restructure it to be more readable and structured, also making it easier to format. But writing a code formatter, we need to consider these stranger edge cases.</p>
-
-<h2 id="code-formatting-is-complicated-because-it-s-a-human-problem">Code formatting is complicated because it&rsquo;s a human problem</h2>
-
+<h2 id="code-formatting-is-complicated-because-its-a-human-problem">Code formatting is complicated because it&rsquo;s a human problem</h2>
 <p>Code formatting is different from many other hard computer science problems because the metric that we optimize for isn&rsquo;t a well-defined measure. Instead, we look for readable, aesthetically satisfying, and useful outputs, and those goals leave a lot of room for subjectivity and taste. I think that&rsquo;s a big part of the challenge of code formatting.</p>
-
 <p>One of the primary benefits of a code formatter is that it shoulders the responsibility of coding style decisions that are normally given to developers. As a result, writing a formatter is a bit like having those tricky formatting and style discussions all at once, with everyone who might use the formatter, while reaching for a solution with as much generality as we can afford. In subjective problems like this, the cost of this generality is increasing complexity, and I hope you enjoyed witnessing some of that complexity behind the curtain in this post.</p>
-
 <h2 id="future-work">Future work</h2>
-
 <p>There&rsquo;s a lot of room to explore beyond the prototype I built today, both in inkfmt itself, and in the larger problem space of code formatting.</p>
-
 <p>On the inkfmt tool, I&rsquo;d like to come back to it soon to either find clean workarounds for some of the tokenizer-related issues I outlined above, or write an AST-based indenting algorithm that can be correct in more situations. I also want to improve the tool itself, so it can fit naturally into my Ink development workflow, formatting on save in my editors and in pre-commit checks in my repositories. There&rsquo;s a long way to go.</p>
-
 <p>Ink isn&rsquo;t a particularly fast language, but I think inkfmt should be able to format tens of thousands of lines of code in under a second. inkfmt can currently format about 1000 lines of Ink code per second, so we have some work to do there in using more efficient data structures and reducing redundant work.</p>
-
 <p>Finally, I want to investigate real-world implementations of code formatters further. Formatters in the wild face a class of challenges that we don&rsquo;t study as often in academia. Questions like, what should the formatter do when encountering a syntax error? Should it format what it can, or give up? What kinds of hints can the formatter take from comments surrounding a code block to ensure it doesn&rsquo;t break the author&rsquo;s original intent? Real-world formatters also have to work incrementally. Large production codebases can range up to tens of millions of lines of code, and formatting any meaningful part of it repeatedly during a work session is going to be slow. Fast formatters only work on pieces of code that have recently changed, and I want to understand incremental parsing and formatting better.</p>
-
 <p>There&rsquo;s good room for improvements in inkfmt, but working through code formatting as a problem has been one of the most interesting programming exercises I&rsquo;ve found in a while, with plenty of room to explore further. Importantly, since the formatter is now at a place where I can use it in my day to day development (albeit through an awkward command-line interface), I hope to keep hacking on it as I learn more.</p>
 
         <hr/>

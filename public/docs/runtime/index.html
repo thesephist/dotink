@@ -3,9 +3,14 @@
 <head>
 	<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-
 <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
 
 
 	<title>Runtime and builtins | Ink</title>
@@ -45,124 +50,93 @@
                 <div class="toc-title">Contents</div>
             </summary>
             <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#operating-system-interfaces">Operating system interfaces</a>
-<ul>
-<li><a href="#args"><code>args()</code></a></li>
-<li><a href="#in-cb"><code>in(cb)</code></a></li>
-<li><a href="#out-s"><code>out(s)</code></a></li>
-<li><a href="#dir-path-cb"><code>dir(path, cb)</code></a></li>
-<li><a href="#make-path-cb"><code>make(path, cb)</code></a></li>
-<li><a href="#stat-path-cb"><code>stat(path, cb)</code></a></li>
-<li><a href="#read-path-offset-length-cb"><code>read(path, offset, length, cb)</code></a></li>
-<li><a href="#write-path-offset-data-cb"><code>write(path, offset, data, cb)</code></a></li>
-<li><a href="#delete-path-cb"><code>delete(path, cb)</code></a></li>
-<li><a href="#listen-host-handler"><code>listen(host, handler)</code></a></li>
-<li><a href="#req-data-callback"><code>req(data, callback)</code></a></li>
-<li><a href="#rand"><code>rand()</code></a></li>
-<li><a href="#urand-length"><code>urand(length)</code></a></li>
-<li><a href="#time"><code>time()</code></a></li>
-<li><a href="#wait-duration-cb"><code>wait(duration, cb)</code></a></li>
-<li><a href="#exec-path-args-stdin-stdoutfn"><code>exec(path, args, stdin, stdoutFn)</code></a></li>
-</ul></li>
-<li><a href="#math-builtins">Math builtins</a>
-<ul>
-<li><a href="#sin-n"><code>sin(n)</code></a></li>
-<li><a href="#cos-n"><code>cos(n)</code></a></li>
-<li><a href="#asin-n"><code>asin(n)</code></a></li>
-<li><a href="#acos-n"><code>acos(n)</code></a></li>
-<li><a href="#pow-b-n"><code>pow(b, n)</code></a></li>
-<li><a href="#ln-n"><code>ln(n)</code></a></li>
-<li><a href="#floor-n"><code>floor(n)</code></a></li>
-</ul></li>
-<li><a href="#runtime-introspection-functions">Runtime introspection functions</a>
-<ul>
-<li><a href="#load-path"><code>load(path)</code></a></li>
-<li><a href="#string-x"><code>string(x)</code></a></li>
-<li><a href="#number-x"><code>number(x)</code></a></li>
-<li><a href="#point-c"><code>point(c)</code></a></li>
-<li><a href="#char-n"><code>char(n)</code></a></li>
-<li><a href="#type-x"><code>type(x)</code></a></li>
-<li><a href="#len-x"><code>len(x)</code></a></li>
-<li><a href="#keys-x"><code>keys(x)</code></a></li>
-</ul></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#operating-system-interfaces">Operating system interfaces</a>
+      <ul>
+        <li><a href="#args"><code>args()</code></a></li>
+        <li><a href="#incb"><code>in(cb)</code></a></li>
+        <li><a href="#outs"><code>out(s)</code></a></li>
+        <li><a href="#dirpath-cb"><code>dir(path, cb)</code></a></li>
+        <li><a href="#makepath-cb"><code>make(path, cb)</code></a></li>
+        <li><a href="#statpath-cb"><code>stat(path, cb)</code></a></li>
+        <li><a href="#readpath-offset-length-cb"><code>read(path, offset, length, cb)</code></a></li>
+        <li><a href="#writepath-offset-data-cb"><code>write(path, offset, data, cb)</code></a></li>
+        <li><a href="#deletepath-cb"><code>delete(path, cb)</code></a></li>
+        <li><a href="#listenhost-handler"><code>listen(host, handler)</code></a></li>
+        <li><a href="#reqdata-callback"><code>req(data, callback)</code></a></li>
+        <li><a href="#rand"><code>rand()</code></a></li>
+        <li><a href="#urandlength"><code>urand(length)</code></a></li>
+        <li><a href="#time"><code>time()</code></a></li>
+        <li><a href="#waitduration-cb"><code>wait(duration, cb)</code></a></li>
+        <li><a href="#execpath-args-stdin-stdoutfn"><code>exec(path, args, stdin, stdoutFn)</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#math-builtins">Math builtins</a>
+      <ul>
+        <li><a href="#sinn"><code>sin(n)</code></a></li>
+        <li><a href="#cosn"><code>cos(n)</code></a></li>
+        <li><a href="#asinn"><code>asin(n)</code></a></li>
+        <li><a href="#acosn"><code>acos(n)</code></a></li>
+        <li><a href="#powb-n"><code>pow(b, n)</code></a></li>
+        <li><a href="#lnn"><code>ln(n)</code></a></li>
+        <li><a href="#floorn"><code>floor(n)</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#runtime-introspection-functions">Runtime introspection functions</a>
+      <ul>
+        <li><a href="#loadpath"><code>load(path)</code></a></li>
+        <li><a href="#stringx"><code>string(x)</code></a></li>
+        <li><a href="#numberx"><code>number(x)</code></a></li>
+        <li><a href="#pointc"><code>point(c)</code></a></li>
+        <li><a href="#charn"><code>char(n)</code></a></li>
+        <li><a href="#typex"><code>type(x)</code></a></li>
+        <li><a href="#lenx"><code>len(x)</code></a></li>
+        <li><a href="#keysx"><code>keys(x)</code></a></li>
+      </ul>
+    </li>
+  </ul>
 </nav>
         </details>
         
 
-        
-
-<h2 id="operating-system-interfaces">Operating system interfaces</h2>
-
+        <h2 id="operating-system-interfaces">Operating system interfaces</h2>
 <p>Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response. Such an event object is of a semi-standard form, on success</p>
-
 <pre><code>{
     type: 'data'
     data: [... some data]
 }
-</code></pre>
-
-<p>and on error, frequently the error interface</p>
-
+</code></pre><p>and on error, frequently the error interface</p>
 <pre><code>{
     type: 'error'
     message: &lt;string&gt;
 }
-</code></pre>
-
-<p>When a system-interface builtin is capable of returning such an error event, we&rsquo;ll simply state so, without repeating the shape of the object again every time. Some builtin functions also need to send a &ldquo;the task is complete successfully&rdquo; event without sending any data. In such instances, an end event, shown below, is sent.</p>
-
+</code></pre><p>When a system-interface builtin is capable of returning such an error event, we&rsquo;ll simply state so, without repeating the shape of the object again every time. Some builtin functions also need to send a &ldquo;the task is complete successfully&rdquo; event without sending any data. In such instances, an end event, shown below, is sent.</p>
 <pre><code>{
     type: 'end'
 }
-</code></pre>
-
-<h3 id="args"><code>args()</code></h3>
-
+</code></pre><h3 id="args"><code>args()</code></h3>
 <p>Returns the list of command-line arguments as strings.</p>
-
-<h3 id="in-cb"><code>in(cb)</code></h3>
-
+<h3 id="incb"><code>in(cb)</code></h3>
 <p>Reads from standard input, calls <code>cb</code> with an event of the form</p>
-
 <pre><code>{
     type: 'data'
     data: &lt;string&gt;
 }
-</code></pre>
-
-<p>or an end event.</p>
-
+</code></pre><p>or an end event.</p>
 <p>Ink will keep reading from stdin until <code>cb</code> returns <code>false</code> to a callback invocation.</p>
-
-<h3 id="out-s"><code>out(s)</code></h3>
-
+<h3 id="outs"><code>out(s)</code></h3>
 <p>Prints the exact string <code>s</code> to standard out. Notably, <code>out</code> will not append a newline to the end of <code>s</code>.</p>
-
-<h3 id="dir-path-cb"><code>dir(path, cb)</code></h3>
-
+<h3 id="dirpath-cb"><code>dir(path, cb)</code></h3>
 <p>Returns a directory listing of the given path, in an event of the form</p>
-
 <pre><code>{
     type: 'data'
     data: list&lt;FileInfo&gt;
 }
-</code></pre>
-
-<p>Where the <code>FileInfo</code> interface is the same one that <code>stat()</code> calls return to the callback. On error, it returns an error event.</p>
-
-<h3 id="make-path-cb"><code>make(path, cb)</code></h3>
-
+</code></pre><p>Where the <code>FileInfo</code> interface is the same one that <code>stat()</code> calls return to the callback. On error, it returns an error event.</p>
+<h3 id="makepath-cb"><code>make(path, cb)</code></h3>
 <p>Recursively creates directories in <code>path</code>, like <code>mkdir -p</code>. If successful, sends an end event, otherwise an error event.</p>
-
-<h3 id="stat-path-cb"><code>stat(path, cb)</code></h3>
-
+<h3 id="statpath-cb"><code>stat(path, cb)</code></h3>
 <p>Returns metadata about a given object in the file tree, of the form</p>
-
 <pre><code>{
     type: 'data'
     data: list&lt;{
@@ -175,36 +149,21 @@
         mod: &lt;number&gt;
     }&gt;
 }
-</code></pre>
-
-<p>or an error event.</p>
-
-<h3 id="read-path-offset-length-cb"><code>read(path, offset, length, cb)</code></h3>
-
+</code></pre><p>or an error event.</p>
+<h3 id="readpath-offset-length-cb"><code>read(path, offset, length, cb)</code></h3>
 <p>Reads a file in the given path, at the byte offset <code>offset</code> for a length <code>length</code>. The callback is invoked with an event of shape</p>
-
 <pre><code>{
     type: 'data'
     data: &lt;string&gt;
 }
-</code></pre>
-
-<p>or an error event, on a read error.</p>
-
-<h3 id="write-path-offset-data-cb"><code>write(path, offset, data, cb)</code></h3>
-
+</code></pre><p>or an error event, on a read error.</p>
+<h3 id="writepath-offset-data-cb"><code>write(path, offset, data, cb)</code></h3>
 <p>Writes to a file in the given path, in the same way <code>read()</code> does. <code>data</code> is to be given as a string, and <code>cb</code> is called with an end event or an error event.</p>
-
 <p><code>write</code> will create a file in the given path if already exists, but will send an error if the path already exists as a directory or it cannot be written to.</p>
-
-<h3 id="delete-path-cb"><code>delete(path, cb)</code></h3>
-
+<h3 id="deletepath-cb"><code>delete(path, cb)</code></h3>
 <p>Deletes a file or directory, recursively, at a given path. <code>delete()</code> sends either an end event or an error event.</p>
-
-<h3 id="listen-host-handler"><code>listen(host, handler)</code></h3>
-
+<h3 id="listenhost-handler"><code>listen(host, handler)</code></h3>
 <p>Starts an HTTP web server. <code>host</code> should specify the host the server should bind to, like <code>localhost:80</code>. The handler is invoked per each HTTP request received, with an event of the form</p>
-
 <pre><code>{
     type: 'req'
     data: {
@@ -215,33 +174,22 @@
     }
     end: &lt;function&gt;
 }
-</code></pre>
-
-<p>After the handler processes the request, it should call <code>end(response)</code> to respond, with the response object of the shape</p>
-
+</code></pre><p>After the handler processes the request, it should call <code>end(response)</code> to respond, with the response object of the shape</p>
 <pre><code>{
     status: &lt;number&gt;
     headers: map&lt;string, string&gt;
     body: &lt;string&gt;
 }
-</code></pre>
-
-<p>On any server error, the handler is called with an error event. The <code>listen()</code> call returns a <code>close</code> callback, which can be invoked to stop the server.</p>
-
-<h3 id="req-data-callback"><code>req(data, callback)</code></h3>
-
+</code></pre><p>On any server error, the handler is called with an error event. The <code>listen()</code> call returns a <code>close</code> callback, which can be invoked to stop the server.</p>
+<h3 id="reqdata-callback"><code>req(data, callback)</code></h3>
 <p>Makes an HTTP request. Complementary to <code>listen</code>, <code>req</code> takes a request object of the form</p>
-
 <pre><code>{
     method: &lt;string&gt;
     url: &lt;string&gt;
     headers: map&lt;string, string&gt;
     body: &lt;string&gt;
 }
-</code></pre>
-
-<p>The callback is called with a response event, of the form</p>
-
+</code></pre><p>The callback is called with a response event, of the form</p>
 <pre><code>{
     type: 'resp'
     data: {
@@ -250,100 +198,53 @@
         body: &lt;string&gt;
     }
 }
-</code></pre>
-
-<p>or an error event. Like <code>listen</code>, the <code>req</code> call also returns a <code>close</code> callback that can abort the request.</p>
-
+</code></pre><p>or an error event. Like <code>listen</code>, the <code>req</code> call also returns a <code>close</code> callback that can abort the request.</p>
 <h3 id="rand"><code>rand()</code></h3>
-
 <p>Returns a random number in the range [0, 1), using the system pseudorandom number generator.</p>
-
-<h3 id="urand-length"><code>urand(length)</code></h3>
-
+<h3 id="urandlength"><code>urand(length)</code></h3>
 <p>Using the system&rsquo;s cryptographically secure random number generator, return a string buffer of length <code>length</code> of random data.</p>
-
 <h3 id="time"><code>time()</code></h3>
-
 <p>Return the current time as a floating-point UNIX timestamp.</p>
-
-<h3 id="wait-duration-cb"><code>wait(duration, cb)</code></h3>
-
+<h3 id="waitduration-cb"><code>wait(duration, cb)</code></h3>
 <p>Waits for <code>duration</code> seconds before calling <code>cb</code> with no arguments.</p>
-
-<h3 id="exec-path-args-stdin-stdoutfn"><code>exec(path, args, stdin, stdoutFn)</code></h3>
-
+<h3 id="execpath-args-stdin-stdoutfn"><code>exec(path, args, stdin, stdoutFn)</code></h3>
 <p>Spawns a child process with the executable at <code>path</code>, with command line arguments given in the list <code>args</code>, and a standard input <code>stdin</code>.</p>
-
 <p>When the process ends, the callback <code>cb</code> is invoked with the event of shape</p>
-
 <pre><code>{
     type: 'data'
     data: &lt;string&gt;
 }
-</code></pre>
-
-<h2 id="math-builtins">Math builtins</h2>
-
-<h3 id="sin-n"><code>sin(n)</code></h3>
-
+</code></pre><h2 id="math-builtins">Math builtins</h2>
+<h3 id="sinn"><code>sin(n)</code></h3>
 <p>Takes the sine of a number.</p>
-
-<h3 id="cos-n"><code>cos(n)</code></h3>
-
+<h3 id="cosn"><code>cos(n)</code></h3>
 <p>Takes the cosine of a number.</p>
-
-<h3 id="asin-n"><code>asin(n)</code></h3>
-
+<h3 id="asinn"><code>asin(n)</code></h3>
 <p>Takes the arcsin / inverse-sine of a number. If the number is not in the range [-1, 1], it throws a runtime error.</p>
-
-<h3 id="acos-n"><code>acos(n)</code></h3>
-
+<h3 id="acosn"><code>acos(n)</code></h3>
 <p>Takes the arccosine / inverse-cosine of a number. If the number is not in the range [-1, 1], it throws a runtime error.</p>
-
-<h3 id="pow-b-n"><code>pow(b, n)</code></h3>
-
+<h3 id="powb-n"><code>pow(b, n)</code></h3>
 <p>Returns <code>b</code> raised to power <code>n</code>.</p>
-
-<h3 id="ln-n"><code>ln(n)</code></h3>
-
+<h3 id="lnn"><code>ln(n)</code></h3>
 <p>Natural logarithm. Throws if <code>n</code> &lt;= 0.</p>
-
-<h3 id="floor-n"><code>floor(n)</code></h3>
-
+<h3 id="floorn"><code>floor(n)</code></h3>
 <p>Truncates the number to an integer.</p>
-
 <h2 id="runtime-introspection-functions">Runtime introspection functions</h2>
-
-<h3 id="load-path"><code>load(path)</code></h3>
-
+<h3 id="loadpath"><code>load(path)</code></h3>
 <p>Loads another Ink program as a module. Read more <a href="/docs/overview/#imports-and-libraries">in the language overview</a>.</p>
-
-<h3 id="string-x"><code>string(x)</code></h3>
-
+<h3 id="stringx"><code>string(x)</code></h3>
 <p>Converts or serialize <code>x</code> into a string value.</p>
-
-<h3 id="number-x"><code>number(x)</code></h3>
-
+<h3 id="numberx"><code>number(x)</code></h3>
 <p>Converts <code>x</code> into a number value, parsing it from a string if necessary. If it cannot be cast correctly, returns 0.</p>
-
-<h3 id="point-c"><code>point(c)</code></h3>
-
+<h3 id="pointc"><code>point(c)</code></h3>
 <p>Returns the first byte of <code>c</code> as a number. In other words, <code>point</code> converts an ASCII character to its number value.</p>
-
-<h3 id="char-n"><code>char(n)</code></h3>
-
+<h3 id="charn"><code>char(n)</code></h3>
 <p>Returns the number <code>n</code> as a byte, in a string. In other words, <code>char</code> converts an ASCII number to a character.</p>
-
-<h3 id="type-x"><code>type(x)</code></h3>
-
+<h3 id="typex"><code>type(x)</code></h3>
 <p>Return the runtime type of <code>x</code> as a string, <em>e.g.</em> <code>'string'</code>, <code>'number'</code>, <code>'composite'</code>, <code>'function'</code>, <code>()</code>.</p>
-
-<h3 id="len-x"><code>len(x)</code></h3>
-
+<h3 id="lenx"><code>len(x)</code></h3>
 <p>For string <code>x</code>, return its length. For composite value <code>x</code>, return the number of keys in the object.</p>
-
-<h3 id="keys-x"><code>keys(x)</code></h3>
-
+<h3 id="keysx"><code>keys(x)</code></h3>
 <p>Return the keys of a composite value <code>x</code> in a list of strings.</p>
 
     </article>

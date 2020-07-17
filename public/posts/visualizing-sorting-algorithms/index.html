@@ -3,9 +3,14 @@
 <head>
 	<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-
 <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
 
 
 	<title>Visualizing and exploring sorting algorithms in two dimensions with Ink | Ink</title>
@@ -42,54 +47,31 @@
     <article class="overlay">
         
 
-        
-
-<p><img src="/img/quick-grey-header.png" alt="Quicksort, greyscale" /></p>
-
+        <p><img src="/img/quick-grey-header.png" alt="Quicksort, greyscale"></p>
 <p>Until Elon Musk brings his <a href="https://www.theverge.com/2019/7/16/20697123/elon-musk-neuralink-brain-reading-thread-robot">Neuralink</a> gadgets to market, our eyes are the highest-bandwidth way we have of understanding the world around us.  We can look at something and immediately take in the hues, the lightness and the darkness, the shapes, and most importantly, the patterns that we wouldn&rsquo;t be able to notice if we couldn&rsquo;t use our vision.</p>
-
 <p>In fact, our eyes are surprisingly good at pattern recognition, noticing the rhythm in the details that make up the large-scale structure of what&rsquo;s in front of us. Today, I thought I&rsquo;d put this to good use by trying to use our eyes&rsquo; pattern-noticing powers to get a more intuitive understanding of popular sorting algorithms in computer science. The header image for this post, for example, is a rendering of the popular <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort</a> algorithm, sorting from left to right. We&rsquo;ll dig deeper into this at the end of this post.</p>
-
 <p>A <a href="https://en.wikipedia.org/wiki/Sorting_algorithm">sorting algorithm</a>, for the uninitiated, is a set of procedures that a computer program can apply repeatedly to take an &ldquo;unsorted&rdquo; list of items, like a list of numbers like <code>[6, 41, 56, 7, 12]</code>, and transform it gradually into a fully sorted list, like <code>[6, 7, 12, 41, 56]</code>. Sorting algorithms are a well-trodden sub-branch of computer science, and there&rsquo;s no shortage of fascinating visualizations and simulations online for studying these algorithms. So by no means are my renderings here completely novel, but I thought it was interesting nonetheless, and these images personally gave me a new level of intuitive understanding over these algorithms that I didn&rsquo;t have before, even after having written them many times over. Let&rsquo;s take a look at what&rsquo;s going on.</p>
-
 <h2 id="the-setup">The setup</h2>
-
 <p>I used <a href="https://github.com/thesephist/ink">Ink</a>, a programming language I&rsquo;m building from scratch, to write the program that generated these images. In the grand scheme of things, Ink isn&rsquo;t the ideal language for something like this, but I thought it&rsquo;d be a good way to find any bugs in my interpreter (I found none!), practice writing some sorting algorithms recursively, and exercise the language a little bit.</p>
-
 <p>I wanted these images to allow me to easily, visually take in what a sorting algorithm did over time, as it took the list from an unsorted, random state to a completely sorted state. So I decided to imagine the image as a two-dimensional diagram. On the horizontal axis, we have a list of numbers, represented as a single line of colors. On the vertical axis, we represent time. As we travel down from the top of the image to the bottom of the image, we&rsquo;ll take the list of numbers (the line of colored pixels) from a random ordering to a &ldquo;sorted&rdquo; rainbow line, by applying each kind of sorting algorithm one step per row. Here&rsquo;s an example of what that looks like.</p>
-
-<p><img src="/img/selection-color.png" alt="What a drawing of a sorting algorithm looks like" /></p>
-
+<p><img src="/img/selection-color.png" alt="What a drawing of a sorting algorithm looks like"></p>
 <p>My particular implementation of this generates a list of 500 random numbers between 0 and 1, and at each line of pixels, I apply a single &ldquo;step&rdquo; of the algorithm, usually a single swap of two numbers in the list. And I continue adding on new lines until the &ldquo;line&rdquo; &ndash; the list &ndash; is completely sorted. The full program is a bit lengthy (about 340 lines), so I won&rsquo;t embed it here, but you can find the Ink source code for this post on my <a href="https://github.com/thesephist/dotink/blob/master/static/ink/sorting-algorithms.ink">GitHub</a>, including the recursive implementations for all the algorithms we&rsquo;ll explore here.</p>
-
 <h2 id="the-algorithms">The algorithms</h2>
-
 <p>I rendered out the images for five common sorting algorithms in total: insertion sort, selection sort, bubble sort, merge sort, and quicksort. Let&rsquo;s look at them in order. (I also linked under each image a greyscale version which conveys exactly the same information.)</p>
-
 <h3 id="bubble-sort">Bubble sort</h3>
-
 <p>Of the five I rendered, bubble sort is the simplest and the slowest. Bubble sort goes like this:</p>
-
 <ol>
 <li>Start at the beginning of the list, and for each pair of numbers, if the first number is bigger than the second, swap their places.</li>
 <li>If you reach the end of the list, come back to the beginning and repeat.</li>
 <li>Repeat these steps until the list is completely sorted.</li>
 </ol>
-
 <p>It turns out, this is a horrendously inefficient way to sort large lists of numbers. Even after vertically shrinking the generated image for bubble sort by 10 times, the only way I could fit it into this post was to lay it out horizontally, rotated by 90 degrees.</p>
-
-<p><img src="/img/bubble-color.png" alt="Bubble sort" /></p>
-
+<p><img src="/img/bubble-color.png" alt="Bubble sort"></p>
 <p>(<a href="/img/bubble-grey.png">Greyscale version</a>)</p>
-
 <p>Here, we start with a random list on the left side of the image. Even though it isn&rsquo;t obvious at all from the description of the algorithm, given the image, we can see exactly why this sort method is called &ldquo;bubble&rdquo; sort &ndash; the smallest numbers &ldquo;bubble&rdquo; up to the front of the list (the bottom of the image here) through time. We can also intuitively imagine why this algorithm takes so long to run to completion. The randomness in the initial list moves out slowly &ndash; each colored pixel takes many, many steps of bubble sort to find its correct place in the list.</p>
-
 <p>Conclusion? Bubble sort is slow, but at least it&rsquo;s got a fitting name.</p>
-
 <h3 id="selection-sort">Selection sort</h3>
-
 <p>The next algorithm I looked at is selection sort. Selection sort goes like this:</p>
-
 <ol>
 <li>Start at the beginning of the list</li>
 <li>Go through the list, one by one, to find the smallest item in the list, and move it to the front of the list</li>
@@ -97,74 +79,42 @@
 <li>Go through the rest of the list again, to find the <em>next</em> smallest item, and add it after the last one.</li>
 <li>Repeat this process until you&rsquo;ve reached the end of the list.</li>
 </ol>
-
 <p>Even though selection sort still seems radically simple, it turns out to be far more efficient than bubble sort. Here&rsquo;s what it looks like.</p>
-
-<p><img src="/img/selection-color.png" alt="Selection sort" /></p>
-
+<p><img src="/img/selection-color.png" alt="Selection sort"></p>
 <p>(<a href="/img/selection-grey.png">Greyscale version</a>)</p>
-
 <p>You may notice that selection sort looks like a square. That&rsquo;s not a coincidence &ndash; selection sort will, at worst, only swap as many times as there are items in the list, because it moves each item to its correct place in one swap operation, rather than moving things around haphazardly like bubble sort. This is what we call an <em>O(n)</em> algorithm &ndash; you can think of it as, for a list of <em>n</em> items, selection sort takes at most <em>n</em> steps to complete. This is why selection sort looks like a square &ndash; for 500 numbers, it took about 500 steps to finish.</p>
-
 <p>I also noticed from this picture that selection sort builds up the final list in one smooth take, from the beginning of the list through to the end. Once the rainbow on the left side of the image starts forming, nothing is ever added to the left side or the inside of the rainbow &ndash; it only grows rightward. At each step, it just appends to the already-sorted section of the list. This makes it efficient in a way, because it doesn&rsquo;t need to move a lot of numbers around &ndash; it just adds it to the end of a list each time. We&rsquo;ll see in a minute that selection sort&rsquo;s cousin, insertion sort, doesn&rsquo;t share this property.</p>
-
 <p>The last interesting property of selection sort is that, even partway through the sort process, a part of the list is <em>completely sorted</em>. This makes selection sort also a <em>partial sort</em> algorithm, which means that it can take a list and sort only a subset of it completely.</p>
-
 <h3 id="insertion-sort">Insertion sort</h3>
-
 <p>Insertion sort is selection sort&rsquo;s close cousin. It&rsquo;s also got a square picture with an <em>O(n)</em> time complexity, and is fairly simple to describe. It goes like this:</p>
-
 <ol>
 <li>Start with the first number.</li>
 <li>For the number to the right of the first, if it&rsquo;s less than the first, add it to the left of the first number; if it&rsquo;s greater, add it to the right. We&rsquo;ve just made a &ldquo;sorted&rdquo; subsection of our list with two numbers in it.</li>
 <li>For subsequent numbers we find on the right, find its correct place in our &ldquo;sorted&rdquo; section of the list on the left side, and insert the new number into its correct place.</li>
 <li>Continue doing this until you reach the right end of the list.</li>
 </ol>
-
 <p>Insertion sort looks familiar, but it has one major difference.</p>
-
-<p><img src="/img/insertion-color.png" alt="Insertion sort" /></p>
-
+<p><img src="/img/insertion-color.png" alt="Insertion sort"></p>
 <p>(<a href="/img/insertion-grey.png">Greyscale version</a>)</p>
-
 <p>The major difference is that, unlike selection sort, insertion sort isn&rsquo;t a partial sort algorithm. It takes whatever number it finds as it goes through the list, and tries to sketch out the shape of the final list from the get-go, adding each number it finds to the middle of the &ldquo;sorted&rdquo; section, the rainbow.</p>
-
 <p>Because of this, insertion sort involves a bit more shuffling of numbers than selection sort. When we find, say, a yellow number halfway through our sort, we have to insert the number into the middle of our sorted section &ndash; the rainbow half &ndash; and shift all the remaining numbers one place to the right. This is a contrast against selection sort, where we simply add numbers to the right end of the sorted sub-list. However, this is outweighed by a benefit of insertion sort &ndash; because we look for a place for each new number within the smaller, sorted subsection of the list, rather than when trying to find the minimum of the whole remaining list, we perform fewer comparisons with each number in each sort step. On balance, this can sometimes make insertion sort faster in practice than selection sort.</p>
-
 <p>However, none of these algorithms so far are a match for the two remaining ones, which are much more efficient on large lists.</p>
-
 <h3 id="merge-sort">Merge sort</h3>
-
 <p>Merge sort, and its relative quicksort, have more complex implementations that are harder to describe precisely in words. Merge sort&rsquo;s general idea is that we divide the list into smaller and smaller subsections, sort the smaller sections, and then &ldquo;merge&rdquo; those smaller, already sorted subsections of the list while preserving the order of the numbers in it. It looks like this.</p>
-
-<p><img src="/img/merge-color.png" alt="Merge sort" /></p>
-
+<p><img src="/img/merge-color.png" alt="Merge sort"></p>
 <p>(<a href="/img/merge-grey.png">Greyscale version</a>)</p>
-
 <p>I was surprised to see that it doesn&rsquo;t feel like merge sort has a lot of &ldquo;sorting&rdquo; going on for most of its time &ndash; for most of the image, the list looks pretty random. But towards the end (the bottom), we start to see these sorted subsections more clearly, as they appear as smaller rainbows that &ldquo;merge&rdquo; into larger ones, until they form a single long rainbow line at the bottom of the image. This is merge sort in action. If you look closer, you can see some faint streaks in the middle as tiny 2- and 4-element subsections are sorted and then merged into larger subsections.</p>
-
 <p>Although I&rsquo;ve formatted the image here as a square for convenience, merge sort is actually much faster in practice for long lists than any of the algorithms we&rsquo;ve encountered so far &ndash; when a list doubles in size, we only need to do about twice as much work, rather than re-reading a doubly large list many times over, as we&rsquo;d have to do in other sorting algorithms above. One last notable property of merge sort is that different sections of a list can be merge-sorted in parallel. This means, if you have multiple computers or multiple CPU cores in a single computer, you may be able to share the work of merge-sorting very, very large lists rather efficiently. (Modern computers are fast enough that, in practice, this is usually irrelevant.)</p>
-
 <h3 id="quicksort">Quicksort</h3>
-
 <p>Quicksort is the most popular sorting algorithm among the ones we&rsquo;re looking at today. Most languages&rsquo; baseline sort operations implement quicksort under the hood, including the standard C library&rsquo;s <code>gsort()</code> and JavaScript&rsquo;s <code>Array.prototype.sort()</code>. It&rsquo;s so popular because it&rsquo;s rather efficient, more so than the other four in this list. Quicksort is a mouthful to explain in detail, but all you need to know, if you don&rsquo;t already, is that quicksort, like merge sort, depends on an approach of splitting up a list into ever smaller parts to be sorted again.</p>
-
 <p>Its portrait is also the most interesting in my opinion.</p>
-
-<p><img src="/img/quick-color.png" alt="Quicksort" /></p>
-
+<p><img src="/img/quick-color.png" alt="Quicksort"></p>
 <p>(<a href="/img/quick-grey.png">Greyscale version</a>)</p>
-
 <p>In this picture of quicksort, we can clearly see where the sorted subsections are, and how they come together. Unlike merge sort, quicksort starts with very visible partitions. Quicksort starts by picking a number from the list, called a &ldquo;pivot&rdquo;, and splitting the list into two parts &ndash; the part with numbers less than the pivot, and the part with the numbers greater than it. In the picture, these appear at the top as the mostly-green and mostly-pink subsections of the top of the list.</p>
-
 <p>This process repeats, until we get a cleanly sorted list at the end. Interestingly, the divisions are rarely exactly 50-50, as they were in merge sort. Instead, these divisions are arbitrary, and depend on the pivot point picked out for each divide. The way we pick these pivot points turns out to matter a lot in how efficient quicksort is for a given list. The more evenly split the partitions, the more efficient the resulting quicksort. In this example, we use a partition scheme by <a href="https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme">Tony Hoare</a>, which proves efficient for most situations.</p>
-
 <h2 id="wrapping-up">Wrapping up</h2>
-
 <p>Besides giving me a refresher on some of these algorithms, going through these generated images reminded me that sometimes, our eyes notice patterns that we can&rsquo;t grasp just by staring at diagrams and words and code. I think representing algorithms as timelines or time &ldquo;streaks&rdquo; like these images can also be tremendously useful for teaching computer science concepts in general, beyond sorting algorithms.</p>
-
 <p>There&rsquo;s a multitude of sorting algorithms that researchers and engineers have invented over the years, and these five are just a taste of the variety in complexity and efficiency in the landscape. If you&rsquo;re interested in the topic, definitely give the Wikipedia article on sorting algorithms a once-over, and look around for other interesting data visualizations and interactive demos around sorting algorithms elsewhere on the web &ndash; there&rsquo;s plenty.</p>
-
 <p>And as it goes without saying, if you&rsquo;re interested in the code for these particular images or for the Ink programming language, check out <a href="https://github.com/thesephist">my GitHub</a> and <a href="https://twitter.com/thesephist">Twitter</a>, where you can usually follow updates.</p>
 
         <hr/>

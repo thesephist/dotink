@@ -17,7 +17,7 @@
       <pubDate>Wed, 15 Jul 2020 17:15:01 -0400</pubDate>
       
       <guid>https://dotink.co/posts/inkfmt/</guid>
-      <description>inkfmt (pronounced &amp;ldquo;ink format&amp;rdquo; or sometimes &amp;ldquo;ink fuh-mt&amp;rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean.</description>
+      <description>inkfmt (pronounced &amp;ldquo;ink format&amp;rdquo; or sometimes &amp;ldquo;ink fuh-mt&amp;rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean. inkfmt is itself an Ink program, and inkfmt uses itself to format its own source code.</description>
     </item>
     
     <item>
@@ -95,9 +95,10 @@ Question to all the side project machines that I follow (with much respect) : wh
       
       <guid>https://dotink.co/docs/projects/</guid>
       <description>dotink This website is served by a web server written in Ink.
-See on GitHub &amp;rarr;
+See on GitHub →
 inkfmt inkfmt is a self-hosting code formatter for Ink. I wrote about building inkfmt here.
-See on GitHub &amp;rarr;</description>
+See on GitHub →
+Polyx Polyx is Linus&amp;rsquo;s personal productivity suite.</description>
     </item>
     
     <item>
@@ -117,7 +118,8 @@ See on GitHub &amp;rarr;</description>
       <guid>https://dotink.co/docs/lib/</guid>
       <description>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries on GitHub.
 Standard (std) std is Ink&amp;rsquo;s core library.
-See source on GitHub &amp;rarr;</description>
+See source on GitHub →
+log(val) Prints the string version of val to standard output.</description>
     </item>
     
   </channel>

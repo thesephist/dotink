@@ -3,9 +3,14 @@
 <head>
 	<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-
 <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
 
 
 	<title>Computing pi as a Riemann sum | Ink</title>
@@ -42,39 +47,21 @@
     <article class="overlay">
         
 
-        
-
-<p>While researching the difference between <a href="https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions">Intel&rsquo;s various x86 SIMD extensions</a>, I came across <a href="https://techblog.lankes.org/2014/06/16/AVX-isnt-always-faster-than-SEE/">this article</a> that demonstrates SSE and AVX performance differences using an algorithm to compute an approximation of pi using a Riemann sum under a curve. Specifically, we can numerically compute the integral</p>
-
+        <p>While researching the difference between <a href="https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions">Intel&rsquo;s various x86 SIMD extensions</a>, I came across <a href="https://techblog.lankes.org/2014/06/16/AVX-isnt-always-faster-than-SEE/">this article</a> that demonstrates SSE and AVX performance differences using an algorithm to compute an approximation of pi using a Riemann sum under a curve. Specifically, we can numerically compute the integral</p>
 <p>$$\int_{0}^{1} \frac{4}{1 + x^2} \mathrm{d} x = 4 \tan ^{-1} (x) = \pi $$</p>
-
 <p>to find a reasonably quickly converging approximation of \( \pi \). This approach to approximating pi was novel to me, and seemed fun, so wrote a little <a href="https://github.com/thesephist/ink">Ink</a> script to compute the integrals numerically for me.</p>
-
 <h2 id="the-sum">The sum</h2>
-
 <p>If we wanted to establish upper and lower bounds for pi, we may take the left- and right-Riemann sums, but in this case I just wanted a useful approximation, so the approximation function computes the sum with each rectangle at the value of the midpoint of the rectangles&rsquo; base.</p>
-
 <p><img class="blend-multiply" src="/img/riemann-sum.jpg" alt="Riemann sum"></p>
-
 <p>The sum we want to compute is just the sum of the areas of the \( n \) rectangles, expressed as</p>
-
-<p>$$ \lim<em>{n \to \infty} \sum</em>{i = 0}^{n} \frac{1}{n} \frac{4}{1 + x_{i}^2} $$</p>
-
-<p>where \( x<em>{i} \) is the midpoint of the base of the \( i \)-th rectangle of \( x \) between 0 and 1. Since \( x</em>{i} = \frac{1}{n} \cdot i + \frac{1}{2n} = \frac{2i + 1}{2n} \), we can rewrite the above as</p>
-
-<p>$$ \pi = \lim<em>{n \to \infty} \sum</em>{i = 0}^{n} \frac{1}{n} \frac{4}{1 + \left( \frac{2i + 1}{2n} \right)^2} $$</p>
-
+<p>$$ \lim_{n \to \infty} \sum_{i = 0}^{n} \frac{1}{n} \frac{4}{1 + x_{i}^2} $$</p>
+<p>where \( x_{i} \) is the midpoint of the base of the \( i \)-th rectangle of \( x \) between 0 and 1. Since \( x_{i} = \frac{1}{n} \cdot i + \frac{1}{2n} = \frac{2i + 1}{2n} \), we can rewrite the above as</p>
+<p>$$ \pi = \lim_{n \to \infty} \sum_{i = 0}^{n} \frac{1}{n} \frac{4}{1 + \left( \frac{2i + 1}{2n} \right)^2} $$</p>
 <p>which is the quantity our script will compute. In practice, we&rsquo;ll write a program to compute this sum for some large values of \( n \).</p>
-
 <h2 id="the-program">The program</h2>
-
 <p>I started with an Ink script that simply computes the sum by applying the function</p>
-
 <pre><code>f := x =&gt; 4 / (1 + x * x)
-</code></pre>
-
-<p>over the values of <code>range(0, 1, 1 / n)</code> using the <code>std.map</code> function in the Ink standard library. But it turns out writing the algorithm using a single tail recursive function is much more efficient over iterating over a list, which brought me to this final version, which runs about 4x faster than the naive implementation I started with (~1.5 microseconds per rectangle vs. ~6μs).</p>
-
+</code></pre><p>over the values of <code>range(0, 1, 1 / n)</code> using the <code>std.map</code> function in the Ink standard library. But it turns out writing the algorithm using a single tail recursive function is much more efficient over iterating over a list, which brought me to this final version, which runs about 4x faster than the naive implementation I started with (~1.5 microseconds per rectangle vs. ~6μs).</p>
 <pre><code>` computing pi by integration
   from 0 to 1 of 4 / (1 + x ^ 2)
   as a Riemann sum `
@@ -103,10 +90,7 @@ pi := Count =&gt; (
     _ -&gt; sub(x + Span, acc + columnArea(x))
   })(0, 0)
 )
-</code></pre>
-
-<p>I tested the algorithm by computing the estimate at values of \( n \) from 100,000 up to 1,000,000.</p>
-
+</code></pre><p>I tested the algorithm by computing the estimate at values of \( n \) from 100,000 up to 1,000,000.</p>
 <pre><code>` run estimate from 100k to 1M`
 
 start := {time: time()}
@@ -130,10 +114,7 @@ map(
     ))
   )
 )
-</code></pre>
-
-<p>I tested the script on my 2013 15&rdquo; Macbook Pro, showing:</p>
-
+</code></pre><p>I tested the script on my 2013 15&rdquo; Macbook Pro, showing:</p>
 <pre><code>Pi at Riemann sum of 100000: 3.14161265 (155ms)
 Pi at Riemann sum of 200000: 3.14159265 (295ms)
 Pi at Riemann sum of 300000: 3.14159265 (451ms)
@@ -144,9 +125,7 @@ Pi at Riemann sum of 700000: 3.14159265 (1035ms)
 Pi at Riemann sum of 800000: 3.14159515 (1172ms)
 Pi at Riemann sum of 900000: 3.14159265 (1323ms)
 Pi at Riemann sum of 1000000: 3.14159265 (1477ms)
-</code></pre>
-
-<p>which, while pretty slow to compute due to my language choice, is a respectable approximation of \( \pi \) for most practical uses.</p>
+</code></pre><p>which, while pretty slow to compute due to my language choice, is a respectable approximation of \( \pi \) for most practical uses.</p>
 
         <hr/>
         <p>
