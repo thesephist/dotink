@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Traceur: a path tracing renderer in Ink and JavaScript | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/traceur/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Traceur: a path tracing renderer in Ink and JavaScript</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">21 July 2020</div>
+            <div class="meta-item readtime" itemprop="duration">12 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#rendering-with-physics">Rendering with physics</a>
+      <ul>
+        <li><a href="#path-tracing">Path tracing</a></li>
+      </ul>
+    </li>
+    <li><a href="#building-traceur">Building Traceur</a>
+      <ul>
+        <li><a href="#aside-object-oriented-idioms-in-ink">Aside: object-oriented idioms in Ink</a></li>
+        <li><a href="#traceur-web-a-javascript-port">Traceur Web, a JavaScript port</a></li>
+      </ul>
+    </li>
+    <li><a href="#resources-and-further-reading">Resources and further reading</a></li>
+    <li><a href="#future-work">Future work</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p><a href="https://github.com/thesephist/traceur">Traceur</a> (pronounced like <em>trace</em> + <em>connoisseur</em>) is a path tracing renderer written in Ink. Traceur is capable of rendering scenes with spherical objects, realistic shadows, reflections, refractions, and depth of field. Internally, Traceur uses well-defined interfaces for working with shapes, materials, and scene descriptions, so it&rsquo;s easy to extend with new textures and lighting effects.</p>
+<p>
+<a href="https://github.com/thesephist/traceur" class="button">See Traceur on GitHub &rarr;</a>
+<a href="https://traceur-web.thesephist.repl.co/" class="button">Try Traceur Web &rarr;</a>
+</p>
+<p>The following scene with a glass bubble, some matte and metallic spheres, and a mirror was rendered in Traceur. (If you have issues viewing the <code>.bmp</code> image file that Traceur works with, see the PNG equivalent <a href="/img/traceur.png">here</a>.)</p>
+<p><img src="/img/traceur.bmp" alt="Path traced scene generated with Traceur"></p>
+<p>Building Traceur was an interesting opportunity for me to step into the world of 3D rendering, as well as test out Ink on a larger project than my previous Ink projects, with some learnings about programming in the language and implementing path tracing. I want to share my experience with you in this post.</p>
+<h2 id="rendering-with-physics">Rendering with physics</h2>
+<p>3D rendering is a neverending quest to understand and emulate how real-world objects interact with light.</p>
+<p>With our mortal, finite-sized, finite-speed computers, it&rsquo;s impossible to accurately model every photon and atom interacting in a scene. So instead, to render 3D scenes, engineers and artists have been relying on creative hacks to approximate lighting and color without simulating light accurately. Modern techniques for photorealistic rendering fall into two camps:</p>
+<p><strong>Rasterization</strong> is a process of projecting objects in the scene onto the viewport (the &ldquo;camera&rdquo; screen). Rasterization has been the popular approach to 3D rendering for a long time, because it&rsquo;s faster than ray tracing or path tracing. In rasterization, rather than simulating the behavior of light accurately, we try to do only the computational work required for the parts of the scene the camera can see, and layer on other effects for realism. This makes rasterization efficient enough for use in video games and real-time rendering (people also call this &ldquo;online rendering&rdquo;), but because pure rasterization disregards parts of the scene the camera can&rsquo;t see, it fails to render realistic reflections and other ambient effects, like light diffusing out from objects out of the frame. Creative graphics engineers have found ways to push this limitation, like <a href="https://en.wikipedia.org/wiki/Global_illumination">global illumination</a>, but these are hacks around the constraint, not perfect solutions.</p>
+<p><strong>Physically based rendering</strong>, which broadly includes ray tracing and path tracing, tries to simulate the real behavior of light and physical materials in an environment as closely as possible. In physically based rendering techniques, we study how real-world materials and atmosphere interacts with light, how light reflects and scatters from real surfaces, and build mathematical models for these laws of physics that we can simulate in our renderer to produce photorealistic results. This kind of rendering is much more computationally expensive, and can take anywhere from minutes to days to render a single frame of a scene, so it&rsquo;s rarely used by itself for real-time rendering. But because PBR produces the most realistic results, many artists and animators use it for its visual accuracy.</p>
+<p>Regardless of which rendering method we use to draw a scene, we have to contend with a fundamental tradeoff between performance and realism. Much of the innovation in photorealistic 3D rendering is about finding better balances between these two opposing goals. <a href="http://graphics.ucsd.edu/~henrik/images/cbox.html">This page showing a list of different renderings</a> of the <a href="https://en.wikipedia.org/wiki/Cornell_box">Cornell Box</a> demonstrates a few different points along this tradeoff spectrum, from efficient to realistic.</p>
+<p>Path tracing, which Traceur implements, is at the far end of the &ldquo;realistic&rdquo; side of this tradeoff &ndash; it&rsquo;s computationally expensive, but produces results that can be very close to reality.</p>
+<h3 id="path-tracing">Path tracing</h3>
+<p><img src="/img/traceur-simple.png" alt="A render with Traceur"></p>
+<p>Path tracing is popular because it can achieve good photorealistic results by combining simple algorithms and building blocks. Here&rsquo;s how path tracing works, in brief.</p>
+<p>In the real world, we see a scene because rays of light from a light source spread out into the world, and bounce off objects in the space. The light changes color and strength at each reflection, diffusion, or refraction when it hits something new, and we see the light when it finally enters our eye, having hit surfaces in its path that influences what color we see at that point in our field of view.</p>
+<p>In path tracing, we invert this process. To render a scene, we want to know what color each pixel should be. So we &ldquo;cast&rdquo; rays in the direction of each pixel on our screen from our point of view, and simulate how light would reflect off surfaces in the scene in its path, until our backwards-simulated ray of light reaches a light source. In this process, we can determine the color of the light we&rsquo;d see at that point in our rendered scene.</p>
+<p>In practice, a path tracer traces light like this many times for each pixel, to simulate probabilistic effects like diffusion, refraction, and focus blur, and averages the result to obtain a final color. The more times we sample each point, the more accurate and smoother the resulting render. This is one of the reasons why path tracing is computationally expensive. The quality of a render increases directly with how many times we crunch the numbers.</p>
+<p>Beyond the high-fidelity output, path tracing is also an interesting and rewarding programming problem, because simulating these simple laws of physics about how light reflects and diffuses over materials, yields complex and visually interesting results in the output.</p>
+<h2 id="building-traceur">Building Traceur</h2>
+<p>Why write a path tracer in Ink?</p>
+<p>I built Traceur primarily to <strong>learn</strong>, and most of Traceur is a direct port of the C++ code covered in the guide I mention below. I wanted a gentle and solid introduction to photorealistic rendering and path tracing that I could build on, and I think I was successful in this goal.</p>
+<p>I decided to write the renderer in Ink because I didn&rsquo;t particularly care about speed, and I enjoy writing Ink programs. Traceur was also a good opportunity to test-drive Ink on a non-trivial project. Traceur is only the third significant project I&rsquo;ve written in Ink, following <a href="https://github.com/thesephist/polyx">Polyx</a> and <a href="/posts/inkfmt/">inkfmt</a>. Working on Traceur was an opportunity to <strong>settle on good conventions for organizing and structuring Ink code for projects of this size</strong>, and a chance to get a sense of Ink&rsquo;s performance in heavy (but realistic) numerical workloads.</p>
+<p>Building a path tracer is a pleasingly iterative process. We can start with a basic proof-of-concept that simply computes where light rays intersect with objects on the scene, and add more detail to the render by programming in the finer nuances of lighting and materials one step at a time. I followed the excellent <a href="https://raytracing.github.io/">Ray Tracing in One Weekend</a> guide in building the first version of Traceur, and shared some progress updates on <a href="https://twitter.com/thesephist/status/1285137118151479296">Twitter</a>. I won&rsquo;t explain path tracing in detail in this post as the guide above and resources linked later in this post do it better than I ever could. Here, I&rsquo;ll focus on my own experience.</p>
+<p>The first &ldquo;working&rdquo; version of Traceur in the process did one thing: cast rays into the scene from the camera at each pixel, and place a red pixel on screen if there is an intersection with a sphere, and a sky-blue gradient otherwise.</p>
+<p><img src="/img/traceur-1.jpg" alt="Building Traceur, step 1"></p>
+<p>Here&rsquo;s the output after Traceur could compute <a href="https://en.wikipedia.org/wiki/Normal_(geometry)">surface normals</a>. This output also includes antialiasing, which computes the pixel color multiple times at each pixel with slight variations to average them together for a visually smoother final result. You can also see that I added a very large second sphere to be the &ldquo;ground.&rdquo;</p>
+<p><img src="/img/traceur-2.jpg" alt="Building Traceur, step 2"></p>
+<p>This is the first real image where Traceur was actually &ldquo;path tracing.&rdquo; You can see the shadow underneath the sphere in the matte material and the roughness of the render from insufficient antialiasing.</p>
+<p><img src="/img/traceur-3.jpg" alt="Building Traceur, step 3"></p>
+<p>Here, we introduce other kinds of more interesting surface materials. Surface materials are implemented with different algorithms for how a ray is scattered or reflected from the material surface. We have metals of different smoothness on both sides, and glass in the middle.</p>
+<p><img src="/img/traceur-4.jpg" alt="Building Traceur, step 4"></p>
+<p>In this final sample, Traceur additionally added a focus blur for some depth of field to the two spheres on either side. This render is also at a different camera angle than the others, a feature added at this time in the project.</p>
+<p><img src="/img/traceur-5.jpg" alt="Building Traceur, step 5"></p>
+<p>Traceur outputs images in the <a href="https://en.wikipedia.org/wiki/BMP_file_format">BMP</a> bitmap file format, which is a lossless binary image format. This was a convenient choice because Ink had a <a href="https://github.com/thesephist/traceur/blob/master/vendor/bmp.ink">BMP encoder library</a> from my previous experiments rendering fractal sets in Ink. Most of the samples here are in the JPG format for size, but the first image on this page is a full-size render straight from Traceur with no post-processing, in Traceur&rsquo;s native BMP format.</p>
+<h3 id="aside-object-oriented-idioms-in-ink">Aside: object-oriented idioms in Ink</h3>
+<p><em>(If you&rsquo;re not very interested in the minutiae of Ink programming, feel free to skip this section.)</em></p>
+<p>Path tracing very naturally lends itself to object-oriented programs. Arithmetic defined on 3-dimensional vectors, scattering and intersection behaviors on materials and shapes, positioning and moving cameras and objects in the scene &ndash; these are all naturally expressed as methods on objects. Ink, however, was designed as a functional language. While working on Traceur, I created an Ink idiom for object-oriented programming-style &ldquo;objects&rdquo; that encapsulates behavior in the way we want to use it, bound to object instances.</p>
+<p>Let&rsquo;s say we want some <code>Material</code> type that looks like</p>
+<pre><code>class Metal {
+    constructor(color, fuzz) {
+        this.color = color;
+        this.fuzz = fuzz;
+    }
+    scatter(ray, hit, attenuation, scattered) {
+        attenuation = this.color;
+        // .. some code ...
+    }
+}
+
+const mat = new Metal([1, 1, 1], 0.5);
+
+mat.scatter(r, h, att, sc) // ... call method
+</code></pre><p>the core of the <code>Metal</code> class is that we can call its constructor, <code>new Metal()</code>, to create an object that contains its properties and encapsulates behavior. Although Ink doesn&rsquo;t have class-based objects built in, we can emulate this idea with the following Ink code.</p>
+<pre><code>Metal := (color, fuzz) =&gt; {
+    scatter: (ray, hit, attenuation, scattered) =&gt; (
+        attenuation := this.color
+        ` ... some code ... `
+    )
+}
+
+mat := Metal([1, 1, 1], 0.5)
+(mat.scatter)(r, h, att, sc) `` ... call method
+</code></pre><p>Here, <code>Metal</code> is simply a function that takes the material&rsquo;s properties and returns a map of names to functions as an object. The object has methods that are functions <a href="https://en.wikipedia.org/wiki/Closure_(computer_programming)">closed over</a> the properties passed in to the constructor. In this way, we can create and use objects with the same kind of ergonomics that dynamically typed object-oriented languages offer, but without the built-in class-based abstraction.</p>
+<p>Traceur uses this kind of object-oriented style to abstract the camera, shapes, and materials, but not vectors, for performance reasons (creating objects like this causes unnecessary memory allocation, which would have meant performance hits for vector ops used in basically every operation in the path tracer).</p>
+<h3 id="traceur-web-a-javascript-port">Traceur Web, a JavaScript port</h3>
+<p>As I started testing Traceur to render images, I felt limited by the slow debug and feedback loop. Ink itself isn&rsquo;t a fast language, especially for numerically intensive workloads like path tracing, but Traceur also saves the output to a file, so to see the results of a render, I&rsquo;d have to change the code, run the render, and open the file to see what changes I wanted to make to the scene.</p>
+<p>To get around this issue, I decided to port Traceur to JavaScript. Since Ink is semantically very similar to JavaScript, the JavaScript port of Traceur, <a href="https://github.com/thesephist/traceur-web">Traceur Web</a>, is a line-by-line translation of the Ink Traceur program, with special attention paid for V8 to be able to easily inline and optimize common function calls. It runs a couple of orders of magnitude faster than the Ink equivalent, and renders interactively to an HTML canvas, for a faster feedback loop.</p>
+<p><img src="/img/traceur-web-screenshot.png" alt="Traceur Web in action"></p>
+<p>Traceur Web is <a href="https://traceur-web.thesephist.repl.co/">live on Repl.it</a>. If you want to get a feel for how path tracing works, you can check out the live demo or see the source code on GitHub (above) or <a href="https://repl.it/@thesephist/traceur-web">Repl.it</a>.</p>
+<h2 id="resources-and-further-reading">Resources and further reading</h2>
+<p>After working through the initial prototype of Traceur, I ended up diving into lots of articles and blog posts about photorealistic rendering and path tracing while researching how best to build and optimize a path tracer. I&rsquo;ve collected some of the best here.</p>
+<p>First, some pieces on path tracing itself:</p>
+<ul>
+<li><a href="http://www.kevinbeason.com/smallpt/">Kevin Beacon&rsquo;s smallpt</a> is a small C++ program that implements a full path tracer without any egregious code obfuscation. The post also breaks down how the code works line-by-line, which is helpful to understanding path tracing in a single picture.</li>
+<li><a href="https://fabiensanglard.net/postcard_pathtracer/">Pixar&rsquo;s recruiting flyer once included a full path tracer</a>, albeit with some C++ obfuscation tricks. This post breaks down how the code works in detail, and also explores some of the tradeoffs that the program makes between fidelity and speed. The Pixar path tracer is also interesting because it squeezes a full 3D model of the letters <code>PIXAR</code> into the path tracer code.
+<ul>
+<li>There&rsquo;s an even older precedent for &ldquo;path tracer on a business card,&rdquo; which is explored <a href="https://fabiensanglard.net/rayTracing_back_of_business_card/">in this post</a>.</li>
+</ul>
+</li>
+<li>The Haskell wiki has an overview of a <a href="https://wiki.haskell.org/The_Monad.Reader/Issue5/HRay:_A_Haskell_ray_tracer">path tracer written in Haskell</a>.</li>
+</ul>
+<p>There&rsquo;s also a wider range of literature and current research on photorealistic rendering in general:</p>
+<ul>
+<li>Unity&rsquo;s documentation is an interesting overview of the kinds of real-time rendering techniques practiced today. Here&rsquo;s a page on <a href="https://docs.unity3d.com/560/Documentation/Manual/GIIntro.html">global illumination</a>.</li>
+<li><a href="https://renderman.pixar.com/">Renderman</a>, Pixar&rsquo;s proprietary rendering software, has lots of interesting manual pages to dig through about high fidelity offline rendering methods in the industry. Here&rsquo;s a page on <a href="https://renderman.pixar.com/resources/RenderMan_20/stratification.html">stratified sampling</a>, which is a way of reducing aliasing / pixelation in a path traced render.</li>
+<li>Wikipedia pages for specific lighting and rendering techniques are interesting starting points for further exploration. Some topics I found interesting are <a href="https://en.wikipedia.org/wiki/Photon_mapping">bounding volume hierarchies</a> and <a href="https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function">BRDFs</a>.</li>
+<li>Traceur and most basic path tracers treat light as a simple RGB (red, green, blue) triplet, but in reality, light spectra are more continuous. <a href="http://people.eecs.berkeley.edu/~cecilia77/graphics/a6/">Spectral path tracing</a> tries to be more faithful to the spectral nature of light, for specific coloring effects like chromatic aberrations.</li>
+</ul>
+<h2 id="future-work">Future work</h2>
+<p>Like compilers and interpreters, photorealistic rendering is an actively evolving and historically rich field. As I come back to Traceur in the future, here&rsquo;s what I want to add to its arsenal of rendering tools.</p>
+<ul>
+<li>Support for object lighting. Currently, objects are lit in Traceur scenes with light from the background (the &ldquo;sky&rdquo; in the renders). I could simulate &ldquo;lights&rdquo; by having extremely luminescent materials in brightly lit scenes, but explicit support for lights in the scene would be a quick and useful addition. Lighting with objects also gives us realistic <a href="https://en.wikipedia.org/wiki/Caustic_(optics)">caustics</a>.</li>
+<li>Support for shapes that aren&rsquo;t spheres or &ldquo;planes&rdquo; emulated with very large spheres</li>
+<li><a href="https://en.wikipedia.org/wiki/Volumetric_path_tracing">Volumetric rendering</a>, with which we can render translucent and transparent materials like liquids and gels</li>
+<li>Patterns and textures on objects</li>
+</ul>
+<p>Photorealistic rendering has been fascinating to dive into. I&rsquo;ve really enjoyed tasting the tip of the iceberg with Traceur, and hope to come back to hack on it further.</p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+                
+                my previous post,
+                <a href="https://dotink.co/posts/inkfmt/"><em>inkfmt: a self-hosting code formatter for Ink</em></a>.
+                
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Traceur: a path tracing renderer in Ink and JavaScript</title>
+      <link>https://dotink.co/posts/traceur/</link>
+      <pubDate>Tue, 21 Jul 2020 10:12:27 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/traceur/</guid>
+      <description>Traceur (pronounced like trace + connoisseur) is a path tracing renderer written in Ink. Traceur is capable of rendering scenes with spherical objects, realistic shadows, reflections, refractions, and depth of field. Internally, Traceur uses well-defined interfaces for working with shapes, materials, and scene descriptions, so it&amp;rsquo;s easy to extend with new textures and lighting effects.</description>
+    </item>
+    
+    <item>
       <title>inkfmt: a self-hosting code formatter for Ink</title>
       <link>https://dotink.co/posts/inkfmt/</link>
       <pubDate>Wed, 15 Jul 2020 17:15:01 -0400</pubDate>
@@ -98,7 +107,7 @@ Question to all the side project machines that I follow (with much respect) : wh
 See on GitHub →
 inkfmt inkfmt is a self-hosting code formatter for Ink. I wrote about building inkfmt here.
 See on GitHub →
-Polyx Polyx is Linus&amp;rsquo;s personal productivity suite.</description>
+Traceur Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur.</description>
     </item>
     
     <item>
