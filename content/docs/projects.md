@@ -16,6 +16,12 @@ inkfmt is a self-hosting code formatter for Ink. I wrote about [building inkfmt 
 
 <a href="https://github.com/thesephist/inkfmt" class="button">See on GitHub &rarr;</a>
 
+## Traceur
+
+Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur. I wrote about [building Traceur here](/posts/traceur/).
+
+<a href="https://github.com/thesephist/traceur" class="button">See on GitHub &rarr;</a>
+
 ## Polyx
 
 Polyx is Linus's personal productivity suite.

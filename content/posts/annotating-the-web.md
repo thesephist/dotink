@@ -6,6 +6,8 @@ toc: true
 draft: true
 ---
 
+Problem statement: there's value in colocating notes with your information consumption. People have tried, it's a hard problem. Here's my exploration, with the novelty being doing it for the dynamic web in real-time.
+
     Write a dotink post about annotating the web -- the Highlighter class. Two approaches, single interface.
 
 ## The highlighting problem
