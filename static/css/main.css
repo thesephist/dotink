@@ -358,4 +358,7 @@ blockquote {
         top: 0;
         left: -16px;
     }
+    pre > code {
+        font-size: .8em;
+    }
 }

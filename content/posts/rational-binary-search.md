@@ -9,9 +9,9 @@ What's a reasonably simple rational approximation of Pi?
 
 We might take a naive approach and simply take a fraction like \\(\frac{314159265}{100000000}\\) and reduce it to get a fractional representation of an arbitrary decimal form of Pi. But this is boring, and requires large denominators to be precise. Can we do any better?
 
-One possible answer is \\(\frac{102573}{32650} = 3.1415926493...\\) which is pretty darn close, accurate to 8 decimal places after rounding, while keeping a much smaller denominator. Want to get more precise? We can take \\(\frac{4272943}{1360120} = 3.14159265358939...\\) which is accurate to 12 decimal places with only 7 significant figures in the fractions.
+One possible answer is \\(\frac{102573}{32650} = 3.1415926493...\\) which is pretty darn close, accurate to 8 decimal places after rounding, while keeping a much smaller denominator. Want to get more precise? We can take \\(\frac{4272943}{1360120} = 3.14159265358939...\\) which is accurate to 12 decimal places with only 7 significant figures in the denominator.
 
-It turns out there's an interesting, if not entirely practically useful, way to generate these few-significant-figures approximations of irrational and transcendal numbers efficiently, and the process resembles binary search very closely. I want to explore the parallels and dive into the binary search approximation method in this post.
+It turns out there's an interesting way to generate these few-significant-figures approximations of irrational and transcendental numbers efficiently, and the process resembles binary search very closely. I want to explore the parallels and dive into the binary search approximation method in this post.
 
 ## Mediants
 
@@ -19,7 +19,7 @@ The approximation method I'll outline here recursively computes mediants of frac
 
 $$Mediant\left(\frac{a}{b}, \frac{c}{d}\right) := \frac{a + c}{b + d}$$
 
-The mediant operation is technically not a function on two fractions, since reduced and non-reduced forms of fractions will lead to different results. Technically we should define it as a function on two ordered pairs. But I'll simply call this process the mediant _operation_ for simplicity in this post.
+The mediant operation is technically not a function on two fractions, since reduced and non-reduced forms of fractions will lead to different results. Technically we should define it as a function on two ordered pairs. But I'll call this process the mediant _operation_ for simplicity in this post.
 
 There are a few interesting things about a mediant of two fractions. The most interesting property of the mediant is called the _mediant inequality_, and it states that a mediant of two distinct fractions will always be between the two fractions.
 
@@ -79,37 +79,41 @@ $$F_{5} = \left\\{
 Farey sequences have a few notable properties for our task of approximating irrational numbers.
 
 - Any fraction in the Farey sequence appears only once, in its most reduced representation, by definition.
-- Farey sequences of increasing order contain fractions that more finely cover the \\([0, 1]\\) interval.
+- Farey sequences of increasing order contain fractions that more finely cover the \\([0, 1]\\) interval. In the limit of \\(\lim_{n \rightarrow \infty} F_{n}\\) the Farey sequence includes exactly all rationals in the closed interval \\([0, 1]\\).
 
 Given these facts, we can simplify our task of finding a small-denominator fractional approximation of a number, to the problem of finding a number in a Farey sequence of sufficiently high order (for a good enough approximation) that is closest to our irrational number.
 
 ### Stern-Brocot tree
 
-A closely related structure to the Farey sequence is the [Stern-Brocot tree](https://en.wikipedia.org/wiki/Stern%E2%80%93Brocot_tree), which is a binary tree produced by recursively taking mediants of fractions.
+A closely related structure to the Farey sequence is the [Stern-Brocot tree](https://en.wikipedia.org/wiki/Stern%E2%80%93Brocot_tree), which is a binary tree produced by recursively taking mediants of fractions, starting from 0 and 1.
 
-// paper drawing here
+![Stern-Brocot tree, Licensed under CC BY-SA 3.0 from Aaron Rotenberg](/img/farey-sb-tree.svg)
 
-The Stern-Brocot tree is another way of enumerating all reduced-form fractions in the unit interval. However, these terms don't appear in the same order as in a Farey sequence -- fractions with denominator \\(n\\) may appear in a tree node of depth less than \\(n\\), as in \\(\frac{2}{5}\\) which appears at depth 4.
+_(Diagram courtesy of [Aaron Rotenberg, Licensed under CC BY-SA 3.0](https://en.wikipedia.org/wiki/Stern%E2%80%93Brocot_tree#/media/File:SternBrocotTree.svg))_
 
-However, traversing the Stern-Brocot tree programmatically is easier than computing Farey sequences of increasing order, and fractions in the tree retain the two important properties of fractions that appear in Farey sequences.
+The Stern-Brocot tree is another way of enumerating all reduced-form fractions in the unit interval. However, these terms don't appear in the same order as in a Farey sequence -- fractions with denominator \\(n\\) may appear in a tree node of depth less than \\(n\\), as in \\(\frac{2}{5}\\) which appears at depth 4 above.
+
+Traversing the Stern-Brocot tree programmatically is easier than computing Farey sequences of increasing order, and fractions in the tree retain the two important properties of fractions that appear in Farey sequences.
 
 - Any fraction in the Stern-Brocot tree appears exactly once, in its most reduced form.
 - Fractions at increasing depths of the Stern-Brocot tree more finely cover the unit interval.
 
+These properties of the tree make the Stern-Brocot tree an excellent starting point for our search for rational approximations of real numbers.
+
 ## Approximating irrationals with the Stern-Brocot tree
 
-I first found this process of approximating irrational numbers with the Farey sequence and the Stern-Brocot tree from [this Numberphile video](). The process stood out to me, so I thought I'd implement it in an Ink script and write about it, which became this post.
+I first found this process of approximating irrational numbers with the Farey sequence and the Stern-Brocot tree from [this video by Matt Parker](https://www.youtube.com/watch?v=7LKy3lrkTRA). The process stood out to me, so I thought I'd implement it in an Ink script and write about it, which became this post.
 
 We can approximate any real number in the unit interval by traversing the Stern-Brocot tree, following branches that better approximate the target number at each depth, until either our approximation is good enough, or the denominator is too large.
 
-For example, to approximate the number 0.37, we take the following branches in the tree
+For example, to approximate the number 0.37, we take the following branches in the tree at each depth
 
 $$\frac{0}{1}
     \rightarrow \frac{1}{2}
     \rightarrow \frac{1}{3}
     \rightarrow \frac{2}{5}
     \rightarrow \frac{3}{8}
-    \rightarrow \frac{4}{11}$$
+    \rightarrow \frac{4}{11} = 0.\overline{36}$$
 
 We can also extend this method to rationally approximate all reals, by splitting numbers outside of the unit interval to their whole number part and a fractional part, and then computing a rational approximation of the fractional part. From our previous example, we also know that a similar approximation for 1.37 is \\(\frac{11 + 4}{11} = \frac{15}{11}\\).
 
@@ -165,10 +169,11 @@ main := args => (
 main(args())
 ```
 
-This program takes two arguments. First, the (positive) decimal number to be approximated, and an maximum denominator we are willing to accept, after which the tree traversal would halt. For the 12-digit approximation of Pi with which I opened this post, I ran
+This program takes two arguments: the (positive) decimal number to be approximated, and a maximum denominator we are willing to accept, after which the tree traversal would halt. For the 12-digit approximation of Pi with which I opened this post, I ran
 
 ```
 ./farey.ink 3.14159265358979 1000000
 ```
 
 Which found `4272943 / 1360120` in the tree traversal at depth 323.
+
