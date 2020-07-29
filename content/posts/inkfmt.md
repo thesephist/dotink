@@ -1,7 +1,6 @@
 ---
 title: "inkfmt: a self-hosting code formatter for Ink"
 date: 2020-07-15T17:15:01-04:00
-location: "West Lafayette, IN"
 toc: true
 ---
 

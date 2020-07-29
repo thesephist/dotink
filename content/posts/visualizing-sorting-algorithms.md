@@ -1,7 +1,6 @@
 ---
 title: "Visualizing and exploring sorting algorithms in two dimensions with Ink"
 date: 2019-07-26T00:00:00-00:00
-location: "SoMa, CA"
 ---
 
 ![Quicksort, greyscale](/img/quick-grey-header.png)

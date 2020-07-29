@@ -1,7 +1,6 @@
 ---
 title: "Build scale-free software, not scalable software"
 date: 2019-07-27T00:00:00-00:00
-location: "Berkeley, CA"
 draft: true
 ---
 
