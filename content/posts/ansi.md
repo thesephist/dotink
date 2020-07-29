@@ -31,8 +31,8 @@ $ clear | xxd -
 
 Here, we can see `clear` outputs six bytes, which `xxd` has rather unhelpfully grouped into sets of 2. But we can interpret them correctly:
 
-- `1b 5b 48` is `^[H`, which moves the cursor to the "home" position, which is line 0, column 0 -- the top left corner of the terminal
-- `1b 5b 4a` is `^[J`, which clears the terminal screen from the cursor-down. Since the cursor is now at 0, 0, this clears the entire screen.
+- `1b 5b 48` is `^[[H`, which moves the cursor to the "home" position, which is line 0, column 0 -- the top left corner of the terminal
+- `1b 5b 4a` is `^[[J`, which clears the terminal screen from the cursor-down. Since the cursor is now at 0, 0, this clears the entire screen.
 
 ## The `ansi` library
 

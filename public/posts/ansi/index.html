@@ -77,8 +77,8 @@
 00000000: 1b5b 481b 5b4a        .[H.[J
 </code></pre><p>Here, we can see <code>clear</code> outputs six bytes, which <code>xxd</code> has rather unhelpfully grouped into sets of 2. But we can interpret them correctly:</p>
 <ul>
-<li><code>1b 5b 48</code> is <code>^[H</code>, which moves the cursor to the &ldquo;home&rdquo; position, which is line 0, column 0 &ndash; the top left corner of the terminal</li>
-<li><code>1b 5b 4a</code> is <code>^[J</code>, which clears the terminal screen from the cursor-down. Since the cursor is now at 0, 0, this clears the entire screen.</li>
+<li><code>1b 5b 48</code> is <code>^[[H</code>, which moves the cursor to the &ldquo;home&rdquo; position, which is line 0, column 0 &ndash; the top left corner of the terminal</li>
+<li><code>1b 5b 4a</code> is <code>^[[J</code>, which clears the terminal screen from the cursor-down. Since the cursor is now at 0, 0, this clears the entire screen.</li>
 </ul>
 <h2 id="the-ansi-library">The <code>ansi</code> library</h2>
 <p>As an in-band signaling mechanism, ANSI escape codes are easy to use in every programming language, but its syntax is pretty unergonomic. It involves memorizing strange numbers that you wouldn&rsquo;t want in your business logic code. So it&rsquo;s a good candidate for an easy, simple library.</p>
