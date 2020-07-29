@@ -12,6 +12,25 @@
     
     
     <item>
+      <title>Better terminal output from Ink with ANSI escape codes</title>
+      <link>https://dotink.co/posts/ansi/</link>
+      <pubDate>Tue, 28 Jul 2020 15:51:01 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/ansi/</guid>
+      <description>ANSI escape codes Most of the time, we think of a computer terminal as a place to output text. We generate logs and print output from programs to the terminal, and interact with the shell by typing lines in and getting lines out.</description>
+    </item>
+    
+    <item>
+      <title>Binary search for rational approximations of irrational numbers</title>
+      <link>https://dotink.co/posts/rational-binary-search/</link>
+      <pubDate>Mon, 27 Jul 2020 19:32:17 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/rational-binary-search/</guid>
+      <description>What&amp;rsquo;s a reasonably simple rational approximation of Pi?
+We might take a naive approach and simply take a fraction like \(\frac{314159265}{100000000}\) and reduce it to get a fractional representation of an arbitrary decimal form of Pi. But this is boring, and requires large denominators to be precise.</description>
+    </item>
+    
+    <item>
       <title>Notable papers about computing and software</title>
       <link>https://dotink.co/posts/papers/</link>
       <pubDate>Sun, 26 Jul 2020 13:13:16 -0400</pubDate>
@@ -112,11 +131,9 @@ Question to all the side project machines that I follow (with much respect) : wh
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/projects/</guid>
-      <description>dotink This website is served by a web server written in Ink.
+      <description>Projects Traceur Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur. I wrote about building Traceur here.
 See on GitHub →
-inkfmt inkfmt is a self-hosting code formatter for Ink. I wrote about building inkfmt here.
-See on GitHub →
-Traceur Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur.</description>
+Polyx Polyx is Linus&amp;rsquo;s personal productivity suite.</description>
     </item>
     
     <item>

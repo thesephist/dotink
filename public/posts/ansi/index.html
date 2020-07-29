@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Better terminal output from Ink with ANSI escape codes | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/ansi/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Better terminal output from Ink with ANSI escape codes</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">28 July 2020</div>
+            <div class="meta-item readtime" itemprop="duration">4 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ansi-escape-codes">ANSI escape codes</a>
+      <ul>
+        <li><a href="#how-do-they-work">How do they work?</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-ansi-library">The <code>ansi</code> library</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <h2 id="ansi-escape-codes">ANSI escape codes</h2>
+<p>Most of the time, we think of a computer terminal as a place to output text. We generate logs and print output from programs to the terminal, and interact with the shell by typing lines in and getting lines out. When <a href="https://en.wikipedia.org/wiki/Computer_terminal">teletype terminals</a> first came to be, text input/output was indeed all it did. It was called a &ldquo;terminal&rdquo; because terminals were separate, independent devices at the <em>terminal ends</em> of computers, connected by serial connections, receiving commands from a mainframe computer stored somewhere else in a facility. As terminals became digitized, more powerful, and more integrated into smaller computers, we started asking more out of terminals.</p>
+<p>Today, terminals can run rich, interactive programs like IDEs, work with mouse pointers, and <a href="https://askubuntu.com/questions/97542/how-do-i-make-my-terminal-display-graphical-pictures">even display images</a>. But few things were pristinely designed and executed from the get-go in the evolution of the venerable terminal from a simple text input/output device to the rich interactive console we have today. Most of the capabilities of modern terminal emulators, like interactive graphics and mouse events, have been grafted onto the existing modes of operation for text terminals.</p>
+<p>There are two main ways modern terminals can provide rich interactive functionality: through <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape sequences</a> and <a href="https://en.wikipedia.org/wiki/Ioctl#Terminals"><code>ioctl</code> or similar system interfaces</a>. <code>ioctl</code> is used for bi-directional communication between the terminal and the operating system, for things like window sizing and mouse control. I won&rsquo;t delve into that today. Instead, let&rsquo;s talk about ANSI escape sequences, which are used for color output and cursor movement.</p>
+<p>As terminals were just getting the ability to be more interactive and have color output, each terminal manufacturer created their own standard for how the terminal should receive these rich messages from the computer at the other end of the line. Eventually, the industry (via ANSI, the American National Standards Institute) standardized around escape codes from the popular <a href="https://en.wikipedia.org/wiki/VT100">VT100</a> terminal. Today&rsquo;s terminals use these same escape codes, and today&rsquo;s software terminals emulate the VT100 as a legacy of backwards compatibility.</p>
+<h3 id="how-do-they-work">How do they work?</h3>
+<p>ANSI escape codes are an <a href="https://en.wikipedia.org/wiki/In-band_signaling">in-band</a> signaling mechanism, meaning the commands are sent as a part of the normal stream of text being output to the terminal. To issue a command to a terminal output device, wherever appropriate, we can insert a sequence of characters starting with <code>^[</code> (the ASCII Escape character, byte <code>0x1b</code>). The terminal then accepts these characters and interprets them as ANSI escape codes, instead of displaying them to the user.</p>
+<p>For example, to print <code>Hello, World!</code> we&rsquo;d normally print the string <code>'Hello, World!'</code>. To print it as red text, we precede the string with the escape sequence <code>^[[0;31m</code>. If we print <code>'\x1b[0;31mHello, World!'</code> to an ANSI compliant terminal, we&rsquo;ll get <code>Hello, World!</code> in red.</p>
+<p>Similar commands exist for <a href="http://ascii-table.com/ansi-escape-sequences-vt-100.php">other types of command and operations</a> like moving the cursor, or clearing the screen.</p>
+<p>As another example, the <code>clear</code> utility to clear your terminal doesn&rsquo;t do anything fancy to talk to the system or terminal. <code>clear</code> really just outputs a string of two ANSI escape sequences:</p>
+<pre><code>$ clear | xxd -
+00000000: 1b5b 481b 5b4a        .[H.[J
+</code></pre><p>Here, we can see <code>clear</code> outputs six bytes, which <code>xxd</code> has rather unhelpfully grouped into sets of 2. But we can interpret them correctly:</p>
+<ul>
+<li><code>1b 5b 48</code> is <code>^[H</code>, which moves the cursor to the &ldquo;home&rdquo; position, which is line 0, column 0 &ndash; the top left corner of the terminal</li>
+<li><code>1b 5b 4a</code> is <code>^[J</code>, which clears the terminal screen from the cursor-down. Since the cursor is now at 0, 0, this clears the entire screen.</li>
+</ul>
+<h2 id="the-ansi-library">The <code>ansi</code> library</h2>
+<p>As an in-band signaling mechanism, ANSI escape codes are easy to use in every programming language, but its syntax is pretty unergonomic. It involves memorizing strange numbers that you wouldn&rsquo;t want in your business logic code. So it&rsquo;s a good candidate for an easy, simple library.</p>
+<p><a href="https://github.com/thesephist/ansi.ink"><code>ansi.ink</code></a> is an Ink library to handle a small set of common escape sequences, including basic cursor movements, clearing screens and lines, and color output. You can find the documentation in the <a href="https://github.com/thesephist/ansi.ink">GitHub README</a>.</p>
+<p><img src="/img/ansi.png" alt="ansi.ink demo"></p>
+<p>The <a href="https://github.com/thesephist/ansi.ink/blob/master/ansi.ink">core of the <code>ansi</code> library</a> is just around 50 lines &ndash; just a convenience wrapper around escape codes and little else.</p>
+<p><code>ansi</code> also happens to be the first library for the Ink language that&rsquo;s out-of-tree (maintained outside of the main <a href="https://github.com/thesephist/ink"><code>thesephist/ink</code></a> source tree.) Ink itself is pretty slow-moving these days, so I think this won&rsquo;t be an issue.</p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+                
+                my previous post,
+                <a href="https://dotink.co/posts/rational-binary-search/"><em>Binary search for rational approximations of irrational numbers</em></a>.
+                
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

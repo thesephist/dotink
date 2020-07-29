@@ -3,12 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dotink.co/posts/papers/</loc>
-    <lastmod>2020-07-26T13:13:16-04:00</lastmod>
+    <loc>https://dotink.co/posts/ansi/</loc>
+    <lastmod>2020-07-28T15:51:01-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://dotink.co/posts/</loc>
+    <lastmod>2020-07-28T15:51:01-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/rational-binary-search/</loc>
+    <lastmod>2020-07-27T19:32:17-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/papers/</loc>
     <lastmod>2020-07-26T13:13:16-04:00</lastmod>
   </url>
   

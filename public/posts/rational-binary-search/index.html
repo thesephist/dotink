@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Binary search for rational approximations of irrational numbers | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/rational-binary-search/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Binary search for rational approximations of irrational numbers</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">27 July 2020</div>
+            <div class="meta-item readtime" itemprop="duration">6 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#mediants">Mediants</a>
+      <ul>
+        <li><a href="#farey-sequences">Farey sequences</a></li>
+        <li><a href="#stern-brocot-tree">Stern-Brocot tree</a></li>
+      </ul>
+    </li>
+    <li><a href="#approximating-irrationals-with-the-stern-brocot-tree">Approximating irrationals with the Stern-Brocot tree</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>What&rsquo;s a reasonably simple rational approximation of Pi?</p>
+<p>We might take a naive approach and simply take a fraction like \(\frac{314159265}{100000000}\) and reduce it to get a fractional representation of an arbitrary decimal form of Pi. But this is boring, and requires large denominators to be precise. Can we do any better?</p>
+<p>One possible answer is \(\frac{102573}{32650} = 3.1415926493&hellip;\) which is pretty darn close, accurate to 8 decimal places after rounding, while keeping a much smaller denominator. Want to get more precise? We can take \(\frac{4272943}{1360120} = 3.14159265358939&hellip;\) which is accurate to 12 decimal places with only 7 significant figures in the denominator.</p>
+<p>It turns out there&rsquo;s an interesting way to generate these few-significant-figures approximations of irrational and transcendental numbers efficiently, and the process resembles binary search very closely. I want to explore the parallels and dive into the binary search approximation method in this post.</p>
+<h2 id="mediants">Mediants</h2>
+<p>The approximation method I&rsquo;ll outline here recursively computes mediants of fractions. A <em>mediant</em> is an operation defined on two fractions&hellip; sort of&hellip; as follows.</p>
+<p>$$Mediant\left(\frac{a}{b}, \frac{c}{d}\right) := \frac{a + c}{b + d}$$</p>
+<p>The mediant operation is technically not a function on two fractions, since reduced and non-reduced forms of fractions will lead to different results. Technically we should define it as a function on two ordered pairs. But I&rsquo;ll call this process the mediant <em>operation</em> for simplicity in this post.</p>
+<p>There are a few interesting things about a mediant of two fractions. The most interesting property of the mediant is called the <em>mediant inequality</em>, and it states that a mediant of two distinct fractions will always be between the two fractions.</p>
+<p>$$\frac{a}{b} &lt; \frac{c}{d} \implies \frac{a}{b} &lt; Mediant\left(\frac{a}{b}, \frac{c}{d}\right) &lt; \frac{c}{d}$$</p>
+<p>You might already be seeing some clues as to how we can use this to binary-search a range of numbers. But first, let us take an aside into some related ideas in sequences of rational numbers.</p>
+<h3 id="farey-sequences">Farey sequences</h3>
+<p><a href="https://en.wikipedia.org/wiki/Farey_sequence">Farey sequences</a> are a countably infinite set of finite sequences of fractions. We form a Farey sequence of order \(n\) by enumerating all reduced fractions with denominators less than or equal to \(n\) in the range \([0, 1]\).</p>
+<p>The first 5 Farey sequences are</p>
+<p>$$F_{1} = \left\{
+\frac{0}{1},
+\frac{1}{1}
+\right\}$$</p>
+<p>$$F_{2} = \left\{
+\frac{0}{1},
+\frac{1}{2},
+\frac{1}{1}
+\right\}$$</p>
+<p>$$F_{3} = \left\{
+\frac{0}{1},
+\frac{1}{3},
+\frac{1}{2},
+\frac{2}{3},
+\frac{1}{1}
+\right\}$$</p>
+<p>$$F_{4} = \left\{
+\frac{0}{1},
+\frac{1}{4},
+\frac{1}{3},
+\frac{1}{2},
+\frac{2}{3},
+\frac{3}{4},
+\frac{1}{1}
+\right\}$$</p>
+<p>$$F_{5} = \left\{
+\frac{0}{1},
+\frac{1}{5},
+\frac{1}{4},
+\frac{1}{3},
+\frac{2}{5},
+\frac{1}{2},
+\frac{3}{5},
+\frac{2}{3},
+\frac{3}{4},
+\frac{4}{5},
+\frac{1}{1}
+\right\}$$</p>
+<p>Farey sequences have a few notable properties for our task of approximating irrational numbers.</p>
+<ul>
+<li>Any fraction in the Farey sequence appears only once, in its most reduced representation, by definition.</li>
+<li>Farey sequences of increasing order contain fractions that more finely cover the \([0, 1]\) interval. In the limit of \(\lim_{n \rightarrow \infty} F_{n}\) the Farey sequence includes exactly all rationals in the closed interval \([0, 1]\).</li>
+</ul>
+<p>Given these facts, we can simplify our task of finding a small-denominator fractional approximation of a number, to the problem of finding a number in a Farey sequence of sufficiently high order (for a good enough approximation) that is closest to our irrational number.</p>
+<h3 id="stern-brocot-tree">Stern-Brocot tree</h3>
+<p>A closely related structure to the Farey sequence is the <a href="https://en.wikipedia.org/wiki/Stern%E2%80%93Brocot_tree">Stern-Brocot tree</a>, which is a binary tree produced by recursively taking mediants of fractions, starting from 0 and 1.</p>
+<p><img src="/img/farey-sb-tree.svg" alt="Stern-Brocot tree, Licensed under CC BY-SA 3.0 from Aaron Rotenberg"></p>
+<p><em>(Diagram courtesy of <a href="https://en.wikipedia.org/wiki/Stern%E2%80%93Brocot_tree#/media/File:SternBrocotTree.svg">Aaron Rotenberg, Licensed under CC BY-SA 3.0</a>)</em></p>
+<p>The Stern-Brocot tree is another way of enumerating all reduced-form fractions in the unit interval. However, these terms don&rsquo;t appear in the same order as in a Farey sequence &ndash; fractions with denominator \(n\) may appear in a tree node of depth less than \(n\), as in \(\frac{2}{5}\) which appears at depth 4 above.</p>
+<p>Traversing the Stern-Brocot tree programmatically is easier than computing Farey sequences of increasing order, and fractions in the tree retain the two important properties of fractions that appear in Farey sequences.</p>
+<ul>
+<li>Any fraction in the Stern-Brocot tree appears exactly once, in its most reduced form.</li>
+<li>Fractions at increasing depths of the Stern-Brocot tree more finely cover the unit interval.</li>
+</ul>
+<p>These properties of the tree make the Stern-Brocot tree an excellent starting point for our search for rational approximations of real numbers.</p>
+<h2 id="approximating-irrationals-with-the-stern-brocot-tree">Approximating irrationals with the Stern-Brocot tree</h2>
+<p>I first found this process of approximating irrational numbers with the Farey sequence and the Stern-Brocot tree from <a href="https://www.youtube.com/watch?v=7LKy3lrkTRA">this video by Matt Parker</a>. The process stood out to me, so I thought I&rsquo;d implement it in an Ink script and write about it, which became this post.</p>
+<p>We can approximate any real number in the unit interval by traversing the Stern-Brocot tree, following branches that better approximate the target number at each depth, until either our approximation is good enough, or the denominator is too large.</p>
+<p>For example, to approximate the number 0.37, we take the following branches in the tree at each depth</p>
+<p>$$\frac{0}{1}
+\rightarrow \frac{1}{2}
+\rightarrow \frac{1}{3}
+\rightarrow \frac{2}{5}
+\rightarrow \frac{3}{8}
+\rightarrow \frac{4}{11} = 0.\overline{36}$$</p>
+<p>We can also extend this method to rationally approximate all reals, by splitting numbers outside of the unit interval to their whole number part and a fractional part, and then computing a rational approximation of the fractional part. From our previous example, we also know that a similar approximation for 1.37 is \(\frac{11 + 4}{11} = \frac{15}{11}\).</p>
+<p>An Ink program that executes this search is</p>
+<pre><code>` binary search to approximate numbers `
+
+std := load('std')
+log := std.log
+f := std.format
+
+Threshold := 0.000000005
+
+` given target &amp; max denominator `
+fareyApproximate := (val, max) =&gt; (
+	whole := floor(val)
+	frac := val - whole
+
+	result := (sub := (an, ad, bn, bd) =&gt; (
+		diff := frac - (an + bn) / (ad + bd)
+		absdiff := (diff &lt; 0 :: {
+			true -&gt; ~diff
+			false -&gt; diff
+		})
+		absdiff &lt; Threshold | ad + bd &gt; max :: {
+			true -&gt; [an + bn, ad + bd]
+			false -&gt; diff &gt; 0 :: {
+				` frac is greater `
+				true -&gt; sub(an + bn, ad + bd, bn, bd)
+				` frac is lesser `
+				false -&gt; sub(an, ad, an + bn, ad + bd)
+			}
+		}
+	))(0, 1, 1, 1)
+
+	[whole * result.1 + result.0, result.1]
+)
+
+main := args =&gt; (
+	target := number(args.2)
+	max := (number(args.3) :: {
+		() -&gt; 1000000
+		0 -&gt; 1000000
+		_ -&gt; number(args.3)
+	})
+
+	result := fareyApproximate(target, max)
+	log(f('{{ 2 }} approx. = {{ 3 }} = {{ 0 }} / {{ 1 }}'
+		[result.0, result.1, target, result.0 / result.1]))
+)
+
+main(args())
+</code></pre><p>This program takes two arguments: the (positive) decimal number to be approximated, and a maximum denominator we are willing to accept, after which the tree traversal would halt. For the 12-digit approximation of Pi with which I opened this post, I ran</p>
+<pre><code>./farey.ink 3.14159265358979 1000000
+</code></pre><p>Which found <code>4272943 / 1360120</code> in the tree traversal at depth 323.</p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+            my next post,
+            <a href="https://dotink.co/posts/ansi/"><em>Better terminal output from Ink with ANSI escape codes</em></a>.
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+	<script>
+		window.MathJax = {
+			tex: {
+				inlineMath: [['\\(', '\\)']]
+			},
+			svg: {
+				fontCache: 'global'
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	
+</body>

@@ -6,10 +6,29 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Jul 2020 13:13:16 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 28 Jul 2020 15:51:01 -0400</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Better terminal output from Ink with ANSI escape codes</title>
+      <link>https://dotink.co/posts/ansi/</link>
+      <pubDate>Tue, 28 Jul 2020 15:51:01 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/ansi/</guid>
+      <description>ANSI escape codes Most of the time, we think of a computer terminal as a place to output text. We generate logs and print output from programs to the terminal, and interact with the shell by typing lines in and getting lines out.</description>
+    </item>
+    
+    <item>
+      <title>Binary search for rational approximations of irrational numbers</title>
+      <link>https://dotink.co/posts/rational-binary-search/</link>
+      <pubDate>Mon, 27 Jul 2020 19:32:17 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/rational-binary-search/</guid>
+      <description>What&amp;rsquo;s a reasonably simple rational approximation of Pi?
+We might take a naive approach and simply take a fraction like \(\frac{314159265}{100000000}\) and reduce it to get a fractional representation of an arbitrary decimal form of Pi. But this is boring, and requires large denominators to be precise.</description>
+    </item>
     
     <item>
       <title>Notable papers about computing and software</title>
