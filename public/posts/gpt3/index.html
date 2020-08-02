@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>A discussion on NLP, GPT-3, and language models | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/gpt3/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>A discussion on NLP, GPT-3, and language models</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">1 August 2020</div>
+            <div class="meta-item readtime" itemprop="duration">9 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#preface">Preface</a></li>
+    <li><a href="#where-we-are-today">Where we are today</a>
+      <ul>
+        <li><a href="#transformers">Transformers</a></li>
+        <li><a href="#gpt-3-and-openais-hypothesis">GPT-3 and OpenAI&rsquo;s hypothesis</a></li>
+        <li><a href="#how-do-we-measure-how-good-gpt-3-is">How do we measure how good GPT-3 is?</a></li>
+      </ul>
+    </li>
+    <li><a href="#where-were-headed">Where we&rsquo;re headed</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <h2 id="preface">Preface</h2>
+<p>Last Saturday, I hosted a small casual hangout discussing recent developments in <a href="https://en.wikipedia.org/wiki/Natural_language_processing">NLP</a>, focusing on OpenAI&rsquo;s new <a href="https://arxiv.org/abs/2005.14165">GPT-3</a> language model. Not being in the machine learning field, I wanted to understand what the excitement was about, and what these new language models enabled us to build. So I gathered some of my friends in the machine learning space and invited about 20 folks to join for a discussion.</p>
+<p>What follows is a loose collection of things I took away from that discussion, and some things I learned from personal follow-up research. I&rsquo;m not an expert, just a curious voyager through the field, but I think I got most things right, and where I&rsquo;m not sure, I&rsquo;ve noted it below.</p>
+<hr>
+<h2 id="where-we-are-today">Where we are today</h2>
+<p>Natural language processing is an aged field. Ever since there have been computers, we&rsquo;ve wanted them to understand human language. The first decades were marked by rigorous, analytical attempts to distill concepts like grammar, morphology, and references down to data structures understandable by computers. But recently, NLP has seen a resurgence of advancements fueled by deep neural networks (like every other field in AI).</p>
+<p>Human language is almost entirely repetition of learned patterns. So it follows that if we created systems that could learn patterns exceedingly well, and asked it to reproduce those patterns for us, it might resemble human language. That&rsquo;s the three-second version of where we are in NLP today: creating very large pattern recognition machines tuned for the kinds of patterns that occur in language, and training these models against the ocean of literature that already exists in the world.</p>
+<h3 id="transformers">Transformers</h3>
+<p>The most recent step-change in NLP seems to have come from work spearheaded by AI teams at Google, published in a 2017 paper titled <em><a href="https://arxiv.org/abs/1706.03762">Attention is all you need</a></em>. In it, the authors propose a new architecture for neural nets called &ldquo;transformers&rdquo; that proves to be very effective in natural language-related tasks like machine translation and text generation.</p>
+<p>Before transformers, I believe the best language models (neural nets trained on a particular corpus of language) were based on <strong><a href="https://en.wikipedia.org/wiki/Recurrent_neural_network">recurrent networks</a></strong>. Recurrent networks are useful for learning from data with temporal dependencies &ndash; data where information that comes later in some text depends on information that comes earlier. Speech recognition, for example, requires processing data changing through time, where there are relationships between sounds that come later, and sounds that come earlier in a track. Language is also temporal. The meaning and structure of this very sentence builds on all the sentences that have come before it. So it makes sense that we were looking to recurrent networks to build language models.</p>
+<p>The problem with RNNs were that the computational workload to train recurrent networks was not scalable. Recurrent networks have a feedback-loop structure where parts of the model that respond to inputs earlier in &ldquo;time&rdquo; (in the data) can influence computation for the &ldquo;later&rdquo; parts of the input, which means the number-crunching work for RNNs must be serial. Today&rsquo;s high performance machine learning systems exploit parallelism (the ability to run many computations at once) to train faster, so this hard requirement against being able to go fully parallel was rough, and it prevented RNNs from being widely trained and used with very large training datasets.</p>
+<p>The 2017 paper was published in a world still looking at recurrent networks, and argued that a slightly different neural net architecture, called a <strong>transformer</strong>, was far easier to scale computationally, while remaining just as effective at language learning tasks. Transformers do away with the &ldquo;recurrent&rdquo; part of the popular language models that came before it. Instead (and this is where my understanding of the models get a little fuzzy), transformers rely on a mechanism called <a href="https://en.wikipedia.org/wiki/Transformer_(machine_learning_model)#Architecture">attention</a> to provide that temporal reasoning ability of recurrent nets.</p>
+<p>A transformer model has what&rsquo;s known as an encoder-decoder structure. This means a transformer neural net has some &ldquo;encoder&rdquo; layers that each take the input and generate some output that gets fed into the next encoder layer. My intuition is that these encoder layers collectively transform some sequential data like a sentence into some abstract data that best represents the underlying semantics of the input. Following the encoder layers are the &ldquo;decoder&rdquo; layers, which each take the output from the previous layer and decode it to progressively produce some output, with some final processing to generate the result that humans see from the model. Attention refers to a part of each encoder and decoder layer that enables the neural net to give different parts of the input different &ldquo;weights&rdquo; of importance for processing. I&rsquo;m not sure on the details of how this mechanism works yet.</p>
+<p>As an aside: attention can be applied to both the simpler, transformer models, as well as recurrent neural nets. The insight of the paper above was that attention by itself was a good-enough mechanism for language tasks, that the scalability gains afforded by getting rid of the &ldquo;recurrent&rdquo; part of RNNs, massively offset the slight downsides of using a simpler model. Because transformers could be trained efficiently on modern machine learning hardware that depend on exploiting data parallelism, we could train large transformer models on humongous datasets. And as these data sets grew in size over time, the resulting models also became more accurate.</p>
+<p>Which brings us to GPT-3.</p>
+<h3 id="gpt-3-and-openais-hypothesis">GPT-3 and OpenAI&rsquo;s hypothesis</h3>
+<p>The GPT-3 language model, and GPT-2 that came before it, are both large transformer models pre-trained on a huge dataset, some mixture of data from the Web (popular links on Reddit), and various other smaller data sources. GPT, incidentally, stands for &ldquo;Generative Pre-trained Transformer&rdquo; &ndash; it&rsquo;s right there in the name: a pre-trained transformer model, &ldquo;generative&rdquo; because it generates text data as output.</p>
+<p>The GPT models (GPT, GPT-2, and current GPT-3) are all transformers of similar architecture with increasing numbers of parameters The interesting and novel property of these models is their ability to generalize what they learn across domains: a GPT-3 model can be trained on general language data, applied to a novel subject domain with few specific training samples, and perform accurately.</p>
+<p>The main feature of GPT-3 is that it is <em>very large</em>. OpenAI claims that the full GPT-3 model contains 175 billion parameters in the model (about 2 orders of magnitude above the largest GPT-2 model). Estimates of the total compute cost to train such a model range in the few million US dollars. OpenAI&rsquo;s hypothesis in producing these GPT models over the last three years seems to be that transformer models can scale up to very high-parameter, high-complexity models that perform at near-human levels on various language tasks. So far, results with GPT-3 have proven out. But there are also concerns that we are close to exhausting this straightforward scaling.</p>
+<h3 id="how-do-we-measure-how-good-gpt-3-is">How do we measure how good GPT-3 is?</h3>
+<p>The main way that researchers seem to measure generative language model performance is with a numerical score called <a href="https://en.wikipedia.org/wiki/Perplexity">perplexity</a>. To understand perplexity, it&rsquo;s helpful to have some intuition for probabilistic language models like GPT-3.</p>
+<p>A probabilistic model&rsquo;s job is to assign probabilities to each possible construction of a sentence or sequence of words, based on how likely it is to occur in the world (in its training data). &ldquo;This cake is very sweet&rdquo; as a sentence has a much larger probability of occurring in the wild than &ldquo;This cake is very spicy&rdquo; &ndash; and so probabilistic models like GPT-3 are tasked with assigning probabilities to various sequences of words, and the output we see is that probability distribution, rendered into one potential, likely sentence.</p>
+<p>Think of it like a very smart auto-correct/auto-complete system. The model assigns probabilities to potential sequences of words, and surfaces the ones that are most likely.</p>
+<p>Perplexity is a way of evaluating a probabilistic model. My very rough intuition for perplexity in the language model context is that perplexity reports the average number of choices the language model has to make arbitrarily in generating every word in the output. So, higher perplexity means that it&rsquo;s as if the model had to rely on arbitrary choices between very many words in predicting its output. In other words, the model is confused (or, perplexed, if you will). Low perplexity, therefore, means the model has to rely on fewer random guesses, and is more accurate.</p>
+<p>GPT-3 achieves perplexity of about 20, which is state-of-the-art as of mid-2020.</p>
+<p><em>(Technically, the intuition for perplexity I&rsquo;ve laid out here isn&rsquo;t really accurate, since the model isn&rsquo;t really choosing arbitrarily at any point in its inference. But I think it&rsquo;s the most intuitive way of understanding an idea that&rsquo;s quite a complex information-theoretical thing.)</em></p>
+<h2 id="where-were-headed">Where we&rsquo;re headed</h2>
+<p>The special sauce of GPT-3 is that it&rsquo;s very good at &ldquo;few-shot learning,&rdquo; meaning a GPT-3 model is able to specialize to a specific language domain without having to go through a lengthy and complex training process on a domain-specific dataset. This has led to those wild experiments we&rsquo;ve been seeing online using GPT-3 for various language-adjacent tasks, everything from deciphering legal jargon to turning language into code, to writing role-play games and summarizing news articles.</p>
+<p>It&rsquo;s exciting that this level of cheap specialization is possible, and this opens the doors for lots of new problem domains to start taking advantage of a state-of-the-art language model.</p>
+<p>The &ldquo;great responsibility&rdquo; complement to this great power is the same as any modern advanced AI model. Trained on an un-vetted corpus of text from published literature and online articles, we rightly worry that the model exhibits <a href="https://medium.com/fair-bytes/how-biased-is-gpt-3-5b2b91f1177">bias</a> that we don&rsquo;t fully understand. I also think the biggest problem with these advanced models is that it&rsquo;s easy for us to over-trust them. I also have questions about whether we are building language models for English and certain popular European languages, to the detriment of speakers of other languages. These problems are as much about communication and education and business ethics as about technology.</p>
+<p>It&rsquo;s strange times, but exciting times. I&rsquo;m looking forward to what we all build atop the progress we&rsquo;ve made, and just as importantly, how we choose to wield and share and protect this ever-growing power.</p>
+<p>As always, but especially in this post, if I&rsquo;ve gotten anything wrong, please <a href="https://thesephist.com/#contact">get in touch</a>.</p>
+<p><em>Thanks to Moin Nadeem, Shrey Gupta, Rishabh Anand, Carol Chen, Shreyas Parab, Aakash Adesara, and many others who joined the call for their insights.</em></p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+            my next post,
+            <a href="https://dotink.co/posts/scale-free-software/"><em>Scale-free software</em></a>.
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

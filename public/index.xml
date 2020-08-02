@@ -12,6 +12,25 @@
     
     
     <item>
+      <title>Scale-free software</title>
+      <link>https://dotink.co/posts/scale-free-software/</link>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://dotink.co/posts/scale-free-software/</guid>
+      <description>Good software engineering is concerned with two kinds of scale: operational scale and engineering scale.
+Operational scale measures how many processors and compute nodes are in your production infrastructure, and how many requests and responses the system handles every second.</description>
+    </item>
+    
+    <item>
+      <title>A discussion on NLP, GPT-3, and language models</title>
+      <link>https://dotink.co/posts/gpt3/</link>
+      <pubDate>Sat, 01 Aug 2020 13:13:31 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/gpt3/</guid>
+      <description>Preface Last Saturday, I hosted a small casual hangout discussing recent developments in NLP, focusing on OpenAI&amp;rsquo;s new GPT-3 language model. Not being in the machine learning field, I wanted to understand what the excitement was about, and what these new language models enabled us to build.</description>
+    </item>
+    
+    <item>
       <title>Better terminal output from Ink with ANSI escape codes</title>
       <link>https://dotink.co/posts/ansi/</link>
       <pubDate>Tue, 28 Jul 2020 15:51:01 -0400</pubDate>
