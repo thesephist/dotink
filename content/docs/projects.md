@@ -32,6 +32,12 @@ This website is served by a web server written in Ink.
 
 <a href="https://github.com/thesephist/dotink" class="button">See on GitHub &rarr;</a>
 
+### September
+
+September is an Ink to JavaScript compiler, written in Ink itself and tested against Ink's standard library tests. September aims to become self-hosting, but is not there yet. I wrote about [building September here](/posts/september/).
+
+<a href="https://github.com/thesephist/september" class="button">See on GitHub &rarr;</a>
+
 ### inkfmt
 
 inkfmt is a self-hosting code formatter for Ink. I wrote about [building inkfmt here](/posts/inkfmt/).
