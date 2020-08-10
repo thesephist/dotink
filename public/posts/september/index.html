@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>The September compiler: translating Ink to JavaScript | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/september/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>The September compiler: translating Ink to JavaScript</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">10 August 2020</div>
+            <div class="meta-item readtime" itemprop="duration">12 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-compile-to-javascript">Why compile to JavaScript?</a>
+      <ul>
+        <li><a href="#prior-art">Prior art</a></li>
+      </ul>
+    </li>
+    <li><a href="#how-it-works">How it works</a>
+      <ul>
+        <li><a href="#tokenization">Tokenization</a></li>
+        <li><a href="#parsing">Parsing</a></li>
+        <li><a href="#semantic-analysis">Semantic analysis</a></li>
+        <li><a href="#code-generation">Code generation</a></li>
+        <li><a href="#the-runtime-library">The runtime library</a></li>
+      </ul>
+    </li>
+    <li><a href="#progress">Progress</a></li>
+    <li><a href="#future-work">Future work</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p><a href="https://github.com/thesephist/september">September</a> is an <a href="https://github.com/thesephist/ink">Ink</a> to JavaScript compiler, written in Ink itself. It&rsquo;s so-called because it&rsquo;s the first in a forthcoming series of autumn-month-themed tools written in and for Ink:</p>
+<ul>
+<li>September, a compiler to JavaScript, which is what this post is about</li>
+<li>August, an assembler and linker, which is yet to be started</li>
+<li>October, a symbolic mathematics environment, which is even more yet to be started, but which I&rsquo;m <em>really</em> excited about</li>
+</ul>
+<p>Autumn months are great, especially because <a href="https://genius.com/Taylor-swift-august-lyrics">august</a> is the best song on <a href="https://en.wikipedia.org/wiki/Folklore_(Taylor_Swift_album)">folklore</a> which is a lyrical and aural masterpiece by the queen of pop Taylor Swift herself, but that&rsquo;s for me to go on about on a different website. Back to the point:</p>
+<p><strong>September compiles Ink programs to equivalent (though not necessarily <em>elegant</em>) JavaScript programs</strong>. What does this mean? It means September can transform Ink code like this</p>
+<pre><code>a := 2
+b := 3
+
+log(a + b)
+log('Hello, World!')
+</code></pre><p>to valid JavaScript code like this, which performs the exact same computation.</p>
+<pre><code>let a = 2;
+let b = 3;
+log(__as_ink_string(a + b));
+log(__Ink_String(`Hello, World!`))
+</code></pre><p>September is a <em>working prototype</em> at the moment. Except for tail recursion optimization, which September cannot currently perform, September passes much of Ink&rsquo;s standard library tests. This allows me to write Ink programs targeting JavaScript environments, including the Web. With September, I&rsquo;m one step closer to being able to write full-stack applications entirely in Ink, which would be pretty cool.</p>
+<p>This post is about why it&rsquo;s useful to compile to JavaScript, how September works, and where I want to take it in the future. If you&rsquo;ve got limited time, I recommend starting with the <a href="#how-it-works">How it works</a> section, because it takes you inside the compiler with a concrete example, and I think it&rsquo;s the most interesting bit.</p>
+<p><a href="https://github.com/thesephist/september" class="button">See September on GitHub →</a></p>
+<p><img src="/img/september.jpg" alt="september banner"></p>
+<h2 id="why-compile-to-javascript">Why compile to JavaScript?</h2>
+<p>Why might we want to compile other languages to JavaScript?</p>
+<p>The most obvious reason is that, even with the advent of <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, JavaScript is the language most interoperable with the Web platform.</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">It&#39;s a good question! Someone asked this yesterday:<br><br>Big things are<br>- lack of native GC support<br>- JS is semantically closer, compilation is less work<br>- I&#39;ll probably want to access DOM APIs directly from Ink<a href="https://t.co/OHjWP8OTkZ">https://t.co/OHjWP8OTkZ</a></p>&mdash; Linus (@thesephist) <a href="https://twitter.com/thesephist/status/1292820353727762432?ref_src=twsrc%5Etfw">August 10, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>In particular, if I want to write web applications entirely in Ink, I need to be able to call into DOM APIs. While there is some movement to create WebAssembly interfaces for the DOM, and some momentum behind providing <a href="https://hacks.mozilla.org/2019/03/standardizing-wasi-a-webassembly-system-interface/">system interfaces for Wasm</a>, WebAssembly today is still a low-level <em>compile target</em> that requires JavaScript to communicate with the outside world. WebAssembly also doesn&rsquo;t interoperate gracefully with JavaScript types like objects and strings, which are a core part of the Web platform&rsquo;s API.</p>
+<p>Compiling to JavaScript would still allow Ink programs to run on the Web and run fast, and because the semantics of JavaScript and Ink are similar, it&rsquo;s trivial to access JavaScript-based APIs from Ink code to do things like manipulate a webpage or make web requests.</p>
+<p>Besides compatibility with the Web platform, JavaScript is a good compile target for Ink specifically because the types, values, functions, and concurrency models of Ink are largely inspired by JavaScript and map over very nicely to JavaScript. This makes compilation rather straightforward, which is the main reason I could write a first working prototype of the compiler in a weekend.</p>
+<h3 id="prior-art">Prior art</h3>
+<p>Compiling to program source code is pretty common in the wild. I think these days the most common textual compile target is JavaScript, because of its ubiquity as The Web Language, but languages also compile frequently to C for its omnipresence and performance, to Lua for its simplicity, and to various other niche languages.</p>
+<p>A few projects in particular inspired my work on September.</p>
+<ul>
+<li><a href="https://fengari.io">Fengari</a>, a Lua runtime on top of JavaScript. Studying Fengari&rsquo;s implementation was especially helpful in thinking about how to translate mutable strings and Ink-JavaScript interoperability.</li>
+<li><a href="https://babeljs.io">Babel</a>, the industry standard JavaScript compiler.</li>
+<li><a href="https://emscripten.org/">Emscripten</a>, an LLVM IR to JavaScript compiler. Practically, this means Emscripten can compile C, C++, and Rust to JavaScript.</li>
+</ul>
+<h2 id="how-it-works">How it works</h2>
+<p>I&rsquo;ve written an in-depth guide to how September works in the <a href="https://github.com/thesephist/september/blob/master/README.md">readme</a> to the project. Here, I&rsquo;ll just give you a taste with a small but illustrative example.</p>
+<p>Let&rsquo;s take this simple Ink program.</p>
+<pre><code>a := 3
+b := 17
+log(a + b)
+</code></pre><p>When we&rsquo;re done, we&rsquo;ll end up with this equivalent JavaScript program.</p>
+<pre><code>a = 3;
+b = 17;
+log(__as_ink_string(a + b))
+</code></pre><h3 id="tokenization">Tokenization</h3>
+<p>The first step in the September compiler is scanning, handled by the <strong><a href="https://github.com/thesephist/september/blob/master/src/tokenize.ink">tokenizer</a></strong>. The tokenizer scans through the program text as a string, and produces a list of tokens, or symbols. In the Ink tokenizer, these tokens are also sometimes tagged with their type, like &ldquo;number literal&rdquo; or &ldquo;string literal&rdquo; or &ldquo;addition operator&rdquo;. For our small program, September yields the following tokens. I&rsquo;ve added some blank lines and comments to make the output easier to read.</p>
+<pre><code># a := 3
+Ident(a) @ 1:1
+DefineOp(()) @ 1:3
+NumberLiteral(3) @ 1:5
+Separator(()) @ 1:6
+
+# b := 7
+Ident(b) @ 2:1
+DefineOp(()) @ 2:3
+NumberLiteral(17) @ 2:5
+Separator(()) @ 2:6
+
+# log(a + b)
+Ident(log) @ 3:1
+LParen(()) @ 3:4
+Ident(a) @ 3:5
+AddOp(()) @ 3:7
+Ident(b) @ 3:9
+Separator(()) @ 3:10
+RParen(()) @ 3:10
+Separator(()) @ 3:11
+</code></pre><p>We can see that the token stream is a straightforward list of symbols that we see in the program. These tokens are also annotated with the line and column numbers in the source code where they occur, like <code>@ 3:9</code> to mean <code>line 3, column 9</code>. This is useful for debugging and emitting useful syntax error messages.</p>
+<p>You might be wondering where the <code>Separator</code> token came from. This is an implicit detail of the Ink language syntax, and functions like the semicolon in most C-style languages, as an expression terminator. It&rsquo;s not necessary most of the time, and inferred by the interpreter or compiler. Here, our tokenizer has inferred where the implicit Separator tokens should be and added them for us. This makes the next step easier. If this bit about the <code>Separator</code> token doesn&rsquo;t make sense, don&rsquo;t worry &ndash; it&rsquo;s not important to the compilation process.</p>
+<h3 id="parsing">Parsing</h3>
+<p>Next up, we need to group these tokens into meaningful hierarchies. We want to know, for example, that the <code>a + b</code> expression is a single expression, while <code>log(a</code> is not. This work is done by the <strong><a href="https://github.com/thesephist/september/blob/master/src/parse.ink">parser</a></strong>, which builds up a recursive data structure called the <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree</a>. The AST for our program looks like this.</p>
+<pre><code>BinExpr(Ident(a) DefineOp Lit(3))
+BinExpr(Ident(b) DefineOp Lit(17))
+Call(Ident(log) (BinExpr(Ident(a) AddOp Ident(b))))
+</code></pre><p>We can see our parser has grouped tokens into meaningful hierarchies. This representation of our program is meaningful enough for the rest of the compiler to draw good conclusions about what the program does.</p>
+<h3 id="semantic-analysis">Semantic analysis</h3>
+<p>Before we generate the equivalent JavaScript code for this Ink program, we need to take a final step: <a href="https://ruslanspivak.com/lsbasi-part13/">semantic analysis</a>. In September, this is handled by the <strong><a href="https://github.com/thesephist/september/blob/master/src/analyze.ink">analyzer</a></strong>.</p>
+<p>The analyzer traverses the syntax tree from top-down, and makes small annotations or transformations on the nodes of the tree that help us generate better code.</p>
+<p>The most common kind of annotation made by September&rsquo;s analyzer is clarifying variable declaration. Like in Python, Ink doesn&rsquo;t have explicit variable declarations. The first time we reference a variable, Ink creates a new variable in that scope. JavaScript code requires that new variables in a scope be declared with <code>let</code> or <code>const</code>. The analyzer combs through variables declared in each scope, and <a href="https://github.com/thesephist/september/blob/6a959e9d5a12936d0a322982e812f9726260c5fd/src/analyze.ink#L37">sets a flag called <code>node.decl?</code> if the expression should be a <code>let</code> declaration</a>.</p>
+<p>In our toy example, the analyzer doesn&rsquo;t make any visible changes, because the information in the original syntax tree is enough to generate a valid JavaScript program.</p>
+<h3 id="code-generation">Code generation</h3>
+<p>Code generation is the step where we walk through the annotated syntax tree and output the equivalent JavaScript code for each node in the tree. This is handled in September by the <strong><a href="https://github.com/thesephist/september/blob/master/src/gen.ink">code generator</a></strong>.</p>
+<p>The code generator contains a comprehensive list of every possible node in the syntax tree, and knows what JavaScript snippet is a faithful translation of each node type. For example, the generator knows that the syntax tree node <code>BinExpr(Ident(a) MulOp Ident(b))</code>, which is <code>a * b</code>, gets translated into <a href="https://github.com/thesephist/september/blob/master/src/gen.ink#L112"><code>(a * b)</code> in JavaScript</a>. This is a simple example &ndash; the generator encodes much more complex transformations I won&rsquo;t explain here, but you can explore them for yourself in the source code I linked in this paragraph, if you&rsquo;re curious.</p>
+<p>When the code generator steps through our syntax tree and outputs the resulting Ink code, we get the final output, a valid JavaScript program.</p>
+<pre><code>a = 3;
+b = 17;
+log(__as_ink_string(a + b))
+</code></pre><p>&hellip; nearly. You might be wondering what the <code>__as_ink_string()</code> function is doing in our code. This is an example of a <strong>runtime library</strong> function.</p>
+<h3 id="the-runtime-library">The runtime library</h3>
+<p>There are some parts of Ink&rsquo;s semantics that are better emulated not by translating code directly to JavaScript, but by calling out to some special piece of functionality written in JavaScript and packaged with the resulting JavaScript program. These pre-written pieces of functionality are collectively called the runtime library, or <em>runtime</em> for short. All languages have runtime libraries of varying sizes, and low-level languages like C have much smaller runtimes than rich, dynamic languages like JavaScript or Python.</p>
+<p>In September, the runtime library implements small pieces of Ink&rsquo;s behavior that are different from JavaScript. An example is the negation operator <code>~</code> in Ink, which negates a number or negates a boolean, depending on the type of the operand.</p>
+<pre><code># Ink
+~true `` -&gt; false
+~1    `` -&gt; negative 1
+      `` same operator!
+
+# JS
+!true // false
+-1    // negative 1
+      // differenet operators!
+</code></pre><p>JavaScript doesn&rsquo;t have an equivalent operator, so instead, September compiles <code>~x</code> to <code>__ink_negate(x)</code>, which is a runtime library function that just does the right thing. Ink&rsquo;s runtime also implements various Ink built-in functions like <code>len()</code> for sizing an object or string, and the Ink <code>string</code> type, which behaves differently than JavaScript strings in important ways. The <code>__as_ink_string()</code> runtime function we see in our toy example ensures that a string value is represented in a way that&rsquo;s consistent with Ink&rsquo;s string type throughout the generated program.</p>
+<p>When September generates the full, final JavaScript program, it takes its <a href="https://github.com/thesephist/september/blob/master/runtime/ink.js">full runtime library. ink.js</a> and outputs this with the resulting program, so we can run the whole thing on a JavaScript environment like Node.js.</p>
+<h2 id="progress">Progress</h2>
+<p>At time of writing, I&rsquo;ve been hacking on September for two days and change. Today, September is something between a proof-of-concept and an alpha. It can compile moderately large Ink programs (including itself and the <a href="https://github.com/thesephist/september/blob/master/runtime/std.js">Ink standard library</a>) correctly, but doesn&rsquo;t implement all of the Ink language for the resulting program to work correctly all of the time.</p>
+<p>One way I&rsquo;ve been tracking the progress of September is by <strong>testing the compiler</strong> against the <a href="https://github.com/thesephist/ink/blob/master/samples/test.ink">test suite I wrote for the original Ink interpreter</a>. This can give us better confidence that an Ink program compiled with September behaves identically to one that runs on the original interpreter.</p>
+<p>So far, September passes something like 283 of the 370 tests in the test suite. It would likely pass far more, but I haven&rsquo;t had time to translate dependencies of the test outside of the standard libraries yet.</p>
+<p>Besides the ample room for further optimization work, one critical missing piece of September today is <a href="https://en.wikipedia.org/wiki/Tail_call">tail call optimization</a>, which is <em>required</em> for a correct implementation of Ink, but not implemented in September yet. This is tricky, because most JavaScript environments don&rsquo;t support tail recursion, so we need to expand out tail recursion in Ink code to <code>while</code> or <code>for</code> loops in the generated JavaScript program. I&rsquo;m quite sure this is possible, but doing it well will take some thought, and I haven&rsquo;t had a chance yet to give it that much thought.</p>
+<p>Even so, September compiles many useful Ink programs correctly, and can run it on Node.js. One promising development is that <strong>Ink programs compiled to JavaScript sometimes <em>run faster</em> than when run on the original interpreter</strong> for many kinds of workloads, like number crunching. This is thanks to the many person-years of optimization work that goes into JavaScript engines like V8.</p>
+<h2 id="future-work">Future work</h2>
+<p>As I&rsquo;ve been careful to mention before, September is a work in progress. Besides tail call elimination and better general optimizations, There are a few other ideas I want to explore with September going forward.</p>
+<ul>
+<li><strong>Bundling.</strong> An Ink program can be spread across many files. Since we can identify all of an Ink program&rsquo;s dependencies through semantic analysis, we should be able to combine all the Ink program files that go into a single application and bundle it into a single JavaScript file.</li>
+<li><strong>Interoperability.</strong> One of my hopes for September is that it lets me write web apps with Ink. I haven&rsquo;t had a chance to run any September-generated code in browsers yet (only Node.js), and when I do, I hope to think more about how Ink programs can best access the cornucopia of Web APIs exposed to JavaScript.</li>
+<li><strong>Self-hosting.</strong> While September can currently compile itself, the runtime isn&rsquo;t sufficiently complete for the compiled code to compile itself again &ndash; i.e. September isn&rsquo;t strictly self-hosting. This is because things like the filesystem APIs aren&rsquo;t implemented yet. I hope to get to a point where September can produce code that can compile itself again, and be truly self-hosting, independently of the original Go-based Ink interpreter.</li>
+</ul>
+<p>Although I&rsquo;ve been reading deeply into the design of compilers lately, September is young (as am I) and building September is a continual learning process. There are some design decisions I really like about the compiler, some that I regret, and some that are just carried over from the design of the original interpreter.</p>
+<p>September is the first time I&rsquo;ve written a semantic analysis algorithm of any sort, and the first time I&rsquo;ve written a compiler with a code generation backend of any kind. So it seems like there&rsquo;s a lot of space for me to improve there and dig deeper into literature with some preliminary knowledge of what kinds of problems I want to solve. And I&rsquo;m excited to go do exactly that.</p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+                
+                my previous post,
+                <a href="https://dotink.co/posts/scale-free-software/"><em>Scale-free software</em></a>.
+                
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

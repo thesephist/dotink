@@ -6,10 +6,20 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 02 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 10 Aug 2020 09:42:24 -0400</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>The September compiler: translating Ink to JavaScript</title>
+      <link>https://dotink.co/posts/september/</link>
+      <pubDate>Mon, 10 Aug 2020 09:42:24 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/september/</guid>
+      <description>September is an Ink to JavaScript compiler, written in Ink itself. It&amp;rsquo;s so-called because it&amp;rsquo;s the first in a forthcoming series of autumn-month-themed tools written in and for Ink:
+ September, a compiler to JavaScript, which is what this post is about August, an assembler and linker, which is yet to be started October, a symbolic mathematics environment, which is even more yet to be started, but which I&amp;rsquo;m really excited about  Autumn months are great, especially because august is the best song on folklore which is a lyrical and aural masterpiece by the queen of pop Taylor Swift herself, but that&amp;rsquo;s for me to go on about on a different website.</description>
+    </item>
     
     <item>
       <title>Scale-free software</title>
