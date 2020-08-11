@@ -12,6 +12,13 @@ Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, 
 
 <a href="https://github.com/thesephist/traceur" class="button">See on GitHub &rarr;</a>
 
+### Matisse
+
+Matisse is a minimalistic gallery of generative art pieces that are written in Ink. As a web app, Matisse depends on the September compiler to compile Ink programs and algorithms down to JavaScript.
+
+<a href="https://github.com/thesephist/matisse" class="button">See on GitHub &rarr;</a>
+<a href="https://matisse.vercel.app/" class="button">Try demo &rarr;</a>
+
 ### Polyx
 
 Polyx is Linus's personal productivity suite.
