@@ -9,7 +9,7 @@ Recently, I wrote [September](/posts/september/), which was designed to become a
 
 This became the `september print` command.
 
-![Syntax highlighting with September](img/september-syntax-highlight.jpg)
+![Syntax highlighting with September](/img/september-syntax-highlight.png)
 
 In addition to translating Ink programs to JavaScript, September can now print syntax highlighted Ink code. This was a quick addition to the toolchain -- about 2 hours of work. Here's what changed. (If you find this post hard to grok, you might want to reference [my post about how September works](/posts/september/) first, then come back.)
 

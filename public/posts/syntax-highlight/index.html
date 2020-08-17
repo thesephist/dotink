@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Syntax highlighting Ink programs with the September toolchain | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/syntax-highlight/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Syntax highlighting Ink programs with the September toolchain</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">17 August 2020</div>
+            <div class="meta-item readtime" itemprop="duration">6 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+
+        <p>Although Ink is over a year old now, it has never had a dedicated syntax highlighter. When I write Ink programs, which is the vast majority of my time reading Ink code, I&rsquo;ve used <a href="https://github.com/thesephist/ink/blob/master/utils/ink.vim">a vim syntax file</a> to take advantage of vim&rsquo;s syntax highlighting capabilities. But often I just need to <code>cat</code> an Ink program source file, and for obvious reasons, there hasn&rsquo;t been an off-the-shelf syntax highlighter I could depend on for simply viewing Ink programs.</p>
+<p>Recently, I wrote <a href="/posts/september/">September</a>, which was designed to become a self-hosting Ink-to-JavaScript compiler. But as a part of the project, I wrote a tokenizer and a parser for Ink that were written in Ink itself and easy to hack on. I thought this would be a good base on which to build a simple syntax-highlighting <code>cat</code> replacement for Ink code.</p>
+<p>This became the <code>september print</code> command.</p>
+<p><img src="/img/september-syntax-highlight.png" alt="Syntax highlighting with September"></p>
+<p>In addition to translating Ink programs to JavaScript, September can now print syntax highlighted Ink code. This was a quick addition to the toolchain &ndash; about 2 hours of work. Here&rsquo;s what changed. (If you find this post hard to grok, you might want to reference <a href="/posts/september/">my post about how September works</a> first, then come back.)</p>
+<h2 id="computing-spans-during-tokenization">Computing spans during tokenization</h2>
+<p>All good tokenizers produce tokens that contain some positional information for each token, like a line number and column number, to help debug programs produced by the compiler. Some tools keep richer location information than others. Until now, September&rsquo;s tokenizer simply recorded a <code>line</code> and <code>col</code> property for each token, recording the line and column number at which the token <em>started</em>. On a compiler error, September would output the line and column of the token where compilation failed.</p>
+<p>To syntax highlight a text file, we need to ultimately compute <em>spans</em>. A span is just a piece of data containing where in the text file a token begins, and where it ends. In a trivially simple program like this</p>
+<pre><code>num + 2
+</code></pre><p>we could compute the following spans.</p>
+<pre><code> span  | token
+
+[0, 4] | num
+[4, 6] | +
+[6, 7] | 2
+</code></pre><p>While it&rsquo;s strictly possible to compute spans from line and column numbers of tokens by referencing the original source file, it would have been needlessly complicated to get it right. So instead, I updated September&rsquo;s tokenizer to add a new property to each token data structure: its starting index in the original source file. With this data about each token, I could construct a span for a given token by taking the token&rsquo;s starting index as the span&rsquo;s start, and taking the next token&rsquo;s starting index as the span&rsquo;s end.</p>
+<p>The highlighter uses this exact algorithm to compute a span for every token in the token stream, from which we can syntax-highlight an entire file.</p>
+<h2 id="tokenizing-comments">Tokenizing comments</h2>
+<p>Until now, Ink&rsquo;s language tooling never needed to know about comments, so they were simply ignored during tokenization and parsing in all of the compilers and interpreters. But I wanted to correctly syntax-highlight comments in a de-emphasized gray color, which meant Ink now had to tokenize comments properly.</p>
+<p>Handling comment tokenization correctly throughout the entire compiler would have been nontrivial, because of the way tokens interact with Ink&rsquo;s <code>Separator</code> token (<code>,</code>). These expression-terminating tokens are implicit and auto-inserted by the tokenizer during scanning, akin to JavaScript&rsquo;s <a href="https://2ality.com/2011/05/semicolon-insertion.html">automatic semicolon insertion</a>. Comments can appear in all sorts of weird places &ndash; next to infix operators, right before parentheses in a function call, before a closing parenthesis, in between a unary not <code>~</code> and its operand &ndash; and I thought trying to make the automatic comma insertion rule smarter would have been more complex than simply making comment tokenization optional.</p>
+<p>So Ink&rsquo;s tokenizer in September now has an extra option, <code>lexComments</code>, that can be flipped on to add comment tokens into the token stream. The tokenizer doesn&rsquo;t provide any guarantees about whether the token stream can be parsed correctly with comments, but we don&rsquo;t need that guarantee for syntax highlighting.</p>
+<p>I imagine there might be a future use case where we&rsquo;d want the comment-enabled token stream to be fully correct, but I&rsquo;m betting that we can handle that transition when we need to.</p>
+<p>For now, Ink has a new type of token, <code>Tok.Comment</code>, that includes the full text of a comment node.</p>
+<h2 id="syntax-highlighting-based-on-tokens">Syntax highlighting based on tokens</h2>
+<p>With accurate span information and well-tokenized comments, we&rsquo;re finally ready to syntax highlight an Ink program. Most of the hard work is already done. Here, we simply need to color each substring of the program source file by what type of token it contains. For example, in the above code snippet <code>num + 2</code>, we could say:</p>
+<ul>
+<li><code>num</code> is a <code>Tok.Ident</code> (identifier), so don&rsquo;t color it</li>
+<li><code>+</code> is an infix operator, so color it red</li>
+<li><code>2</code> is a number literal, so color it magenta</li>
+</ul>
+<p>These are arbitrary coloring rules, but this illustrates the process. Because we have a list of all possible token types, we can simply associate each token with a color that we think make sense. Then we can iterate through the entire token stream, and for every token, we produce a correctly colored substring of the original program by referencing the token&rsquo;s span. In the end, we&rsquo;re left with a list of correctly syntax-highlighted substrings of the original program, which we can simply concatenate together to produce a fully highlighted source file.</p>
+<p>To apply color to text, we use <a href="https://github.com/thesephist/ansi.ink">ansi.ink</a>, a color terminal printing library for Ink. The ansi library gives us functions to produce colored versions of a string. For example, we cay say <code>(ansi.Red)('hello, world')</code> to produce a version of the string &lsquo;hello world&rsquo; that would display in red when printed to an ANSI compliant terminal.</p>
+<p>All this happens in the highlighter&rsquo;s <code>main</code> function:</p>
+<pre><code>`` src/highlight.ink
+
+main := prog =&gt; (
+    `` tokenize the program
+    tokens := tokenize(prog)
+
+    `` compute a span for each token
+    ``  we also determine a colorFn for each token,
+    ``  depending on its type.
+    spans := map(tokens, (tok, i) =&gt; {
+        colorFn: [tok.type, tokens.(i + 1)] :: {
+            ` direct function calls are marked green
+                on a best-effort basis `
+            [
+                Tok.Ident
+                {type: Tok.LParen, val: _, line: _, col: _, i: _}
+            ] -&gt; Green
+            _ -&gt; colorFn(tok)
+        }
+        start: tok.i
+        end: tokens.(i + 1) :: {
+            () -&gt; len(prog)
+            _ -&gt; tokens.(i + 1).i
+        }
+    })
+
+    `` create highlighted &quot;pieces&quot; of the program by applying
+    ``  each token's colorFn to its span text
+    pcs := map(
+        spans
+        span =&gt; (span.colorFn)(slice(prog, span.start, span.end))
+    )
+
+    `` concatenate highlighted pieces together for a final output
+    cat(pcs, '')
+)
+</code></pre><p>There are some limitations to this approach:</p>
+<ol>
+<li>Because we are highlighting from a token stream, we have very little semantic information available to us through the process. This means we can&rsquo;t do things like highlighting identifiers based on type, or based on whether one is an argument or a local variable.</li>
+<li>We will attempt to correctly highlight incorrect programs that would otherwise contain syntax errors.</li>
+<li>Because the highlighting logic defined here is tied closely to September&rsquo;s tokenizer, we can&rsquo;t reuse any logic here to write syntax highlighting rules for other environments like GitHub&rsquo;s <code>linguist</code> or Visual Studio Code.</li>
+</ol>
+<p>For my purposes of building a better <code>cat</code> for Ink programs though, none of these are deal breakers.</p>
+<p>From now, whenever I want to read an Ink program file in the terminal, rather than opening up a new Vim buffer, I can simply <code>september print file.ink</code>. How nice!</p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+                
+                my previous post,
+                <a href="https://dotink.co/posts/september/"><em>The September compiler: translating Ink to JavaScript</em></a>.
+                
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

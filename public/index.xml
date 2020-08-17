@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Syntax highlighting Ink programs with the September toolchain</title>
+      <link>https://dotink.co/posts/syntax-highlight/</link>
+      <pubDate>Mon, 17 Aug 2020 02:03:23 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/syntax-highlight/</guid>
+      <description>Although Ink is over a year old now, it has never had a dedicated syntax highlighter. When I write Ink programs, which is the vast majority of my time reading Ink code, I&amp;rsquo;ve used a vim syntax file to take advantage of vim&amp;rsquo;s syntax highlighting capabilities.</description>
+    </item>
+    
+    <item>
       <title>The September compiler: translating Ink to JavaScript</title>
       <link>https://dotink.co/posts/september/</link>
       <pubDate>Mon, 10 Aug 2020 09:42:24 -0400</pubDate>
