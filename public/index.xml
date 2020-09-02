@@ -12,6 +12,16 @@
     
     
     <item>
+      <title>Ink language support in Visual Studio Code</title>
+      <link>https://dotink.co/posts/ink-vscode/</link>
+      <pubDate>Wed, 02 Sep 2020 02:16:52 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/ink-vscode/</guid>
+      <description>Today, I published the first version of ink-vscode, which adds support for the Ink language to the Visual Studio Code editor.
+So far, there has only been one kind of editor support for the Ink language, in the form of a syntax definition for the Vim editor.</description>
+    </item>
+    
+    <item>
       <title>Syntax highlighting Ink programs with the September toolchain</title>
       <link>https://dotink.co/posts/syntax-highlight/</link>
       <pubDate>Mon, 17 Aug 2020 02:03:23 -0400</pubDate>

@@ -65,6 +65,18 @@ Alternatively, the interpreter will read from `stdin` if exists, and evaluate fr
 $ ink < prog.ink
 ```
 
+### Editor support
+
+Ink currently has support for two editors, Vim and [Visual Studio Code](/posts/ink-vscode).
+
+**Vim** support is enabled by the [Vim syntax definition file](https://github.com/thesephist/ink/blob/master/utils/ink.vim). Copy the syntax file to `~/.vim/syntax/ink.vim` in your Vim configuration directory to take advantage of the support, and enable it by adding the following line to your `.vimrc` to recognize `.ink` files as Ink programs:
+
+```
+autocmd BufNewFile,BufRead *.ink set filetype=ink
+```
+
+**Visual Studio Code** support comes from the [ink-vscode extension](https://github.com/thesephist/ink-vscode). The extension includes syntax highlighting for Ink programs within the editor. At time of writing, the extension is not in the Visual Studio Code Marketplace, and needs to be installed from source. You can find instructions on how to do so in the repository linked above.
+
 ## A brief tour of Ink
 
 ### Values and operators

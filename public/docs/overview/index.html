@@ -57,6 +57,7 @@
         <li><a href="#setup-and-installation">Setup and installation</a></li>
         <li><a href="#the-repl">The repl</a></li>
         <li><a href="#writing-and-running-programs">Writing and running programs</a></li>
+        <li><a href="#editor-support">Editor support</a></li>
       </ul>
     </li>
     <li><a href="#a-brief-tour-of-ink">A brief tour of Ink</a>
@@ -107,7 +108,12 @@ ink v0.1.7
 <pre><code>$ ink prog.ink
 </code></pre><p>Alternatively, the interpreter will read from <code>stdin</code> if exists, and evaluate from the input. So the above is equivalent to</p>
 <pre><code>$ ink &lt; prog.ink
-</code></pre><h2 id="a-brief-tour-of-ink">A brief tour of Ink</h2>
+</code></pre><h3 id="editor-support">Editor support</h3>
+<p>Ink currently has support for two editors, Vim and <a href="/posts/ink-vscode">Visual Studio Code</a>.</p>
+<p><strong>Vim</strong> support is enabled by the <a href="https://github.com/thesephist/ink/blob/master/utils/ink.vim">Vim syntax definition file</a>. Copy the syntax file to <code>~/.vim/syntax/ink.vim</code> in your Vim configuration directory to take advantage of the support, and enable it by adding the following line to your <code>.vimrc</code> to recognize <code>.ink</code> files as Ink programs:</p>
+<pre><code>autocmd BufNewFile,BufRead *.ink set filetype=ink
+</code></pre><p><strong>Visual Studio Code</strong> support comes from the <a href="https://github.com/thesephist/ink-vscode">ink-vscode extension</a>. The extension includes syntax highlighting for Ink programs within the editor. At time of writing, the extension is not in the Visual Studio Code Marketplace, and needs to be installed from source. You can find instructions on how to do so in the repository linked above.</p>
+<h2 id="a-brief-tour-of-ink">A brief tour of Ink</h2>
 <h3 id="values-and-operators">Values and operators</h3>
 <p>Ink has number, string, boolean, null, and composite values.</p>
 <pre><code>` numbers `
