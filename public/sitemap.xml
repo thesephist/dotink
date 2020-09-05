@@ -3,12 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dotink.co/posts/ink-vscode/</loc>
-    <lastmod>2020-09-02T02:16:52-04:00</lastmod>
+    <loc>https://dotink.co/posts/</loc>
+    <lastmod>2020-09-05T13:13:06-04:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dotink.co/posts/</loc>
+    <loc>https://dotink.co/posts/go-syscalls/</loc>
+    <lastmod>2020-09-05T13:13:06-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/ink-vscode/</loc>
     <lastmod>2020-09-02T02:16:52-04:00</lastmod>
   </url>
   

@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>System calls from the Go runtime in the Minimum Viable Go Program</title>
+      <link>https://dotink.co/posts/go-syscalls/</link>
+      <pubDate>Sat, 05 Sep 2020 13:13:06 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/go-syscalls/</guid>
+      <description>Go, despite being a fully compiled language, has a sizeable runtime that helps Go programs handle things like multithreading, input/output, global variable initialization, and memory safety. To provide all of these convenience and safety features, the Go runtime interacts with the operating system in ways that are often opaque to the Go code we write.</description>
+    </item>
+    
+    <item>
       <title>Ink language support in Visual Studio Code</title>
       <link>https://dotink.co/posts/ink-vscode/</link>
       <pubDate>Wed, 02 Sep 2020 02:16:52 -0400</pubDate>
