@@ -104,7 +104,7 @@ You'll notice here hat Ink comments are demarcated with backticks. This is Ink's
 
 We define variables in Ink with the `:=` assignment operator. The assignment operator binds a value to a variable name (or a composite value's key) in the current scope. Variables in Ink are lexically scoped.
 
-Ink supports the basic arithmetic operations using infix operators, and more advanced functions using builtin native functions.
+Ink supports the basic arithmetic operations using infix operators, and more advanced functions using builtin native functions. Note that to declare a negative number, Ink uses the negation operator `~` (a tilde) instead of a negative sign.
 
 ```
 (1 + 2 * 3 / 4) + ~5 % 7 `` -> 1.78571429
