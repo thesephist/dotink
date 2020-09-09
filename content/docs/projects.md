@@ -33,17 +33,23 @@ Codeliner generates graphics from program source files.
 
 ## Language tooling
 
-### dotink
-
-This website is served by a web server written in Ink.
-
-<a href="https://github.com/thesephist/dotink" class="button">See on GitHub &rarr;</a>
-
 ### September
 
 September is an Ink to JavaScript compiler, written in Ink itself and tested against Ink's standard library tests. September aims to become self-hosting, but is not there yet. I wrote about [building September here](/posts/september/).
 
 <a href="https://github.com/thesephist/september" class="button">See on GitHub &rarr;</a>
+
+### Ink by Example
+
+Ink by Example is a hands-on introduction to programming in Ink using annotated example programs. The website is run by [@healeycodes](https://healeycodes.com/) and [powered by Ink](https://github.com/healeycodes/inkbyexample/tree/main/src).
+
+<a href="https://inkbyexample.com/" class="button">Visit Ink by Example &rarr;</a>
+
+### dotink
+
+This website is served by a web server written in Ink.
+
+<a href="https://github.com/thesephist/dotink" class="button">See on GitHub &rarr;</a>
 
 ### inkfmt
 

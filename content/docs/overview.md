@@ -79,6 +79,8 @@ autocmd BufNewFile,BufRead *.ink set filetype=ink
 
 ## A brief tour of Ink
 
+Let's get into the building blocks of Ink programs. If you like to learn from studying short example programs, you might also like [Ink by Example](https://inkbyexample.com/).
+
 ### Values and operators
 
 Ink has number, string, boolean, null, and composite values.
