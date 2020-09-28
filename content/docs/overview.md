@@ -79,6 +79,8 @@ autocmd BufNewFile,BufRead *.ink set filetype=ink
 
 ## A brief tour of Ink
 
+Let's get into the building blocks of Ink programs. If you like to learn from studying short example programs, you might also like [Ink by Example](https://inkbyexample.com/).
+
 ### Values and operators
 
 Ink has number, string, boolean, null, and composite values.
@@ -104,7 +106,7 @@ You'll notice here hat Ink comments are demarcated with backticks. This is Ink's
 
 We define variables in Ink with the `:=` assignment operator. The assignment operator binds a value to a variable name (or a composite value's key) in the current scope. Variables in Ink are lexically scoped.
 
-Ink supports the basic arithmetic operations using infix operators, and more advanced functions using builtin native functions.
+Ink supports the basic arithmetic operations using infix operators, and more advanced functions using builtin native functions. Note that to declare a negative number, Ink uses the negation operator `~` (a tilde) instead of a negative sign.
 
 ```
 (1 + 2 * 3 / 4) + ~5 % 7 `` -> 1.78571429
