@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Schrift: a faster, bytecode-driven interpreter for Ink | Ink</title>
+	<link rel="canonical" href="https://dotink.co/posts/schrift-code/" />
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Schrift: a faster, bytecode-driven interpreter for Ink</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">23 September 2020</div>
+            <div class="meta-item readtime" itemprop="duration">13 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-a-second-interpreter">Why a second interpreter?</a>
+      <ul>
+        <li><a href="#schrifts-values-and-goals">Schrift&rsquo;s values and goals</a></li>
+        <li><a href="#why-rust">Why Rust?</a></li>
+      </ul>
+    </li>
+    <li><a href="#schrifts-bytecode-and-virtual-machine">Schrift&rsquo;s bytecode and virtual machine</a>
+      <ul>
+        <li><a href="#register-based-ssa-style-bytecode">Register-based SSA-style bytecode</a></li>
+        <li><a href="#blocks-and-scopes">Blocks and scopes</a></li>
+        <li><a href="#memory-allocation-and-escape-analysis">Memory allocation and escape analysis</a></li>
+        <li><a href="#the-virtual-machine">The virtual machine</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>I&rsquo;ve been working on a new big project recently: a faster, better-designed, more versatile interpreter for Ink, rewritten from the ground-up, called <strong>Schrift</strong>.</p>
+<p>Schrift is an <strong>experimental runtime for Ink focused on performance and runtime instrumentation capabilities</strong>, and is still very much under development. Many parts of the interpreter are not correctly implemented yet, but the high-level architecture has been pinned down for most pieces of the project. This post is an overview of the architecture of this new interpreter, and how it differs from the existing, <a href="https://github.com/thesephist/ink">Go-based interpreter</a>.</p>
+<p><a href="https://github.com/thesephist/schrift" class="button">See Schrift on GitHub →</a></p>
+<p>Incidentally, the name <em>schrift</em> comes from the German noun &ldquo;Schrift,&rdquo;, which stands for &ldquo;handwriting&rdquo; or &ldquo;script,&rdquo; which parallels the name &ldquo;Ink&rdquo; nicely. The word itself also sounds quite speedy, and speedy is what we&rsquo;re going for with this project.</p>
+<h2 id="why-a-second-interpreter">Why a second interpreter?</h2>
+<p>When I first created the Ink language and built the initial Go-based interpreter (which I&rsquo;ll call the &ldquo;naive interpreter&rdquo; to disambiguate against Schrift), I was also concurrently learning about the basics of a programming language runtime. As a result, the naive interpreter&rsquo;s design is, well, <em>naive</em>. It has a rather inefficient design across the pipeline, and is built as a tree-walk interpreter which has quite a low ceiling for efficiency. The naive interpreter&rsquo;s design doesn&rsquo;t lend itself very easily to the kinds of optimizations common to all modern interpreters, and makes some fundamental assumptions about how runtime variables are represented that makes it difficult to incrementally improve it with a more efficient design.</p>
+<p>In addition, the naive interpreter depends on the Go runtime for many essential features like garbage collection, efficient hashmaps, and managing the call stack. While the Go runtime is fast and efficient, by letting the host language take over for these facilities, the naive interpreter gives up a lot of control that we would want over the interpreter if we want to make certain kinds of optimizations and deliver better error messages.</p>
+<p>In summary, the naive interpreter based on Go and the Go runtime gave up control and performance headroom for simplicity of implementation, and now that we have one simple, correct implementation, I wanted to experiment with a faster interpreter for Ink that could exercise more control over the design of the runtime, and leave more room for performance optimizations to the language.</p>
+<h3 id="schrifts-values-and-goals">Schrift&rsquo;s values and goals</h3>
+<p>I&rsquo;m a big believer an idea borrowed from Oxide Computing&rsquo;s Bryan Cantrill, that programming languages and implementations have <em>values</em>. Values are deeper than goals, and guide decisions and priorities of a language or implementation&rsquo;s design. Schrift&rsquo;s values are intentionally different than that of the naive Ink interpreter. The naive interpreter values simplicity of implementation and &ldquo;hackability&rdquo; above all else. By contrast, Schrift is less of a prototype. Schrift&rsquo;s values are:</p>
+<ul>
+<li><strong>Performance</strong>. Schrift will run Ink programs quickly and efficiently, taking good advantage of available hardware, and allow for new optimizations to be introduced into the interpreter easily.</li>
+<li><strong>Compatibility</strong>. Schrift&rsquo;s implementation of Ink will try to be 100% compatible with the existing implementation.</li>
+<li><strong>Developer experience</strong>. Specifically, Schrift will produce great error messages against erroneous programs, and allow errors to produce useful stack traces.</li>
+<li><strong>Observability</strong>. It&rsquo;s important to understand how a program executes on a machine. Schrift should support runtime profiling and tracing with minimal overhead, and offer hooks in the Ink language to take advantage of these capabilities.</li>
+</ul>
+<h3 id="why-rust">Why Rust?</h3>
+<p>In light of Schrift&rsquo;s values, it should be no surprise that Rust is the implementation language of choice. Rust is fast, and offers enough control over the runtime environment of the program that we can ensure that we can move things around and use data representations in the runtime that best fit what makes Ink run best. Rust, unlike Go used in the naive interpreter, has a lightweight runtime, so Schrift can define its own garbage collection mechanism, its own concurrency style for event handling, and its own choice of implementations for fundamental data structures like hashmaps.</p>
+<p>I would be lying if I didn&rsquo;t include the fact that I&rsquo;ve wanted to learn Rust for a while. Writing a new interpreter was also a good opportunity for me to learn Rust while writing a non-trivial project. Rust was a great fit for Schrift&rsquo;s needs, balancing performance headroom with safety and control over the runtime&rsquo;s data representation and memory.</p>
+<h2 id="schrifts-bytecode-and-virtual-machine">Schrift&rsquo;s bytecode and virtual machine</h2>
+<p>You can find a high level overview of Schrift&rsquo;s overall architecture in the <a href="https://github.com/thesephist/schrift">GitHub repository</a>&rsquo;s readme. Here, I want to explore implementation details of the compiler, and the bytecode format more specifically.</p>
+<p>Ink&rsquo;s naive interpreter was a simple tree-walking interpreter, and as a result, didn&rsquo;t need any intermediate representation beyond an abstract syntax tree. Schrift, by comparison, wants to compile Ink down to some binary format that a virtual machine can optimize and execute efficiently. Schrift uses a bytecode format that&rsquo;s somewhat unique, but inspired by Lua and Python&rsquo;s designs.</p>
+<h3 id="register-based-ssa-style-bytecode">Register-based SSA-style bytecode</h3>
+<p>Schrift&rsquo;s bytecode format is a hybrid between a low-level <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">SSA</a> and a true &ldquo;bytecode&rdquo; format. Schrift&rsquo;s VM is designed to be a register machine, and the bytecode format makes it easy to map each SSA operation derived from an Ink program to instructions acting on registers in the VM.</p>
+<p>For example, one instruction in the Schrift bytecode might be</p>
+<pre><code>@3  ADD @1 @2
+</code></pre><p>This instruction copies the values from registers 1 and 2, adds them together following Ink&rsquo;s add semantics (addition for numbers, a boolean &ldquo;or&rdquo; for booleans, concatenation for strings) and places it in register 3. A more complex instruction is the <code>CALL</code> instruction for calling a closure or a function with variadic arguments. (There are more efficient, non-variadic forms of <code>CALL</code> for 1, 2, or 3-argument calls, which are common.) This takes the form</p>
+<pre><code>@5  CALL @3 [@4, @5, @6, @7]
+</code></pre><p>This instruction takes a callable value from register 3, and calls it with arguments copied from registers 4, 5, 6, and 7. The return value of that call is then placed into register 5. This code might have been derived from an Ink program line that does something like</p>
+<pre><code>b := f(a, b, c, d)
+</code></pre><p>These examples illustrate how the bytecode instructions generally have an SSA-like feel to them &ndash; primitive operations take operands on the right and map them to registers on the left. However, unlike in SSA, destination registers in Schrift bytecode can be reused if a variable is mutated. In this way, we follow the SSA style but deviate where Ink&rsquo;s semantic simplicity allows us to.</p>
+<p>Every bytecode instruction takes one destination register, and every instruction may optionally take zero or more argument registers. For simplicity&rsquo;s sake, there are no &ldquo;immediates&rdquo; in the Schrift bytecode &ndash; all constants are loaded from a per-block constant pool using the specialized <code>LOAD_CONST</code> instruction, before they are used by other instructions. You can find the full list of valid Ink bytecode instructions in <a href="https://github.com/thesephist/schrift/blob/master/src/gen.rs"><code>src/gen.ink</code></a>.</p>
+<h3 id="blocks-and-scopes">Blocks and scopes</h3>
+<p>Schrift compiles a single Ink program down into a series of <strong>blocks</strong>, each of which contain bytecode <strong>instructions</strong>, as well as some per-block metadata. A block in Schrift bytecode is similar to the &ldquo;basic block&rdquo; abstraction used in SSA-driven compilers like LLVM &ndash; a block in Schrift represents a contiguous stretch of control flow whose only entrypoint is at the top of the code, and whose only exit point is at the bottom of the code. Beyond a single specialized instruction for jumping forward conditionally, used to implement match expressions, Schrift compiles control flow down to jumps (or calls) from blocks to other blocks.</p>
+<p>Schrift blocks are inspired by CPython&rsquo;s code blocks, in that each block contains a sequential chunk of code, alongside some metadata like a constant pool and array of surrounding captured variables in the case of closures. Here&rsquo;s an annotated overview of one such block generated by Schrift, using the <code>--debug-compile</code> compiler flag.</p>
+<pre><code>#5                  # this is Block #5 in the program.
+                    # blocks are globally indexed from zero.
+                    # and indexes are used to call and jump to
+                    # blocks in the bytecode.
+
+consts: [           # constants used in this block
+    0,              # number constant
+    Func(2, []),    # Funcs are other blocks we can jump to
+    1,
+    Func(3, []),
+    Func(4, [])
+]
+
+binds: [6]          # implementation detail for closures,
+                    # references a parent scope's register
+  @0    NOP
+  @2    LOAD_CONST 0        # load constant from constant pool
+  @3    LOAD_CONST 1
+  @1    CALL_IF_EQ @3, @0 == @2, 2
+                    # CALL_IF_EQ is the only branching
+                    # construct in Schrift. It calls a closure
+                    # if two register values are equal, and
+                    # optionally does a forward jump.
+  @4    LOAD_CONST 2
+  @5    LOAD_CONST 3
+  @1    CALL_IF_EQ @5, @0 == @4, 1
+  @6    NOP
+  @0    ESCAPE @0           # escape stack value to vm heap
+  @7    LOAD_ESC 0          # load escaped value to stack
+  @8    LOAD_CONST 4
+  @1    CALL_IF_EQ @8, @0 == @6, 0
+</code></pre><p>A block corresponds in source code to either a function or an expression list, and represents its own lexical scope.</p>
+<p>At runtime, the Schrift VM will begin execution at the top of block 0 (the hard-coded &ldquo;main&rdquo; entrypoint). Every time a new function is called, the corresponding block will be loaded from its index and the VM will allocate a new stack frame in which to execute the called block&rsquo;s code.</p>
+<p>Let&rsquo;s look at some generated bytecode for a complete Ink program. Here&rsquo;s a simple hello world in Ink.</p>
+<pre><code>log := s =&gt; out(s + char(10))
+
+message := 'Hello, Ink!'
+log(message)
+</code></pre><p>Before optimizations, Schrift compiles this code down to two blocks, one entrypoint block at index zero, and one block for the <code>log</code> function.</p>
+<p>Here&rsquo;s the first block, the program entrypoint.</p>
+<pre><code>#0      
+consts: [
+    NativeFunc(...),
+    NativeFunc(...),
+    NativeFunc(...),
+    NativeFunc(...),
+        # NativeFuncs are builtin functions
+        # defined at the global scope.
+    Func(1, []),
+        # function definition for &quot;log&quot;
+    'Hello, Ink!'
+        # the string literal for &quot;message&quot;
+]
+binds: []
+  @0    LOAD_CONST 0    # load global constants
+  @1    LOAD_CONST 1
+  @2    LOAD_CONST 2
+  @3    LOAD_CONST 3
+  @0    ESCAPE @0       # &quot;out&quot; and &quot;char&quot; need to &quot;escape&quot;
+  @3    ESCAPE @3       # to be used in closures (more below).
+  @6    LOAD_CONST 4    # load the `log` function block
+  @4    MOV @6
+  @7    LOAD_CONST 5    # load the message string value
+  @5    MOV @7
+  @8    CALL @4, [@5]   # call `log` with the string argument
+
+</code></pre><p>Here&rsquo;s the second block, which represents the <code>log</code> function.</p>
+<pre><code>#1      
+consts: [10]
+        # `log` only has one constant, the number 10
+binds: [3, 0]
+        # `log` &quot;closes over&quot; values in parent frame's
+        # registers 0 and 3 (out and char builtin functions)
+  @1    LOAD_ESC 0          # load &quot;out&quot; from heap
+  @2    LOAD_ESC 1          # load &quot;char&quot; from heap
+  @3    LOAD_CONST 0        # load constant 10
+  @4    CALL @2, [@3]       # perform char(10)
+  @5    @0 + @4             # concatenate strings
+  @6    CALL @1, [@5]       # perform out(...) and return
+</code></pre><h3 id="memory-allocation-and-escape-analysis">Memory allocation and escape analysis</h3>
+<p>One of the more sophisticated tasks that the compiler performs during code generation is <a href="https://en.wikipedia.org/wiki/Escape_analysis">escape analysis</a>.</p>
+<p>In Ink, every function is a closure. This means that a function &ldquo;captures&rdquo; the lexical environment in which it was created. In other words, it can reference any variables outside of its local scope, in a parent scope many levels up. By default, values in Schrift are stack allocated as a performance measure, but if a value is captured by a closure in a child scope, it can survive longer than the scope in which that value was first created. This is a problem for stack-allocated values, so variables which are captured by a closure need to be either allocated on a heap, or moved to the heap before its original stack frame exits. The task of figuring out which variables must be heap-allocated due to closures is called escape analysis, and in Schrift, the compiler performs this job.</p>
+<p>During code generation, the compiler will also compute lexical variable bindings to prove which variable names refer to which variable declarations in a program. Because this work is already being done, the compiler can also do a bit of extra work to check whether a variable access is pulling a value out of a local frame or its parent frame. When this happens, the original variable declaration in the parent scope is annotated with the fact that that variable must &ldquo;escape&rdquo; into the heap before any closures are invoked. Then, the compiler uses this information to add an <code>ESCAPE</code> instruction to the variable declaration, to let the variable&rsquo;s value escape to the heap during execution.</p>
+<p>We see this in the sample hello world program and bytecode above, where the <code>log</code> function captures the <code>char</code> and <code>out</code> builtins of the parent scope. As a result, before the <code>log</code> function (block 1) is actually called, in block 0, two <code>ESCAPE</code> instructions push those values out to the heap.</p>
+<h3 id="the-virtual-machine">The virtual machine</h3>
+<p>All of the effort to generate and optimize bytecode for an Ink program culminates in a finale at runtime, when the Schrift virtual machine loads the bytecode blocks and begins executing the program.</p>
+<p>In comparison to the bytecode format and the compiler itself, the Schrift virtual machine is quite conventional. The VM follows a basic <code>while</code>/<code>switch</code> instruction dispatch loop, where the VM iterates through every bytecode instruction, incrementing the instruction pointer and dispatching instructions based on the opcode at each iteration. At a function call, the VM allocates a new stack frame, loads the right arguments into the new frame, and begins executing bytecode from the newly loaded block.</p>
+<p>The primary design quirk of the Schrift VM is that, while it&rsquo;s designed as a register machine, the &ldquo;registers&rdquo; technically live on the stack. The Ink VM doesn&rsquo;t have a &ldquo;stack&rdquo; in the traditional sense of a call stack that exists apart from the VM&rsquo;s registers. Rather, the VM uses slots in a stack frame&rsquo;s allocated memory region as the registers for executing that particular function call. New &ldquo;register&rdquo; slots are allocated for every stack frame, and each frame is optionally reused for tail-recursive calls on loops. This simplifies the code complexity and calling convention of the VM.</p>
+<p>Unlike the naive interpreter, Schrift allocates and manages its own runtime stack and program state for executing Ink. Because of this, Schrift can have much finer control over how certain Ink semantics are executed, and offer much more straightforward visibility into the VM state. For example, it should be much easier to implement an error stack trace in Schrift than in the naive interpreter, as we have control and visibility through the entire call stack of a running Ink program.</p>
+<p>The VM will continue to evolve &ndash; what&rsquo;s there today is a minimal implementation that naively executes the generated bytecode. But I&rsquo;m excited for the opportunity created by this new abstraction for Ink to take advantage of the higher performance headroom and debugging affordances like high quality traces and profiling. For example, the VM could currently benefit from a more data-oriented design, with a single contiguous stack of registers in memory and an explicit return register between function invocations, with a separate stack frame metadata stack.</p>
+<p>All of this goes to show that Schrift has a lot of ways to improve from its current state, but I&rsquo;m excited by the new possibilities for improvement it opens up for optimizations and instrumentation, and I&rsquo;ve also been enjoying diving into Rust as a part of the process. Many of the ideas outlined here are up for change, but I think the high-level goals and design of Schrift are pointing in the right direction, and I&rsquo;m looking forward to the possibilities it can open up for Ink.</p>
+
+        <hr/>
+        <p>
+            If you enjoyed this piece, you might also enjoy
+            
+                
+                my previous post,
+                <a href="https://dotink.co/posts/go-syscalls/"><em>System calls from the Go runtime in the Minimum Viable Go Program</em></a>.
+                
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

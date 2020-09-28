@@ -6,10 +6,16 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 05 Sep 2020 13:13:06 -0400</lastBuildDate>
-    
-	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Wed, 23 Sep 2020 06:36:34 -0400</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Schrift: a faster, bytecode-driven interpreter for Ink</title>
+      <link>https://dotink.co/posts/schrift-code/</link>
+      <pubDate>Wed, 23 Sep 2020 06:36:34 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/schrift-code/</guid>
+      <description>I&amp;rsquo;ve been working on a new big project recently: a faster, better-designed, more versatile interpreter for Ink, rewritten from the ground-up, called Schrift.
+Schrift is an experimental runtime for Ink focused on performance and runtime instrumentation capabilities, and is still very much under development.</description>
+    </item>
     
     <item>
       <title>System calls from the Go runtime in the Minimum Viable Go Program</title>
