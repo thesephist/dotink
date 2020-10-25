@@ -25,6 +25,12 @@ Polyx is Linus's personal productivity suite.
 
 <a href="https://github.com/thesephist/polyx" class="button">See on GitHub &rarr;</a>
 
+### Histools analyzer
+
+Histools is a collection of tools for generating heatmaps and data visualizations from browser history data. Ink is used for a small script that exports and transforms data for display.
+
+<a href="https://github.com/thesephist/histools" class="button">See demo on GitHub &rarr;</a>
+
 ### Codeliner
 
 Codeliner generates graphics from program source files.
