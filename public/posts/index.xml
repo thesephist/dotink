@@ -6,7 +6,16 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 23 Sep 2020 06:36:34 -0400</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 24 Oct 2020 22:53:37 -0400</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Histools: visualizing my browser history over time with Ink and Torus</title>
+      <link>https://dotink.co/posts/histools/</link>
+      <pubDate>Sat, 24 Oct 2020 22:53:37 -0400</pubDate>
+      
+      <guid>https://dotink.co/posts/histools/</guid>
+      <description>Today I made Histools, a small set of tools for visualizing browser history data from Apple&amp;rsquo;s Safari browser. It renders a heatmap of pages visited on Safari over time, alongside a searchable, sorted list of pages I&amp;rsquo;ve visited most often with mini-heatmaps for each URL.</description>
+    </item>
+    
     <item>
       <title>Schrift: a faster, bytecode-driven interpreter for Ink</title>
       <link>https://dotink.co/posts/schrift-code/</link>
