@@ -1,6 +1,7 @@
 ---
 title: "Things I'm learning about in sales"
 date: 2019-08-26T00:00:00-00:00
+canonical: https://thesephist.com/posts/sales-learnings/
 ---
 
 (This is an archived copy of a post originally published at [thesephist.com](https://thesephist.com/posts/sales-learnings/).)

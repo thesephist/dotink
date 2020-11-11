@@ -1,6 +1,7 @@
 ---
 title: "How I side project"
 date: 2019-07-22T00:00:00-00:00
+canonical: https://thesephist.com/posts/how-i-side-project/
 ---
 
 (This is an archived copy of a post originally published at [thesephist.com](https://thesephist.com/posts/how-i-side-project/).)

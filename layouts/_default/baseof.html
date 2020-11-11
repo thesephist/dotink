@@ -4,7 +4,11 @@
 	{{ partial "head.html" }}
 
 	<title>{{ if .Title }}{{ .Title }}{{ end }} | Ink</title>
+	{{ if .Params.Canonical }}
+	<link rel="canonical" href="{{ .Params.Canonical }}" />
+	{{ else }}
 	<link rel="canonical" href="{{ .Permalink }}" />
+	{{ end }}
 </head>
 
 <body class="type-{{ .Kind }}">

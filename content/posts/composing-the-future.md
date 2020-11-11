@@ -1,6 +1,7 @@
 ---
 title: "Thank you Repl.it, Hello Hack Club"
 date: 2019-08-15T00:00:00-00:00
+canonical: https://thesephist.com/posts/composing-the-future/
 ---
 
 (This is an archived copy of a post originally published at [thesephist.com](https://thesephist.com/posts/composing-the-future/).)
