@@ -117,6 +117,28 @@ t := 0.6
 pow(sin(t), 2) + pow(cos(t), 2) `` -> 1
 ```
 
+### Logical and bitwise operators
+
+Ink has binary operators `&` (and), `|` (or), and `^` (xor). These operators can be used on booleans, integer values of numbers, and strings to perform binary or bitwise operations. Bitwise operations on byte strings are implemented natively and useful for manipulating large vectors of data at once.
+
+```
+`` boolean logic
+true & false `` -> false
+false ^ true `` -> true
+
+`` bitwise integer operations
+15 & 23 `` -> 7
+15 | 23 `` -> 31
+15 ^ 23 `` -> 24 (15 xor 23)
+
+`` bitwise ops on strings (byte arrays)
+'abcd' & 'ABCD' `` -> 'ABCD'
+'abcd' | 'ABCD' `` -> 'abcd'
+'abcd' ^ 'ABCD' `` -> '    '
+`` note: if two string lengths don't match, the shorter
+``  string will be zero-extended at the end.
+```
+
 ### Variables
 
 A variable in Ink can contain any alphanumeric Unicode character, as well as `?`, `!` and `@`. The three last special symbols are conventionally used to indicate special semantics:

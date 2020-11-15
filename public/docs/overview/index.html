@@ -42,7 +42,7 @@
             <h1>An overview of Ink</h1>
         </div>
         <div class="meta overlay">
-            <div class="meta-item readtime" itemprop="duration">11 mins</div>
+            <div class="meta-item readtime" itemprop="duration">12 mins</div>
         </div>
     </div>
     <article class="overlay">
@@ -65,6 +65,7 @@
     <li><a href="#a-brief-tour-of-ink">A brief tour of Ink</a>
       <ul>
         <li><a href="#values-and-operators">Values and operators</a></li>
+        <li><a href="#logical-and-bitwise-operators">Logical and bitwise operators</a></li>
         <li><a href="#variables">Variables</a></li>
         <li><a href="#expressions">Expressions</a></li>
         <li><a href="#strings">Strings</a></li>
@@ -142,6 +143,23 @@ pow(2, 10) `` -&gt; 1024
 
 t := 0.6
 pow(sin(t), 2) + pow(cos(t), 2) `` -&gt; 1
+</code></pre><h3 id="logical-and-bitwise-operators">Logical and bitwise operators</h3>
+<p>Ink has binary operators <code>&amp;</code> (and), <code>|</code> (or), and <code>^</code> (xor). These operators can be used on booleans, integer values of numbers, and strings to perform binary or bitwise operations. Bitwise operations on byte strings are implemented natively and useful for manipulating large vectors of data at once.</p>
+<pre><code>`` boolean logic
+true &amp; false `` -&gt; false
+false ^ true `` -&gt; true
+
+`` bitwise integer operations
+15 &amp; 23 `` -&gt; 7
+15 | 23 `` -&gt; 31
+15 ^ 23 `` -&gt; 24 (15 xor 23)
+
+`` bitwise ops on strings (byte arrays)
+'abcd' &amp; 'ABCD' `` -&gt; 'ABCD'
+'abcd' | 'ABCD' `` -&gt; 'abcd'
+'abcd' ^ 'ABCD' `` -&gt; '    '
+`` note: if two string lengths don't match, the shorter
+``  string will be zero-extended at the end.
 </code></pre><h3 id="variables">Variables</h3>
 <p>A variable in Ink can contain any alphanumeric Unicode character, as well as <code>?</code>, <code>!</code> and <code>@</code>. The three last special symbols are conventionally used to indicate special semantics:</p>
 <ul>
