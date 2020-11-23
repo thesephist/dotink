@@ -22,18 +22,16 @@
 
         {{ .Content }}
         <hr/>
-        <p>
-            If you enjoyed this piece, you might also enjoy
+        <p class="prevInSection">
+            {{ if .PrevInSection }}
+            &larr;
+            <a href="{{ .PrevInSection.Permalink }}"><em>{{ .PrevInSection.Title }}</em></a>
+            {{ end }}
+        </p>
+        <p class="nextInSection">
             {{ if .NextInSection }}
-            my next post,
-            <a href="{{ .NextInSection.Permalink }}"><em>{{ .NextInSection.Title }}</em></a>.
-            {{ else }}
-                {{ if .PrevInSection }}
-                my previous post,
-                <a href="{{ .PrevInSection.Permalink }}"><em>{{ .PrevInSection.Title }}</em></a>.
-                {{ else }}
-                other posts on the site. Read more on the <a href="/posts/">posts page</a>.
-                {{ end }}
+            <a href="{{ .NextInSection.Permalink }}"><em>{{ .NextInSection.Title }}</em></a>
+            &rarr;
             {{ end }}
         </p>
     </article>

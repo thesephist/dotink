@@ -6,7 +6,11 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 24 Oct 2020 22:53:37 -0400</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 24 Oct 2020 22:53:37 -0400</lastBuildDate>
+    
+	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Histools: visualizing my browser history over time with Ink and Torus</title>
       <link>https://dotink.co/posts/histools/</link>

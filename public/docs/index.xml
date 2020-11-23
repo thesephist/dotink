@@ -5,7 +5,11 @@
     <link>https://dotink.co/docs/</link>
     <description>Recent content in Ink language docs on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://dotink.co/docs/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    
+	<atom:link href="https://dotink.co/docs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>An overview of Ink</title>
       <link>https://dotink.co/docs/overview/</link>

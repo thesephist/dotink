@@ -147,6 +147,14 @@ nav a {
 
 /* FOOTER */
 
+.prevInSection {
+    text-align: left;
+}
+
+.nextInSection {
+    text-align: right;
+}
+
 footer .overlay {
     height: 80px;
     display: flex;
