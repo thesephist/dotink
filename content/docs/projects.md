@@ -25,6 +25,12 @@ Polyx is Linus's personal productivity suite.
 
 <a href="https://github.com/thesephist/polyx" class="button">See on GitHub &rarr;</a>
 
+### Klisp
+
+Klisp is a very minimal LISP written in Ink. It's primarily a pedagogical project -- I made it to understand Lisp better. Ink's semantics are already quite Lispy, so Klisp builds on Ink's semantics and adds an S-expression grammar and a repl, a true read-eval-print loop, for an ergonomic Lisp experience.
+
+<a href="https://github.com/thesephist/klisp" class="button">See on GitHub &rarr;</a>
+
 ### Histools analyzer
 
 Histools is a collection of tools for generating heatmaps and data visualizations from browser history data. Ink is used for a small script that exports and transforms data for display.
@@ -33,7 +39,7 @@ Histools is a collection of tools for generating heatmaps and data visualization
 
 ### Codeliner
 
-Codeliner generates graphics from program source files.
+Codeliner generates graphics from program source files that mimic the shape of code displayed on the page.
 
 <a href="https://github.com/thesephist/codeliner" class="button">See on GitHub &rarr;</a>
 
