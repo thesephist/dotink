@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Weight of abstraction | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/weight-of-abstraction/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Weight of abstraction</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">14 November 2020</div>
+            <div class="meta-item readtime" itemprop="duration">1 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#cost-vs-weight">Cost vs weight</a></li>
+    <li><a href="#mathematical-notation">Mathematical notation</a></li>
+    <li><a href="#programming-languages">Programming languages</a></li>
+    <li><a href="#natural-language">Natural language</a></li>
+    <li><a href="#abstraction-weights-in-language-design">Abstraction weights in language design</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <pre><code>What drives abstraction? The laws of physics of abstractions.
+software is a mechanics of abstractions, so we should understand the physics of it.
+</code></pre>
+<h2 id="cost-vs-weight">Cost vs weight</h2>
+<pre><code>Cost considers lots of things -- perf, maintainability, compile-time, specific to programming.
+Weight just refers to (1) Ease of creation, disposability (2) gravitational field
+</code></pre>
+<h2 id="mathematical-notation">Mathematical notation</h2>
+<pre><code>Most abstractions are very lightweight, use-once
+</code></pre>
+<h2 id="programming-languages">Programming languages</h2>
+<pre><code>Abstractions can be very heavy, very light.
+
+Lisp has very small cost of abstraction -&gt; good, but leads to overabstraction
+Java has very large cost -&gt; bad, in the worst way
+C++?
+</code></pre>
+<h2 id="natural-language">Natural language</h2>
+<pre><code>Most abstractions are pretty heavy.
+Concept handles, link to Name your ideas
+</code></pre>
+<h2 id="abstraction-weights-in-language-design">Abstraction weights in language design</h2>
+<pre><code>When we design languages, we should take care that the weights of abstractions reflect how we want people to use them.
+e.g. functions should be lightweight if we want lots of disposable use. Packages should be heavyweight if we don't want npm hell.
+Fast, light abstractions are not always good.
+</code></pre>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/histools/"><em>Histools: visualizing my browser history over time with Ink and Torus</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+	<script>
+		window.MathJax = {
+			tex: {
+				inlineMath: [['\\(', '\\)']]
+			},
+			svg: {
+				fontCache: 'global'
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	
+</body>

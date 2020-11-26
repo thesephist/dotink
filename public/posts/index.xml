@@ -6,10 +6,19 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 24 Oct 2020 22:53:37 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 14 Nov 2020 23:34:45 -0500</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Weight of abstraction</title>
+      <link>https://dotink.co/posts/weight-of-abstraction/</link>
+      <pubDate>Sat, 14 Nov 2020 23:34:45 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/weight-of-abstraction/</guid>
+      <description>What drives abstraction? The laws of physics of abstractions. software is a mechanics of abstractions, so we should understand the physics of it.  Cost vs weight Cost considers lots of things -- perf, maintainability, compile-time, specific to programming.</description>
+    </item>
     
     <item>
       <title>Histools: visualizing my browser history over time with Ink and Torus</title>
