@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>A retrospective on toy programming language design mistakes | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/pl-design-mistakes/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>A retrospective on toy programming language design mistakes</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">26 November 2020</div>
+            <div class="meta-item readtime" itemprop="duration">8 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#error-handling-impacts-language-design-more-than-you-think">Error handling impacts language design more than you think</a>
+      <ul>
+        <li><a href="#do-you-care-about-stack-traces">Do you care about stack traces?</a></li>
+      </ul>
+    </li>
+    <li><a href="#tradeoffs-of-combining-integer-and-floating-point-types">Tradeoffs of combining integer and floating-point types</a></li>
+    <li><a href="#string-representations">String representations</a></li>
+    <li><a href="#asynchrony-and-concurrency">Asynchrony and concurrency</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>I&rsquo;ve written a few toy programming languages, mostly of the functional paradigm. The most significant of those is <a href="https://github.com/thesephist/ink">Ink</a>, but I&rsquo;ve also written a Lisp-style mini-language called <a href="https://github.com/thesephist/xin">Xin</a>, and now a proper Lisp in <a href="/posts/klisp/">Klisp</a>. Besides those implementations, I&rsquo;ve also played with a half dozen other concepts and ideas for alternative programming languages as I&rsquo;ve learned about array programming, pipelines, shells, and other more esoteric concepts in programming language design.</p>
+<p>In the process, I&rsquo;ve made lots of mistakes and miscalculations that I regret, and I&rsquo;ve learned a lot from them. Many decisions (like Ink&rsquo;s pattern-match syntax or byte strings) panned out well, while other design decisions (like error handling, or the lack thereof) have not aged so well. Since many people seem to reference my past experiments for embarking on a project to build their own toy languages, I thought I&rsquo;d summarize my regrets and learnings here. For a more comprehensive guide to building your own programming language, you should read <a href="https://thesephist.com/posts/pl/">my post on the topic on my main blog</a>.</p>
+<h2 id="error-handling-impacts-language-design-more-than-you-think">Error handling impacts language design more than you think</h2>
+<p>By far the biggest mistake I made in designing Ink was that I neglected to consider how errors and exceptions would be handled. In software, there are two kinds of errors:</p>
+<ol>
+<li>
+<p><strong>Expected error conditions</strong>. When you attempt to open a file, you should expect that the file might not exist. When you send some data on a network, you should expect the network to be unavailable sometimes. These are errors that a programmer expects as a result of normal operations of computers. Depending on your use case, memory allocations may also result in expected errors &ndash; if the machine is out of memory to allocate, should your language handle this error? Can it?</p>
+<p>I decided to handle errors in most of these cases in Ink by wrapping fallible actions in event objects that can either contain an error or a successful response to an action. For example, reading a file in Ink using the <code>read</code> built-in function may return an object like <code>{type: 'data', data: '...'}</code> on a successful read, or <code>{type: 'error', message: '...'}</code> on an unsuccessful read. These are expected errors, and I&rsquo;m happy with how Ink handles them for the most part.</p>
+</li>
+<li>
+<p><strong>Unexpected errors from incorrect programs</strong>. Unexpected errors are a different kind of beast, and a result of <em>incorrect programs</em>. This is an important point to grasp &ndash; if a program produces an error due to an invalid program, like &ldquo;divided by zero&rdquo; or &ldquo;unexpected argument type&rdquo;, it implies that a programmer made a mistake somewhere. Most of the time, the program that a programmer is writing will be incorrect &ndash; most of the time, when we&rsquo;re working on a program, we are building an incomplete program or fixing a broken one. This means error messages to unexpected errors are one of the <em>primary user interfaces</em> that a programmer has to your interpreter or compiler.</p>
+<p>When I first built Ink, I didn&rsquo;t think about how Ink programs might recover from or react to unexpected errors like type errors or division by zero. The lack of a good recovery mechamism resulted in two poor points of UX for the interpreter: (1) when such an error happens, the entire interpreter exits irrecoverably, and (2) it&rsquo;s impossible for a program to respond to unexpected errors happening inside of it, and try to recover or print runtime information to help debug the issue. The interpreter&rsquo;s design also made this more difficult than it should have been to remedy later, so the Ink interpreter reacts to runtime errors poorly to this day. This is by far my biggest regret in Ink&rsquo;s first implementation, and I&rsquo;m hoping to improve the situation in <a href="/posts/schrift-code/">Schrift</a>, a second generation interpreter for Ink.</p>
+</li>
+</ol>
+<h3 id="do-you-care-about-stack-traces">Do you care about stack traces?</h3>
+<p>Stack tracing is one of those topics that &ldquo;programming language 101&rdquo; guides rarely cover, but is important to get right in production languages. As I began using Ink for more meaningful projects like my productivity tool suite or my website, it became important to be able to debug my way out of errors that occurred deep in a program&rsquo;s execution. My initial design for Ink didn&rsquo;t allow the interpreter to produce useful stack traces on a program crash or runtime error. Ink&rsquo;s &ldquo;execution stack&rdquo; was really just the Go call stack in the interpreter, and to retrieve a stack trace, the interpreter would have to <code>panic()</code> and <code>recover()</code> up the stack, which isn&rsquo;t ideal.</p>
+<p>The second-generation interpreter I&rsquo;m writing for Ink, called <a href="/posts/schrift-code/">Schrift</a>, uses a bytecode VM that keeps its own Ink call stack in memory. In this setup, it&rsquo;s much more straightforward to retrieve a stack trace at any point in the program by walking up the call stack in the virtual machine state.</p>
+<p>If you want to use a new language to build meaningful (non-toy example) programs, it seems important to think about how your interpreter design will impact how easily you can collect stack traces (and more generally instrument program state) at runtime.</p>
+<h2 id="tradeoffs-of-combining-integer-and-floating-point-types">Tradeoffs of combining integer and floating-point types</h2>
+<p>Ink, Xin, and Klisp all take after JavaScript to have a single <code>number</code> type rather than separate integer and floating-point types. These <code>number</code>s are double-precision numbers and serve their purpose well &ndash; I haven&rsquo;t really ever felt that I needed a raw integer type in my usage of those languages. However, I use these languages mostly for programming command-line tools, algorithms, simulations, and web services, none of which really require manipulating integers and binary integer representations.</p>
+<p>There are also programming domains where it&rsquo;s critical to have integers as primitive, native types in the language, and where binary representations of signed and unsigned integers are necessary. If you&rsquo;re implementing efficient and packed data structures, talking to hardware or lower level parts of an operating system, or trying to squeeze out the most performance out of your language, you&rsquo;ll most definitely want native integer types in the language that can work in the native data formats of a CPU, instead of burning floating point registers and floating point throughput unnecessarily.</p>
+<p>There&rsquo;s also an interesting middle ground that tries to balance the ergonomics of a single number type and the performance benefits of native integer representations: the <em>safe integer optimization</em>. When using safe integers, a single <code>number</code> type may be represented in the interpreter as either the full floating-point value, or an integer type of equivalent or smaller size in memory. For example, if the interpreter sees a number <code>100</code>, it can determine that <code>100</code> is safe to represent as a signed integer in the particular machine architecture, and use more efficient integer operations when operating on the number until the guarantees of the integer&rsquo;s representability no longer holds (e.g. when multiplied by a fraction). V8, for example, uses a kind of safe integers called small integers (SMI) to optimize many operations on integers in the JavaScript VM. The safe integer optimization is also on the best-effort roadmap for Schrift.</p>
+<h2 id="string-representations">String representations</h2>
+<p>Ink strings are mutable arrays of bytes (8-bit chars), but actually began as a wrapper around simple immutable Go strings. Go strings had better safety guarantees, automatic handling of Unicode characters, and simplified the interpreter code. But when it came time for Ink to interact with the host operating system with things like file and network I/O, I found it simpler to expand the string type to be mutable bytes instead, rather than add a new byte array type to the language. And from then on, the string type in Ink has been just a mutable array of bytes.</p>
+<p>I think this decision ended up ok for Ink as a language for my use cases, but I wish I had put more thought into string mutability from the start. For minimal languages like Ink or even Lua and Zig (minimal as in simple, not as in naive), strings are byte arrays, but for higher level languages like Go and C++, an immutable, Unicode-aware string type makes more sense.</p>
+<h2 id="asynchrony-and-concurrency">Asynchrony and concurrency</h2>
+<p>Ink also grew support for asynchrony and concurrency later in its life, as I started integrating operating system interfaces like file and network IO into the language. It inherits JavaScript&rsquo;s excellent callback-based interface for concurrency, and I&rsquo;m happy with it. For Xin, I tried to implement a green threads and channels-based primitive for asynchrony, and discovered I hadn&rsquo;t thought it though enough in design. Xin ended up with a kludgey solution based on callbacks that doesn&rsquo;t really fit into the language, that I now regret.</p>
+<p>In general, how a language lets you schedule execution in the future is a core part of the design of a language. If you want the language to handle the details, you probably need to implement an event loop, and maybe a more sophisticated thread scheduler in the interpreter. If you want to yield asynchrony to the operating system&rsquo;s threads, you end up accepting the performance compromises of using OS threads. Either way, these decisions are difficult to reverse, and I think they&rsquo;re worth thinking deeply about in the design of a language from the outset if you intend to support concurrent programming.</p>
+<p>As with most other disciplines in computer science, programming language design has a rich and deep history, and when asking these questions to design a programming language &ndash; even a toy example to learn &ndash; I think it&rsquo;s worthwhile to look at prior art, especially the attempts that failed or receded into a niche, to see how design decisions in a language can be implemented, and how they can influence the kinds of programs you&rsquo;ll be able to write in a new programming language.</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/nightvale/"><em>Nightvale: an interactive, literate programming notebook built on Ink</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Klisp: a Lisp in about 200 lines of Ink | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/klisp/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Klisp: a Lisp in about 200 lines of Ink</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">21 November 2020</div>
+            <div class="meta-item readtime" itemprop="duration">8 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#implementing-klisp">Implementing Klisp</a>
+      <ul>
+        <li><a href="#representing-klisp-values">Representing Klisp values</a></li>
+        <li><a href="#the-read-function">The <code>read</code> function</a></li>
+        <li><a href="#the-eval-function">The <code>eval</code> function</a></li>
+        <li><a href="#the-print-function">The <code>print</code> function</a></li>
+      </ul>
+    </li>
+    <li><a href="#a-taste-of-klisp">A taste of Klisp</a></li>
+    <li><a href="#next-up">Next up</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p><a href="https://github.com/thesephist/klisp"><strong>Klisp</strong></a> (named after <em>inK LISP</em>) is a very minimal Lisp environment with a core written in about 200 lines of Ink. In addition to the interpreter itself, Klisp also includes an interactive repl and a small standard library that makes operations on lists and Klisp values easy and idiomatic.</p>
+<!-- ![The Klisp repl](/img/klisp.jpg) -->
+<p>Under the hood, Klisp implements a minimal core Lisp dialect with six special forms: <code>quote</code>, <code>do</code>, <code>def</code>, <code>if</code>, <code>fn</code>, and <code>macro</code>. From these building blocks, Klisp builds up a richer vocabulary of functions and macros for working with lists and functions to build interesting programs. Klisp borrows at a high level from Scheme and Clojure, but is its own dialect of Lisp.</p>
+<p><a href="https://github.com/thesephist/klisp" class="button">See Klisp on GitHub →</a></p>
+<p>You can read more about the Klisp project in the GitHub repository. The rest of this post explores how Klisp is currently implemented, in both the Ink-based core and the standard library.</p>
+<h2 id="implementing-klisp">Implementing Klisp</h2>
+<p>The core of Klisp is implemented purely in Ink in a single source file, in three separate functions, <code>read</code>, <code>eval</code>, and <code>print</code>. In the classic Lisp tradition, <code>read</code> parses a string input into a Lisp data structure (of linked list nodes called <code>L</code> in the source code), <code>eval</code> evaluates a list as a Klisp program, and <code>print</code> transforms Klisp lists back into strings &ndash; the inverse of <code>read</code>.</p>
+<p>Before diving into the implementations of these core routines, we need to decide how to represent Klisp values in an Ink program.</p>
+<h3 id="representing-klisp-values">Representing Klisp values</h3>
+<p>Ink is, semantically, a Lisp. Although it has a unique syntax and therefore can&rsquo;t take advantage of the benefits of homoiconicity, Ink programs are composed of lexically bound values and small functions working on other primitive values, with functions as first-class values and tail recursion as the preferred looping paradigm. Given this fact, I chose to represent most Klisp values as raw Ink values:</p>
+<ul>
+<li>Klisp strings are Ink strings (mutable byte arrays)</li>
+<li>Klisp numbers are Ink numbers (64-bit floats)</li>
+<li>The null value in Klisp <code>()</code> is the same in Ink</li>
+</ul>
+<p>There are three values that require more consideration: lists, functions, and symbols. The only composite type in Klisp is the <em>pair</em>, a cons cell, used to build up lists. Klisp represents a cons cell with a length-2 list in Ink: <code>[_, _]</code>. Klisp also has two kinds of function-like values: functions and macros. Klisp stores these as length-3 Ink lists, <code>[_, _, _]</code>, with the first slot reporting whether a function is a macro, the second containing the runnable function, and the third disambiguating this value from list nodes (but containing no useful value). For example, the <code>car</code> built-in function is represented as the Ink list</p>
+<pre><code>[
+    false   `` not a macro
+    L =&gt; L.'0'.0 `` the function itself
+    _ `` empty value
+]
+</code></pre><p>Klisp has a symbol type, sometimes called the &ldquo;atom&rdquo; type, whose equivalent does not exist in Ink. A symbol is an atomic name that a program treats as a special value, and binds to a value in a scope. Because symbols are named, Klisp implements a symbol as a string prefixed with the null byte <code>\0</code>. This ensures that symbols will not conflict with strings as values, but are still efficient to move around the interpreter, and ca be used as keys to the map backing each variable scope.</p>
+<p>With this set of types, all Klisp values are representable unambiguously as Ink values in the interpreter.</p>
+<h3 id="the-read-function">The <code>read</code> function</h3>
+<p>The <code>read</code> function transforms a string of input to a Klisp list data structure containing the parsed code. Unlike most parsers, the reader in Klisp does not contain a separate tokenizing step. Instead, <code>read</code> tokenizes as it goes, parsing the entire Klisp program in a single pass. This is possible because of the language&rsquo;s S-expression syntax.</p>
+<p>The reader function parses all S-expressions in the given input sequentially, and wraps the program in a single <code>do</code> block to create one <code>eval</code>-able list of expressions, to pass it off to <code>eval</code>.</p>
+<h3 id="the-eval-function">The <code>eval</code> function</h3>
+<p><code>eval</code> is the heart of the interpreter, and implements evaluation rules for the six special forms in the language.</p>
+<p>The evaluator is implemented primarily as a big nested match expression, jumping to the right match branch for each kind of S-expression node. When a special form is found, it&rsquo;s processed according to language rules. If no special form is found, the evaluator asks whether the head of the list is a function or a macro, and runs it. Literal values are passed straight through the evaluator, and symbols are looked up in the local environment (variable scope).</p>
+<p>A scope is implemented with a simple Ink dictionary (object). When child scopes are created in a program, the child scope gets assigned a special value with the key <code>-env</code> that points back to the parent scope&rsquo;s dictionary. This name doesn&rsquo;t conflict with any variable names, because variable names (symbols) are prefixed with the null byte. In this way, lexical scope trees can be simply represented as a tree of dictionaries with pointers to parent scopes.</p>
+<p>The Klisp evaluator is an <em>environment-passing</em> interpreter. Each invocation to <code>eval</code> also passes the environment dictionary in which the given Klisp code should be evaluated. Because Ink is tail-call optimized, equivalent expressions in Klisp are also tail call optimized by default.</p>
+<p>Although not a part of the evaluator, the <em>default environment</em> is worth mentioning here. When <code>eval</code> is first invoked by the Klisp tool, a default, top-level environment is passed in. This default environment contains all the built-in values in Klisp, like <code>true</code> / <code>false</code>, list manipulation functions, and arithmetic operators. The default environment is exported as <code>Env</code> from <code>klisp.ink</code>.</p>
+<h3 id="the-print-function">The <code>print</code> function</h3>
+<p>As the complement to the <code>read</code> function, <code>print</code> takes a Klisp program as data and prints it back as S-expressions. Like <code>eval</code>, <code>print</code> is a single nested match expression, recursively invoking itself for lists and pretty-printing literal values as Ink values.</p>
+<p><code>print</code> is the shortest function of the triplet, and by far the simplest.</p>
+<h2 id="a-taste-of-klisp">A taste of Klisp</h2>
+<p>In many ways, Klisp is just a syntactically minimal Lisp. You won&rsquo;t find reader macros or complex data types in Klisp, but the basic building blocks are all present. One simple Klisp program here defines a function and invokes it on a number.</p>
+<pre><code>; square is a function x -&gt; x^2
+(defn square (x)
+      (* x x))
+
+(square 11) ; =&gt; 121
+</code></pre><p>Here, <code>defn</code> is a core library macro that expands the first few lines to:</p>
+<pre><code>; square is a function x -&gt; x^2
+(def square
+     (fn (x) (* x x)))
+</code></pre><p>In either case, we bind the variable <code>square</code> in the top-level scope to a function returning a number multiplied with itself, then call that function on <code>11</code>.</p>
+<p>The core data structure of Klisp is a list, which is a recursive sequence of S-expressions. The Klisp core library offers many common functions that operate on lists.</p>
+<pre><code>(def nums (range 0 10 1))
+; =&gt; (0 1 2 3 4 5 6 7 8 9)
+
+(map nums inc) ; &quot;inc&quot; increments a number
+; =&gt; (1 2 3 4 5 6 7 8 9 10)
+
+(def even-nums
+     (filter nums even?)) ; &quot;even?&quot; defined elsewhere
+; =&gt; (2 4 6 8 10)
+
+(size even-nums) ; =&gt; 5
+(nth even-nums 2) ; =&gt; 6
+
+(sum even-nums)
+; =&gt; 30
+</code></pre><p>Klisp also allows for macros, and the core library offers a few useful macros for declarative control flow. <code>cond</code> and <code>match</code> are two such good examples. <code>cond</code> lets you concisely express a list of if-else cases in a single block, and a <code>match</code> block implements a switch-case. Here&rsquo;s a simple FizzBuzz implementation using the <code>cond</code> macro.</p>
+<pre><code>(defn fizzbuzz (n)
+  ; for each natural number through n,
+  ; evaluate the following function:
+  (each (nat n)
+        (fn (i)
+            (cond
+              ((divisible? i 15)
+               (println 'FizzBuzz'))
+              ((divisible? i 3)
+               (println 'Fizz'))
+              ((divisible? i 5)
+               (println 'Buzz'))
+              (true (println i))))))
+</code></pre><p>Much more on Klisp as a programming language can be found on the <a href="https://github.com/thesephist/klisp">GitHub readme</a>, and in the core library implementation in <code>lib/klisp.klisp</code>.</p>
+<h2 id="next-up">Next up</h2>
+<p>Klisp is a pedagogical project, and isn&rsquo;t (at the moment) intended to be used to build anything serious or practical beyond learning to write programs in a Lisp. This is in part because the language is still shifting somewhat underneath, but also because Klisp is still quite slow and unsafe. The interpreter written in Ink does not handle most errors in incorrect programs well, and is very slow partly due to the host language, and partly because of a lack of efficient data structures like vectors. These are tradeoffs I chose in the initial implementation with the goal of learning in mind.</p>
+<p>However, I enjoy writing programs in Klisp, and I hope to continue to add to it. Lisps tend be able to grow organically over time much better than most other languages, and I enjoy coming back to Klisp to write small programs and add a function or two to the core library once in a while. In the process I also hope to address the two tradeoffs I highlighted above &ndash; error handling and performance. I believe performance may be improved by using a faster Ink interpreter under the hood like <a href="/posts/schrift-code/">Schrift</a>, and with the additional performance headroom, better error handling logic may also come.</p>
+<p>I&rsquo;m also thinking about using Klisp in other potentially interesting software projects going forward. The <a href="/posts/nightvale/">Nightvale</a> project, for example, is written entirely in Ink and uses Klisp as the programming language of choice in the client.</p>
+<p>I&rsquo;ve really enjoyed exploring Lisps so far, and Klisp is the lastest in that journey that I hope will take me much farther, for much longer.</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/weight-of-abstraction/"><em>Weighing software abstractions to design better programs</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+            <a href="https://dotink.co/posts/nightvale/"><em>Nightvale: an interactive, literate programming notebook built on Ink</em></a>
+            &rarr;
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

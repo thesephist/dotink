@@ -1,6 +1,6 @@
 ---
 title: "Standard library reference"
-brief: "API documentation for the Ink standard library std, str, and friends"
+brief: "API documentation for the Ink standard library std, str, quicksort, and friends"
 toc: true
 ---
 

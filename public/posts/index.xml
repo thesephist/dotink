@@ -6,18 +6,45 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 Nov 2020 23:34:45 -0500</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2020 21:13:28 -0500</lastBuildDate>
     
 	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Weight of abstraction</title>
+      <title>A retrospective on toy programming language design mistakes</title>
+      <link>https://dotink.co/posts/pl-design-mistakes/</link>
+      <pubDate>Thu, 26 Nov 2020 21:13:28 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/pl-design-mistakes/</guid>
+      <description>I&amp;rsquo;ve written a few toy programming languages, mostly of the functional paradigm. The most significant of those is Ink, but I&amp;rsquo;ve also written a Lisp-style mini-language called Xin, and now a proper Lisp in Klisp. Besides those implementations, I&amp;rsquo;ve also played with a half dozen other concepts and ideas for alternative programming languages as I&amp;rsquo;ve learned about array programming, pipelines, shells, and other more esoteric concepts in programming language design.</description>
+    </item>
+    
+    <item>
+      <title>Nightvale: an interactive, literate programming notebook built on Ink</title>
+      <link>https://dotink.co/posts/nightvale/</link>
+      <pubDate>Thu, 26 Nov 2020 07:35:59 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/nightvale/</guid>
+      <description>Building on my progress and positive experience with Klisp, I recently created Nightvale, an interactive notebook in the browser for literate programming and communicating computational ideas using Klisp code. On Nightvale, I can create docs that combine rich (Markdown-esque) text, mathematical notation, and runnable Klisp code to explain ideas.</description>
+    </item>
+    
+    <item>
+      <title>Klisp: a Lisp in about 200 lines of Ink</title>
+      <link>https://dotink.co/posts/klisp/</link>
+      <pubDate>Sat, 21 Nov 2020 03:14:58 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/klisp/</guid>
+      <description>Klisp (named after inK LISP) is a very minimal Lisp environment with a core written in about 200 lines of Ink. In addition to the interpreter itself, Klisp also includes an interactive repl and a small standard library that makes operations on lists and Klisp values easy and idiomatic.</description>
+    </item>
+    
+    <item>
+      <title>Weighing software abstractions to design better programs</title>
       <link>https://dotink.co/posts/weight-of-abstraction/</link>
       <pubDate>Sat, 14 Nov 2020 23:34:45 -0500</pubDate>
       
       <guid>https://dotink.co/posts/weight-of-abstraction/</guid>
-      <description>What drives abstraction? The laws of physics of abstractions. software is a mechanics of abstractions, so we should understand the physics of it.  Cost vs weight Cost considers lots of things -- perf, maintainability, compile-time, specific to programming.</description>
+      <description>I like thinking about software as if it were matter, following some pre-ordained laws of nature as if they occupied real space and time. Of course, the metaphor often only stretches so far, but I think metaphors of physics in software can give us great mental models for thinking about the complexity that we create when we build software, which are the most complex machines humans design.</description>
     </item>
     
     <item>

@@ -13,7 +13,7 @@
 </script>
 
 
-	<title>Weight of abstraction | Ink</title>
+	<title>Weighing software abstractions to design better programs | Ink</title>
 	
 	<link rel="canonical" href="https://dotink.co/posts/weight-of-abstraction/" />
 	
@@ -39,11 +39,11 @@
 <main aria-role="main">
     <div class="hero inverted">
         <div class="overlay">
-            <h1>Weight of abstraction</h1>
+            <h1>Weighing software abstractions to design better programs</h1>
         </div>
         <div class="meta overlay">
             <div class="meta-item date" itemprop="datepublished">14 November 2020</div>
-            <div class="meta-item readtime" itemprop="duration">1 mins</div>
+            <div class="meta-item readtime" itemprop="duration">8 mins</div>
         </div>
     </div>
     <article class="overlay">
@@ -56,40 +56,59 @@
   <ul>
     <li><a href="#cost-vs-weight">Cost vs weight</a></li>
     <li><a href="#mathematical-notation">Mathematical notation</a></li>
-    <li><a href="#programming-languages">Programming languages</a></li>
-    <li><a href="#natural-language">Natural language</a></li>
-    <li><a href="#abstraction-weights-in-language-design">Abstraction weights in language design</a></li>
+    <li><a href="#natural-languages">Natural languages</a></li>
+    <li><a href="#programming-languages">Programming languages</a>
+      <ul>
+        <li><a href="#gravity-of-abstractions">Gravity of abstractions</a></li>
+      </ul>
+    </li>
+    <li><a href="#weighing-abstractions-in-program-and-language-design">Weighing abstractions in program and language design</a></li>
   </ul>
 </nav>
         </details>
         
 
-        <pre><code>What drives abstraction? The laws of physics of abstractions.
-software is a mechanics of abstractions, so we should understand the physics of it.
-</code></pre>
+        <p>I like thinking about software as if it were matter, following some pre-ordained laws of nature as if they occupied real space and time. Of course, the metaphor often only stretches so far, but I think metaphors of physics in software can give us great mental models for thinking about the complexity that we create when we build software, which are <a href="https://thesephist.com/posts/software/">the most complex machines humans design</a>.</p>
+<p>I&rsquo;ve written on my main blog <a href="https://thesephist.com/posts/dof/">about software and degrees of freedom</a>, a concept in mathematical physics. This time, I want to talk about the <em>weight</em> of software, specifically the weight of abstractions we create when we build software. Can functions and classes and variables feel <em>heavy</em> or <em>lightweight</em>? How can we use that intuition to help us write better software?</p>
 <h2 id="cost-vs-weight">Cost vs weight</h2>
-<pre><code>Cost considers lots of things -- perf, maintainability, compile-time, specific to programming.
-Weight just refers to (1) Ease of creation, disposability (2) gravitational field
-</code></pre>
+<p>An often cited related idea to the <strong>weight</strong> of abstractions in software is the <a href="https://250bpm.com/blog:86/"><strong>cost</strong> of abstractions</a>. When we refer to a design as an &ldquo;over-abstraction,&quot;, for example, we&rsquo;re claiming that the costs of a particular abstraction, say a class that&rsquo;s reused many times, is not worth the benefits we get in return. Abstraction cost is an economic idea &ndash; do we get a good deal? Do the benefits outweigh the costs?</p>
+<p>Abstraction cost takes into account a whole ensemble of factors, like performance, maintainability, and even compile-time costs. The <em>cost</em> of an abstraction is the total price you pay over the lifetime of a software project for the benefits of abstraction, like code reuse and maintainability. As a result, abstraction cost is a concept <em>unique to software</em>. Other disciplines also deal with abstraction. Mathematics, for example, is in some ways just a study of abstractions. But it doesn&rsquo;t make sense to talk about abstraction costs in the context of mathematics, because there&rsquo;s nothing to run, nothing to maintain, and very little to break.</p>
+<p>The <strong>weight of an abstraction</strong> is a much more specific idea. <strong>Lightweight abstractions are easy and quick to create, and just as trivial to delete. Heavy abstractions are the opposite &ndash; they take some effort to create, and are usually even harder to dispose of.</strong> At first glance, this sounds as if we should make all our abstractions as light as possible. But that&rsquo;s not always the case. Heavy abstractions, when used right, are able to provide all the benefits of a great abstraction. The <code>String</code> type in many low level languages is exactly one such a heavy abstraction. In nearly all software projects, the string type is absolutely fundamental, and adding a new string type or removing an existing one would mean rewriting significant parts of most apps. But the string type also pulls its weight &ndash; it provides an interface to a string of characters that everyone needs.</p>
+<p><strong>When an abstraction pulls its weight, it&rsquo;s very probably a good abstraction.</strong></p>
+<p>Before examining weights of software abstractions further, let&rsquo;s take a detour into mathematics.</p>
 <h2 id="mathematical-notation">Mathematical notation</h2>
-<pre><code>Most abstractions are very lightweight, use-once
-</code></pre>
+<p>Mathematical notation is a language of abstractions. When we say, &ldquo;let \(y = f(x)\),&rdquo; we&rsquo;re creating a (short-lived) abstraction, a stand-in for \(f(x)\) named \(y\). There are also more complex abstractions, like the summation:</p>
+<p>$$\sum^n_{i = 1} a_i = a_1 + a_2 + a_3 + \dots + a_n$$</p>
+<p>The summation sign \(\sum\) is a <em>notational abstraction</em>, one that replaces a sum of a sequence, something that occurs everywhere in mathematics, into a recognizable, universally reusable symbol. Notational abstractions are everywhere. Even trivial things like the equals sign, the exponentiation notation (\(x^n\)), and the constant \(\pi\) are notational abstractions, symbols that stand in for other symbols.</p>
+<p>Notational abstractions tend to be <strong>lightweight</strong>, because they are either short-lived or universal. In a proof, you might say &ldquo;let \(S\) be the set of all integers that satisfy X property.&rdquo; The abstraction \(S\) lives for the duration of that proof, and no longer. In such a limited scope, notational abstractions also tend not to change. A proof would never change its mind halfway through about what a symbol means. This short life span of an abstraction, combined with this immutability, means notational abstractions are rarely heavy &ndash; they&rsquo;re easily replaced, easily added, and seldom deleted for something else.</p>
+<h2 id="natural-languages">Natural languages</h2>
+<p>Abstractions in natural languages have a completely opposite property to mathematical notation. One abstraction (word or phrase) rarely substitutes for another, and the meaning of specific words change constantly, in a world where most words will live on effectively forever.</p>
+<p>Take the word &ldquo;disk&rdquo; as an example. The word &ldquo;disk&rdquo; was birthed in reference to flat, round objects that athletes in Ancient Greece would throw as a sport. The abstraction quickly grew through the millenia to denote flat-rounded objects in general. The etymological family tree took a sharp turn when, towards the end of the 20th century, disk-shaped storage devices were invented for use in electronic computers. These magnetic disks became the dominant form of electronic storage for a few decades, and &ldquo;disk&rdquo; became a colloquial way to refer to persistent storage in computers. In 2020, fewer and fewer computers have rotating, circular disks as their storage media, but we continue to refer to these storage devices as &ldquo;disks.&rdquo; The word no longer resembles its origin, and yet, &ldquo;disk&rdquo; continues to evolve as a linguistic abstraction.</p>
+<p>Words and phrases are nothing like mathematical notation. They are constantly changing and adapting to the needs of its speakers, and few words have &ldquo;limited&rdquo; scope of usage. Words, once created, are hard to destroy. For these reasons, almost all natural-linguistic abstractions like words are <strong>heavy</strong>.</p>
+<p>If software abstractions changed so often and so unpredictably, maintaining software systems would be a nightmare. This is one of the reasons programming languages are much easier to learn than natural languages &ndash; programming abstractions tend to change less often, and in more predictable ways. Software, being the lovechild of mathematics and language, perches somewhere in between these two extremes in the scale of abstractions.</p>
 <h2 id="programming-languages">Programming languages</h2>
-<pre><code>Abstractions can be very heavy, very light.
-
-Lisp has very small cost of abstraction -&gt; good, but leads to overabstraction
-Java has very large cost -&gt; bad, in the worst way
-C++?
-</code></pre>
-<h2 id="natural-language">Natural language</h2>
-<pre><code>Most abstractions are pretty heavy.
-Concept handles, link to Name your ideas
-</code></pre>
-<h2 id="abstraction-weights-in-language-design">Abstraction weights in language design</h2>
-<pre><code>When we design languages, we should take care that the weights of abstractions reflect how we want people to use them.
-e.g. functions should be lightweight if we want lots of disposable use. Packages should be heavyweight if we don't want npm hell.
-Fast, light abstractions are not always good.
-</code></pre>
+<p>Programming abstractions come in all sizes, and most languages provide the tools to create both lightweight abstractions and heavy ones. Here are a few lightweight abstractions. These are trivial to introduce, and easy to delete or replace.</p>
+<ul>
+<li>A local variable</li>
+<li>The array type</li>
+<li>The function \(x \rightarrow x^2\)</li>
+</ul>
+<p>Here are a few heavy abstractions. These are usually created with a lot of thought and intent, and very complicated to delete or modify as time goes on.</p>
+<ul>
+<li>The <code>User</code> type in a web app</li>
+<li>A Java class</li>
+<li>A C++ template</li>
+</ul>
+<p>Some languages tend to push programmers towards using lightweight abstractions, and others seem to guide them towards heavier ones, even for the same task. Put another way, abstractions are easy to create and remove in some languages, and harder to create and delete in others. We sometimes call this extra &ldquo;weight&rdquo; added to abstractions &ldquo;boilerplate code.&rdquo;</p>
+<p>In older versions of <strong>Java</strong>, fore example, creating a small utility function like &ldquo;increment this by one&rdquo; necessarily meant also creating some anonymous class to contain the function. A small record type in Java may require a full class of getters and setters, by convention. Creating most abstractions in Java used to be tedious, and resulted in heavy abstractions that were too tedious to create. As a result, new features and code would frequently be added to existing abstractions, in the end also making them more complicated to remove from a codebase.</p>
+<p><strong>Lisp</strong>, I think, is in the opposite end of the spectrum. Both by convention and by design, Lisp favors lightweight abstractions that are easy to create. Lisp functions tend to be small, and tend to do one or few things. Good Lisp programs compose these small functions together to create more complex programs. This means each function (which is our main abstraction) is relatively cheap to create, and easy to replace or modify. Functions grow and mutate less often than in other more imperative, inheritance-based languages.</p>
+<h3 id="gravity-of-abstractions">Gravity of abstractions</h3>
+<p>Heavy abstractions have an interesting effect on codebases that seem to be universal. They have gravity, (vaguely) like heavy objects in physics.</p>
+<p>Heavy abstractions get heavier with time. They accumulate more and more use cases and requirements, because it&rsquo;s often easier to expand a complex, heavy abstraction to support some new use case than to create another heavy abstraction. The heavier an abstraction, the stronger the tendency for it to accumulate even more weight from surrounding code, and become even harder to modify later. This is the <em>gravity</em> of heavy abstractions.</p>
+<p>Heavy abstractions are not <em>de facto</em> bad, but an abstraction constantly accumulating new surface area is an important risk for any codebase. Light abstractions, by contrast, don&rsquo;t accumulate mass and bloat in the same way, because it&rsquo;s usually cheaper to create another light abstraction independent of existing ones. Light abstractions stay lightweight. They have little gravity to worry about.</p>
+<h2 id="weighing-abstractions-in-program-and-language-design">Weighing abstractions in program and language design</h2>
+<p>Abstractions we create when we design programs affect the codebase they inhabit in ways that aren&rsquo;t obvious from the start. Some abstractions deserve to be embedded deeply into a codebase, growing and changing over time, while others are better off lightweight, coming and going as needed. While deciding on what kind of abstraction to use is the job of the programmer, the tool that they use, the programming language, also influences how easy it is to create heavy or light abstractions in the language. Sometimes, this leads projects to become bloated with abstractions that should have been lightweight, but are too heavy for their own good, accumulating lots of peripheral changes and becoming difficult to change or remove.</p>
+<p>When we design programming languages and software libraries, we should <strong>take care that the weights of abstractions the language encourages reflect how we want people to use them</strong>. Functions and types should be lightweight if we want programmers to use lots of them, creating and disposing them often. Packages should be heavyweight if we don&rsquo;t want to flood the ecosystem with lots of small libraries that should really just be functions or types. Fast, lightweight abstractions are not always good, and a judicious allocation of weight between different abstractions will serve us programmers best.</p>
 
         <hr/>
         <p class="prevInSection">
@@ -99,6 +118,9 @@ Fast, light abstractions are not always good.
             
         </p>
         <p class="nextInSection">
+            
+            <a href="https://dotink.co/posts/klisp/"><em>Klisp: a Lisp in about 200 lines of Ink</em></a>
+            &rarr;
             
         </p>
     </article>

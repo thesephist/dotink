@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Nightvale: an interactive, literate programming notebook built on Ink | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/nightvale/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Nightvale: an interactive, literate programming notebook built on Ink</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">26 November 2020</div>
+            <div class="meta-item readtime" itemprop="duration">4 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+
+        <p>Building on my progress and positive experience with <a href="/posts/klisp/">Klisp</a>, I recently created <a href="https://nightvale.dotink.co/"><strong>Nightvale</strong></a>, an interactive notebook in the browser for literate programming and communicating computational ideas using Klisp code. On Nightvale, I can create docs that combine rich (Markdown-esque) text, mathematical notation, and runnable Klisp code to explain ideas. Nightvale is written entirely in Ink on the backend, and uses my <a href="https://github.com/thesephist/torus">Torus</a> UI rendering library on the client.</p>
+<p>The name <em>Nightvale</em> comes from the podcast <em>Welcome to Night Vale</em>, but besides the fact that the name sounded good to my ears, the two have no connection.</p>
+<p>I think there&rsquo;s so much more to do in building great computational notebooks, both on top of Nightvale and elsewhere in the marketplace, and want to share some of those thoughts &ndash; as well as how Nightvale itself works &ndash; here.</p>
+<p><a href="https://nightvale.dotink.co/" class="button">Try the Nightvale sandbox →</a></p>
+<!-- screenshot -->
+<h2 id="literate-programming-notebooks">Literate programming notebooks</h2>
+<p>If code comments <em>provide</em> context for source code in software, literate programming is about placing software entirely <em>in context</em>. Many times, it&rsquo;s valuable to think about and study software in context of a larger narrative, than simply study an implementation independently. Context can provide additional reasoning behind design decisions and tradeoffs, but more importantly, software in context can be a great explanatory tool to teach new ideas in mathematics and computation. Programming notebooks like Nightvale, Jupyter, and Observable all give us ways to explain ideas and provide interactive examples of playing with those ideas in code right next to it. As both a writer and a software enthusiast, literate programming notebooks feel like the ultimate educational and creative medium.</p>
+<p>There&rsquo;s a long and illustrious history of research and experiments into building interactive, literate programming environments. While Nightvale doesn&rsquo;t push any boundaries, it takes inspiration from prior art.</p>
+<p><a href="https://observablehq.com/"><strong>Observable notebooks</strong></a> and <a href="https://jupyter.org/"><strong>Jupyter notebooks</strong></a> are the two most influential and conceptually rich of these inspirations. Though we can write full, useful programs in both Observable and Jupyter notebooks, the primary purpose of these computational notebooks is to <em>communicate</em> or <em>explain</em>. There is a lot of power in good explanations. Good explanations are how good ideas replicate across a community. The better tools we have to share great explanations, the more efficiently we can build and share good ideas. Nightvale isn&rsquo;t as feature rich as either of these products, but the vision is the same &ndash; enable me to write good, natural, interactive explanations of mathematical, quantitative, and computational ideas.</p>
+<p>Nightvale is also closely related to the idea of repls and other richer development environments. I&rsquo;ve been thinking a lot about Lisp repls while developing Nightvale, and taking conceptual hints from repls in <strong>Clojure</strong> and <strong>Julia</strong>. In some ways, each code block in Nightvale is a small repl, providing quick feedback for small, bite-sized programs.</p>
+<p>Lastly, mathematical notation is a key part of Nightvale. Natural language, programming languages, and mathematical notation all bring <a href="/posts/weight-of-abstraction/">different kinds of abstraction capabilities</a> at different levels of precision, and I think having the full expressive gamut of tools available in a single document lets the author choose the best tool for explaining a given idea.</p>
+<h2 id="how-nightvale-works">How Nightvale works</h2>
+<p>Nightvale uses a client-server design to allow for writing programmable documents. The server, written in Ink, incorporates a limited variant of the <a href="/posts/klisp/">Klisp</a> interpreter where the evaluator has a lower maximum recursion limit than normal, to prevent infinite loops and excessive CPU consumption by untrusted code. When a document loads in Nightvale, any embedded programs are sent to the evaluation service in the backend over simple HTTP APIs to retrieve results, which is displayed in the document. At the moment, the server keeps no state in between evaluations, so each code block must be a standalone Klisp program. This lets the evaluation service be completely stateless, which makes Nightvale simple.</p>
+<p>The client side of Nightvale is written as a single-page <a href="https://github.com/thesephist/torus">Torus</a> application. Each Nightvale doc is stored as a list of <strong>blocks</strong> of text. Each block is either a rich text block, rendered with <a href="https://github.com/thesephist/torus/blob/master/samples/markus/main.js">Markus</a> (a Markdown-esque parsing library for Torus), or a code block, rendered as an in-document runnable code editor. Within rich text blocks, <a href="https://katex.org/">KaTeX</a> is used to render mathematical notation.</p>
+<p>On the backend, the Ink-based server uses an <a href="https://github.com/thesephist/polyx/blob/master/lib/http.ink">http server and routing library</a> I initially wrote for <a href="https://github.com/thesephist/polyx">Polyx</a>. Documents are saved to disk as JSON blobs under a &ldquo;database&rdquo; directory on the server, which is primitive, but works well enough for my limited use cases.</p>
+<h2 id="the-possibilities-are-vast">The possibilities are vast</h2>
+<p>There&rsquo;s a lot of room for Nightvale to grow into a beautiful and functional tool for taking notes and sharing explanations, and what&rsquo;s there today is an MVP. Inspired by existing notebooks and repls, I want to add more options for visualizing program output (into graphs, tables, and charts), improve the code editor to be a properly ergonomic Lisp editor, and maybe even allow programs to provide interactive UI elements as output, as in Observable&rsquo;s notebooks.</p>
+<p>Most importantly, I think Nightvale is just a great medium for writing hybrid documents about math and programming, and I look forward to sharing my ideas through it.</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/klisp/"><em>Klisp: a Lisp in about 200 lines of Ink</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+            <a href="https://dotink.co/posts/pl-design-mistakes/"><em>A retrospective on toy programming language design mistakes</em></a>
+            &rarr;
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

@@ -1,6 +1,6 @@
 ---
 title: "Runtime and builtins"
-brief: Ink's native runtime functions, asynchrony, and other details of the interpreter
+brief: Ink's native runtime functions, asynchrony and concurrency, and other details of the interpreter
 toc: true
 ---
 

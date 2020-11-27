@@ -56,10 +56,11 @@
     <li><a href="#projects">Projects</a>
       <ul>
         <li><a href="#traceur">Traceur</a></li>
+        <li><a href="#klisp">Klisp</a></li>
+        <li><a href="#nightvale">Nightvale</a></li>
+        <li><a href="#histools-analyzer">Histools analyzer</a></li>
         <li><a href="#matisse">Matisse</a></li>
         <li><a href="#polyx">Polyx</a></li>
-        <li><a href="#klisp">Klisp</a></li>
-        <li><a href="#histools-analyzer">Histools analyzer</a></li>
         <li><a href="#codeliner">Codeliner</a></li>
       </ul>
     </li>
@@ -83,28 +84,36 @@
 
         <h2 id="projects">Projects</h2>
 <h3 id="traceur">Traceur</h3>
-<p>Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur. I wrote about <a href="/posts/traceur/">building Traceur here</a>.</p>
-<p><a href="https://github.com/thesephist/traceur" class="button">See on GitHub →</a></p>
+<p>Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur.</p>
+<p><a href="/posts/traceur/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/traceur" class="button">See on GitHub →</a></p>
+<h3 id="klisp">Klisp</h3>
+<p>Klisp is a very minimal LISP written in Ink. It&rsquo;s primarily a pedagogical project &ndash; I made it to understand Lisp better. Ink&rsquo;s semantics are already quite Lispy, so Klisp builds on Ink&rsquo;s semantics and adds an S-expression grammar and a repl, a true read-eval-print loop, for an ergonomic Lisp experience.</p>
+<p><a href="/posts/klisp/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/klisp" class="button">See on GitHub →</a></p>
+<h3 id="nightvale">Nightvale</h3>
+<p>Nightvale is an interactive notebook in the browser for literate programming and communicating computational ideas using prose, mathematical notation, and Klisp code. Nightvale runs entirely on Ink on the backend and on <a href="https://github.com/thesephist/torus">Torus</a> on the client.</p>
+<p><a href="/posts/nightvale/" class="button">Blog post</a>
+<a href="https://nightvale.dotink.co/" class="button">Try the Nightvale sandbox →</a></p>
+<h3 id="histools-analyzer">Histools analyzer</h3>
+<p>Histools is a collection of tools for generating heatmaps and data visualizations from browser history data. Ink is used for a small script that exports and transforms data for display.</p>
+<p><a href="/posts/histools/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/histools" class="button">See demo on GitHub →</a></p>
 <h3 id="matisse">Matisse</h3>
 <p>Matisse is a minimalistic gallery of generative art pieces that are written in Ink. As a web app, Matisse depends on the September compiler to compile Ink programs and algorithms down to JavaScript.</p>
 <p><a href="https://github.com/thesephist/matisse" class="button">See on GitHub →</a>
 <a href="https://matisse.vercel.app/" class="button">Try demo →</a></p>
 <h3 id="polyx">Polyx</h3>
-<p>Polyx is Linus&rsquo;s personal productivity suite.</p>
+<p>Polyx is Linus&rsquo;s personal productivity suite which includes services like file sync, notes, contacts, and other information management tools.</p>
 <p><a href="https://github.com/thesephist/polyx" class="button">See on GitHub →</a></p>
-<h3 id="klisp">Klisp</h3>
-<p>Klisp is a very minimal LISP written in Ink. It&rsquo;s primarily a pedagogical project &ndash; I made it to understand Lisp better. Ink&rsquo;s semantics are already quite Lispy, so Klisp builds on Ink&rsquo;s semantics and adds an S-expression grammar and a repl, a true read-eval-print loop, for an ergonomic Lisp experience.</p>
-<p><a href="https://github.com/thesephist/klisp" class="button">See on GitHub →</a></p>
-<h3 id="histools-analyzer">Histools analyzer</h3>
-<p>Histools is a collection of tools for generating heatmaps and data visualizations from browser history data. Ink is used for a small script that exports and transforms data for display.</p>
-<p><a href="https://github.com/thesephist/histools" class="button">See demo on GitHub →</a></p>
 <h3 id="codeliner">Codeliner</h3>
 <p>Codeliner generates graphics from program source files that mimic the shape of code displayed on the page.</p>
 <p><a href="https://github.com/thesephist/codeliner" class="button">See on GitHub →</a></p>
 <h2 id="language-tooling">Language tooling</h2>
 <h3 id="september">September</h3>
-<p>September is an Ink to JavaScript compiler, written in Ink itself and tested against Ink&rsquo;s standard library tests. September aims to become self-hosting, but is not there yet. I wrote about <a href="/posts/september/">building September here</a>.</p>
-<p><a href="https://github.com/thesephist/september" class="button">See on GitHub →</a></p>
+<p>September is an Ink to JavaScript compiler, written in Ink itself and tested against Ink&rsquo;s standard library tests. September aims to become self-hosting, but is not there yet.</p>
+<p><a href="/posts/september/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/september" class="button">See on GitHub →</a></p>
 <h3 id="ink-by-example">Ink by Example</h3>
 <p>Ink by Example is a hands-on introduction to programming in Ink using annotated example programs. The website is run by <a href="https://healeycodes.com/">@healeycodes</a> and <a href="https://github.com/healeycodes/inkbyexample/tree/main/src">powered by Ink</a>.</p>
 <p><a href="https://inkbyexample.com/" class="button">Visit Ink by Example →</a></p>
@@ -112,12 +121,14 @@
 <p>This website is served by a web server written in Ink.</p>
 <p><a href="https://github.com/thesephist/dotink" class="button">See on GitHub →</a></p>
 <h3 id="inkfmt">inkfmt</h3>
-<p>inkfmt is a self-hosting code formatter for Ink. I wrote about <a href="/posts/inkfmt/">building inkfmt here</a>.</p>
-<p><a href="https://github.com/thesephist/inkfmt" class="button">See on GitHub →</a></p>
+<p>inkfmt is a self-hosting code formatter for Ink used in almost every Ink project. Under the hood, inkfmt implements a tokenizer for Ink written in Ink itself.</p>
+<p><a href="/posts/inkfmt/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/inkfmt" class="button">See on GitHub →</a></p>
 <h2 id="libraries">Libraries</h2>
 <h3 id="ansiink">ansi.ink</h3>
 <p><code>ansi</code> is an Ink library for printing with ANSI escape sequences to a terminal emulator. It supports basic ANSI colors and cursor movements.</p>
-<p><a href="https://github.com/thesephist/ansi.ink" class="button">See on GitHub →</a></p>
+<p><a href="/posts/ansi/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/ansi.ink" class="button">See on GitHub →</a></p>
 
     </article>
 </main>

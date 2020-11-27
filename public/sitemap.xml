@@ -3,13 +3,28 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://dotink.co/posts/pl-design-mistakes/</loc>
+    <lastmod>2020-11-26T21:13:28-05:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://dotink.co/posts/</loc>
-    <lastmod>2020-11-14T23:34:45-05:00</lastmod>
+    <lastmod>2020-11-26T21:13:28-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://dotink.co/</loc>
-    <lastmod>2020-11-14T23:34:45-05:00</lastmod>
+    <lastmod>2020-11-26T21:13:28-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/nightvale/</loc>
+    <lastmod>2020-11-26T07:35:59-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/klisp/</loc>
+    <lastmod>2020-11-21T03:14:58-05:00</lastmod>
   </url>
   
   <url>
