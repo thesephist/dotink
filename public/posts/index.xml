@@ -6,11 +6,7 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 26 Nov 2020 21:13:28 -0500</lastBuildDate>
-    
-	<atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 26 Nov 2020 21:13:28 -0500</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>A retrospective on toy programming language design mistakes</title>
       <link>https://dotink.co/posts/pl-design-mistakes/</link>

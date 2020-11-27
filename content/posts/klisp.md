@@ -6,7 +6,7 @@ toc: true
 
 [**Klisp**](https://github.com/thesephist/klisp) (named after _inK LISP_) is a very minimal Lisp environment with a core written in about 200 lines of Ink. In addition to the interpreter itself, Klisp also includes an interactive repl and a small standard library that makes operations on lists and Klisp values easy and idiomatic.
 
-<!-- ![The Klisp repl](/img/klisp.jpg) -->
+![The Klisp repl](/img/klisp.png)
 
 Under the hood, Klisp implements a minimal core Lisp dialect with six special forms: `quote`, `do`, `def`, `if`, `fn`, and `macro`. From these building blocks, Klisp builds up a richer vocabulary of functions and macros for working with lists and functions to build interesting programs. Klisp borrows at a high level from Scheme and Clojure, but is its own dialect of Lisp.
 
