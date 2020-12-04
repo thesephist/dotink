@@ -162,7 +162,7 @@ sigaltstack({ss_sp=0xc000002000, ss_flags=0, ss_size=32768}, NULL) = 0
 rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
 </code></pre><p>These four syscalls set how operating system signals are received by the program thread. Specifically, the Go runtime is setting an alternate &ldquo;signal stack&rdquo; at which a signal handler will run. The Go runtime does a lot of work to wrap the OS&rsquo;s signals into nicer interfaces for the Go program author, and I assume this custom signal stack allocation is a part of that. Interestingly, the newly allocated signal stack address starts at <code>0xc000002000</code>, which is very close to the segment allocated in one of the <code>mmap</code> calls earlier, hinting that the signal stack was probably allocated by an earlier <code>mmap</code>.</p>
 <pre><code>gettid()                                = 134804
-</code></pre><p><code>gettid</code>&rsquo;s job is simple: to return the thread&rsquo;s thread ID, which Go presumably uses for its internal bookkeeping.</p>
+</code></pre><p><code>gettid</code>'s job is simple: to return the thread&rsquo;s thread ID, which Go presumably uses for its internal bookkeeping.</p>
 <pre><code>rt_sigaction(SIGHUP, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
 rt_sigaction(SIGHUP, {sa_handler=0x45bf20, sa_mask=~[], sa_flags=SA_RESTORER|SA_ONSTACK|SA_RESTART|SA_SIGINFO, sa_restorer=0x45c060}, NULL, 8) = 0
 rt_sigaction(SIGINT, NULL, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=0}, 8) = 0
