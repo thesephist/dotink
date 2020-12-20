@@ -120,11 +120,11 @@ Reverse of `encode`, `decode` takes a list of numbers less than 256 and returns 
 
 ### `readFile(path, cb)`
 
-Reads file from a given path completely, and calls `cb` with the the read string buffer as the argument. If the read fails for one reason or another, the null value `()` is sent instead to the callback.
+Reads file from a given path completely, and calls `cb` with the read string buffer as the argument. If the read fails for one reason or another, the null value `()` is sent instead to the callback.
 
 ### `writeFile(path, data, cb)`
 
-Writes a string buffer, given as `data`, to the file at `path`. If a file is already present, `writeFile` truncates the existing file. If the file is not there, `writeFile` creates it. If write is successful, `cb` is called with `tru`. On any error, `()` is passed instead to the callback.
+Writes a string buffer, given as `data`, to the file at `path`. If a file is already present, `writeFile` truncates the existing file. If the file is not there, `writeFile` creates it. If write is successful, `cb` is called with `true`. On any error, `()` is passed instead to the callback.
 
 ### `format(raw, values)`
 
