@@ -21,9 +21,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/projects/</guid>
-      <description>Projects Traceur Traceur is a path-tracing renderer in Ink, supporting Monte-Carlo antialiasing, realistic shadows, reflections, refractions, and focus blur.
-Blog post See on GitHub →
-Klisp Klisp is a very minimal LISP written in Ink. It&amp;rsquo;s primarily a pedagogical project &amp;ndash; I made it to understand Lisp better.</description>
+      <description>Projects Lucerne Lucerne is a Twitter reader and web client designed to amplify my personal Twitter workflows around learning from conversations and sharing my own writing and projects. Lucerne is built around the concept of persistent search filtered called &amp;ldquo;channels&amp;rdquo; and designed around my needs from the Twitter platform.</description>
     </item>
     
     <item>

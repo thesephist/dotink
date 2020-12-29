@@ -6,6 +6,15 @@ toc: true
 
 ## Projects
 
+### Lucerne
+
+![A screenshot of Lucerne displaying a timeline](/img/lucerne.png)
+
+Lucerne is a Twitter reader and web client designed to amplify my personal Twitter workflows around learning from conversations and sharing my own writing and projects. Lucerne is built around the concept of persistent search filtered called "channels" and designed around my needs from the Twitter platform. The client is written from scratch in Ink, including the various cryptographic algorithms needed to interface with Twitter's API.
+
+<a href="https://thesephist.com/posts/lucerne/" class="button">Blog post</a>
+<a href="https://github.com/thesephist/lucerne" class="button">See on GitHub &rarr;</a>
+
 ### Traceur
 
 ![Path traced scene generated with Traceur](/img/traceur.bmp)
@@ -56,6 +65,12 @@ Matisse is a minimalistic gallery of generative art pieces that are written in I
 Polyx is Linus's personal productivity suite which includes services like file sync, notes, contacts, and other information management tools.
 
 <a href="https://github.com/thesephist/polyx" class="button">See on GitHub &rarr;</a>
+
+### August
+
+August is an educational assembler written from scratch in Ink, supporting 64-bit x86 ELF executables to start with more under development. It features an instruction encoder and ELF file format library written in Ink.
+
+<a href="https://github.com/thesephist/august" class="button">See on GitHub &rarr;</a>
 
 ### Codeliner
 
