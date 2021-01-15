@@ -15,7 +15,7 @@
         <div class="overlay">
             {{ range (.Pages.ByParam "order") }}
             <a class="summaryLink" href="{{.Permalink}}">
-                <h2>{{ .Title }}</h2>
+                <div class="summaryTitle">{{ .Title }}</div>
                 <p>{{ .Params.Brief }}</p>
             </a>
             {{ end }}

@@ -251,13 +251,10 @@ blockquote {
     font-style: italic;
 }
 
-.summaryLink {
-    margin-bottom: 52px;
-}
-
 /* SECTION */
 
 .type-section a.summaryLink {
+    margin-bottom: 2em;
     text-decoration: none;
     display: block;
     transition: opacity .2s, transform .2s;
@@ -267,7 +264,12 @@ blockquote {
     opacity: .7;
 }
 
-.type-section a.summaryLink:hover h2::after {
+.type-section a.summaryLink .summaryTitle {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.type-section a.summaryLink:hover .summaryTitle::after {
     content: ' →';
 }
 

@@ -13,7 +13,7 @@
       <pubDate>Thu, 03 Dec 2020 09:15:46 -0500</pubDate>
       
       <guid>https://dotink.co/posts/bmp/</guid>
-      <description>In the early days of Ink, the most interesting thing Ink programs could do was take some textual input, and output some text back to the terminal. While that was useful for testing the language, it was far from interesting.</description>
+      <description>In the early days of Ink, the most interesting thing Ink programs could do was take some textual input, and output some text back to the terminal.</description>
     </item>
     
     <item>
@@ -22,7 +22,7 @@
       <pubDate>Thu, 03 Dec 2020 08:33:42 -0500</pubDate>
       
       <guid>https://dotink.co/posts/macros/</guid>
-      <description>Lisp is a homoiconic programming language &amp;ndash; Lisp program source code is also a first-class data structure in Lisp, made of nested lists of symbols. This allows Lisp programs to define and use really elegant macros, pieces of syntax defined in the Lisp program itself.</description>
+      <description>Lisp is a homoiconic programming language &amp;ndash; Lisp program source code is also a first-class data structure in Lisp, made of nested lists of symbols.</description>
     </item>
     
     <item>
@@ -31,7 +31,7 @@
       <pubDate>Thu, 26 Nov 2020 21:13:28 -0500</pubDate>
       
       <guid>https://dotink.co/posts/pl-design-mistakes/</guid>
-      <description>I&amp;rsquo;ve written a few toy programming languages, mostly of the functional paradigm. The most significant of those is Ink, but I&amp;rsquo;ve also written a Lisp-style mini-language called Xin, and now a proper Lisp in Klisp. Besides those implementations, I&amp;rsquo;ve also played with a half dozen other concepts and ideas for alternative programming languages as I&amp;rsquo;ve learned about array programming, pipelines, shells, and other more esoteric concepts in programming language design.</description>
+      <description>I&amp;rsquo;ve written a few toy programming languages, mostly of the functional paradigm. The most significant of those is Ink, but I&amp;rsquo;ve also written a Lisp-style mini-language called Xin, and now a proper Lisp in Klisp.</description>
     </item>
     
     <item>
@@ -40,7 +40,7 @@
       <pubDate>Thu, 26 Nov 2020 07:35:59 -0500</pubDate>
       
       <guid>https://dotink.co/posts/nightvale/</guid>
-      <description>Building on my progress and positive experience with Klisp, I recently created Nightvale, an interactive notebook in the browser for literate programming and communicating computational ideas using Klisp code. On Nightvale, I can create docs that combine rich (Markdown-esque) text, mathematical notation, and runnable Klisp code to explain ideas.</description>
+      <description>Building on my progress and positive experience with Klisp, I recently created Nightvale, an interactive notebook in the browser for literate programming and communicating computational ideas using Klisp code.</description>
     </item>
     
     <item>
@@ -86,7 +86,7 @@ Schrift is an experimental runtime for Ink focused on performance and runtime in
       <pubDate>Sat, 05 Sep 2020 13:13:06 -0400</pubDate>
       
       <guid>https://dotink.co/posts/go-syscalls/</guid>
-      <description>Go, despite being a fully compiled language, has a sizeable runtime that helps Go programs handle things like multithreading, input/output, global variable initialization, and memory safety. To provide all of these convenience and safety features, the Go runtime interacts with the operating system in ways that are often opaque to the Go code we write.</description>
+      <description>Go, despite being a fully compiled language, has a sizeable runtime that helps Go programs handle things like multithreading, input/output, global variable initialization, and memory safety.</description>
     </item>
     
     <item>
@@ -114,8 +114,7 @@ So far, there has only been one kind of editor support for the Ink language, in 
       <pubDate>Mon, 10 Aug 2020 09:42:24 -0400</pubDate>
       
       <guid>https://dotink.co/posts/september/</guid>
-      <description>September is an Ink to JavaScript compiler, written in Ink itself. It&amp;rsquo;s so-called because it&amp;rsquo;s the first in a forthcoming series of autumn-month-themed tools written in and for Ink:
- September, a compiler to JavaScript, which is what this post is about August, an assembler and linker, which is yet to be started October, a symbolic mathematics environment, which is even more yet to be started, but which I&amp;rsquo;m really excited about  Autumn months are great, especially because august is the best song on folklore which is a lyrical and aural masterpiece by the queen of pop Taylor Swift herself, but that&amp;rsquo;s for me to go on about on a different website.</description>
+      <description>September is an Ink to JavaScript compiler, written in Ink itself. It&amp;rsquo;s so-called because it&amp;rsquo;s the first in a forthcoming series of autumn-month-themed tools written in and for Ink:</description>
     </item>
     
     <item>
@@ -153,7 +152,7 @@ Operational scale measures how many processors and compute nodes are in your pro
       
       <guid>https://dotink.co/posts/rational-binary-search/</guid>
       <description>What&amp;rsquo;s a reasonably simple rational approximation of Pi?
-We might take a naive approach and simply take a fraction like \(\frac{314159265}{100000000}\) and reduce it to get a fractional representation of an arbitrary decimal form of Pi. But this is boring, and requires large denominators to be precise.</description>
+We might take a naive approach and simply take a fraction like \(\frac{314159265}{100000000}\) and reduce it to get a fractional representation of an arbitrary decimal form of Pi.</description>
     </item>
     
     <item>
@@ -171,7 +170,7 @@ We might take a naive approach and simply take a fraction like \(\frac{314159265
       <pubDate>Tue, 21 Jul 2020 10:12:27 -0400</pubDate>
       
       <guid>https://dotink.co/posts/traceur/</guid>
-      <description>Traceur (pronounced like trace + connoisseur) is a path tracing renderer written in Ink. Traceur is capable of rendering scenes with spherical objects, realistic shadows, reflections, refractions, and depth of field. Internally, Traceur uses well-defined interfaces for working with shapes, materials, and scene descriptions, so it&amp;rsquo;s easy to extend with new textures and lighting effects.</description>
+      <description>Traceur (pronounced like trace + connoisseur) is a path tracing renderer written in Ink. Traceur is capable of rendering scenes with spherical objects, realistic shadows, reflections, refractions, and depth of field.</description>
     </item>
     
     <item>
@@ -180,7 +179,7 @@ We might take a naive approach and simply take a fraction like \(\frac{314159265
       <pubDate>Wed, 15 Jul 2020 17:15:01 -0400</pubDate>
       
       <guid>https://dotink.co/posts/inkfmt/</guid>
-      <description>inkfmt (pronounced &amp;ldquo;ink format&amp;rdquo; or sometimes &amp;ldquo;ink fuh-mt&amp;rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean. inkfmt is itself an Ink program, and inkfmt uses itself to format its own source code.</description>
+      <description>inkfmt (pronounced &amp;ldquo;ink format&amp;rdquo; or sometimes &amp;ldquo;ink fuh-mt&amp;rdquo;) is a self-hosting code formatter for the Ink language. This means inkfmt takes valid Ink programs and normalizes the formatting of the code to be readable and clean.</description>
     </item>
     
     <item>
@@ -189,7 +188,7 @@ We might take a naive approach and simply take a fraction like \(\frac{314159265
       <pubDate>Sun, 21 Jun 2020 11:44:30 -0400</pubDate>
       
       <guid>https://dotink.co/posts/unix-setup/</guid>
-      <description>Many of my projects include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on DigitalOcean, and I set them all up very similarly. I currently have 17 separate web servers / projects running across two $5/month servers.</description>
+      <description>Many of my projects include a web server, usually written in Go, Node.js, or Ink. I deploy these servers to Linux VMs running on DigitalOcean, and I set them all up very similarly.</description>
     </item>
     
     <item>
@@ -218,8 +217,7 @@ As I&amp;rsquo;m diving deeper into my role at Hack Club Bank, I&amp;rsquo;m try
       
       <guid>https://dotink.co/posts/composing-the-future/</guid>
       <description>(This is an archived copy of a post originally published at thesephist.com.)
-Summer&amp;rsquo;s almost over! It&amp;rsquo;s a change of season, and the season of changes.
-My internship at Repl.it is coming to a close, and I&amp;rsquo;m joining the fantastic team at Hack Club moving forward.</description>
+Summer&amp;rsquo;s almost over! It&amp;rsquo;s a change of season, and the season of changes.</description>
     </item>
     
     <item>
@@ -238,8 +236,7 @@ My internship at Repl.it is coming to a close, and I&amp;rsquo;m joining the fan
       
       <guid>https://dotink.co/posts/how-i-side-project/</guid>
       <description>(This is an archived copy of a post originally published at thesephist.com.)
-This post started out as a long-form response to this tweet by Raj Kunkolienkar:
-Question to all the side project machines that I follow (with much respect) : what framework / setup / infrastructure / tools do you use to push out ideas to MVP so quickly?</description>
+This post started out as a long-form response to this tweet by Raj Kunkolienkar:</description>
     </item>
     
   </channel>

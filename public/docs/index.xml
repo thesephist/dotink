@@ -12,7 +12,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/overview/</guid>
-      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language. It&amp;rsquo;s dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks. Ink is designed to be minimal and simple, first and foremost.</description>
+      <description>What&amp;rsquo;s Ink? Ink is a functional, general-purpose, interpreted scripting language. It&amp;rsquo;s dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks.</description>
     </item>
     
     <item>
@@ -21,7 +21,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/projects/</guid>
-      <description>Projects Lucerne Lucerne is a Twitter reader and web client designed to amplify my personal Twitter workflows around learning from conversations and sharing my own writing and projects. Lucerne is built around the concept of persistent search filtered called &amp;ldquo;channels&amp;rdquo; and designed around my needs from the Twitter platform.</description>
+      <description>Projects Lucerne Lucerne is a Twitter reader and web client designed to amplify my personal Twitter workflows around learning from conversations and sharing my own writing and projects.</description>
     </item>
     
     <item>
@@ -30,7 +30,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dotink.co/docs/runtime/</guid>
-      <description>Operating system interfaces Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response. Such an event object is of a semi-standard form, on success</description>
+      <description>Operating system interfaces Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response.</description>
     </item>
     
     <item>
@@ -40,9 +40,7 @@
       
       <guid>https://dotink.co/docs/lib/</guid>
       <description>The Ink standard library is not current packaged into the distributed binary. However, you can get up-to-date versions of these libraries on GitHub.
-Standard (std) std is Ink&amp;rsquo;s core library.
-See source on GitHub →
-log(val) Prints the string version of val to standard output.</description>
+Standard (std) std is Ink&amp;rsquo;s core library.</description>
     </item>
     
   </channel>
