@@ -6,7 +6,16 @@
     <description>Recent content in The Ink blog on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2020 09:15:46 -0500</lastBuildDate><atom:link href="https://dotink.co/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 Feb 2021 05:30:36 -0500</lastBuildDate><atom:link href="https://dotink.co/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Implementing the lambda calculus in Ink</title>
+      <link>https://dotink.co/posts/lambda/</link>
+      <pubDate>Wed, 03 Feb 2021 05:30:36 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/lambda/</guid>
+      <description>The lambda calculus is a formal model of computation, a mathematically rigorous way of thinking about what computers do. Unlike the other popular theoretical model, the Turing machine, the lambda calculus describes all computation in terms of pure functions, and functions acting on other functions.</description>
+    </item>
+    
     <item>
       <title>BMP: the simple, underappreciated image file format</title>
       <link>https://dotink.co/posts/bmp/</link>

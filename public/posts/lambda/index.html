@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Implementing the lambda calculus in Ink | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/lambda/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Implementing the lambda calculus in Ink</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">3 February 2021</div>
+            <div class="meta-item readtime" itemprop="duration">14 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-world-of-pure-functions">The world of (pure) functions</a>
+      <ul>
+        <li><a href="#currying">Currying</a></li>
+        <li><a href="#a-note-on-notation">A note on notation</a></li>
+      </ul>
+    </li>
+    <li><a href="#church-numerals">Church numerals</a></li>
+    <li><a href="#booleans">Booleans</a></li>
+    <li><a href="#recursion-and-fixed-point-combinators">Recursion and fixed-point combinators</a>
+      <ul>
+        <li><a href="#the-y-combinator">The Y combinator</a></li>
+        <li><a href="#the-z-combinator">The Z combinator</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-factorial">The factorial</a></li>
+    <li><a href="#further-reading">Further reading</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>The <a href="https://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a> is a formal model of computation, a mathematically rigorous way of thinking about what computers do. Unlike the other popular theoretical model, the Turing machine, the lambda calculus describes all computation in terms of pure functions, and functions acting on other functions.</p>
+<p>Lambda calculus is a useful model because of its inherent simplicity. It allows computer theoreticians to model more complex computation using simpler parts that lend themselves nicely to study. The lambda calculus also happens to be a generally useful model of computation for functional programming languages, like Lisps and Haskell.</p>
+<p>While the lambda calculus is a theoretical model, we can also build real, executable implementations of the lambda calculus using programming languages with first-class functions, by modeling all computation using functions in the programming language.</p>
+<p>Through this post, we&rsquo;ll pick apart the basic building blocks of programs we&rsquo;re normally familiar with, like numbers and conditionals, using the primitives of the lambda calculus. We&rsquo;ll end with an implementation of the factorial function, implemented fully within our <a href="/docs/overview/">Ink</a>-based mini lambda calculus implementation.</p>
+<p><img src="/img/lambda.png" alt="A few lines of the lambda calculus implemented in Ink"></p>
+<p>You can also find the full source file of everything covered in this post in the <a href="https://github.com/thesephist/lambda/blob/main/lambda.ink">lambda.ink</a> project, including a thoroughly commented implementation.</p>
+<p><a href="https://github.com/thesephist/lambda" class="button">See lambda.ink on GitHub →</a></p>
+<h2 id="the-world-of-pure-functions">The world of (pure) functions</h2>
+<p>For simplicity, we&rsquo;ll only consider functions that take one input, and return one output value. Some examples of such functions are</p>
+<pre><code>`` identity
+x =&gt; x
+
+`` doubles the input
+x =&gt; 2 * x
+
+`` square
+x =&gt; x * x
+</code></pre><p>Functions can also take other functions as input, and operate on them. For example, a function may take a function and invoke it with a constant</p>
+<pre><code>`` calls a given function with 2
+f =&gt; f(2)
+</code></pre><h3 id="currying">Currying</h3>
+<p>A more interesting thing a function can do is to <em>return another function</em>. In other words, a function might be defined as</p>
+<pre><code>f := x =&gt; (y =&gt; x + y)
+
+f(2)(3) `` =&gt; 5
+</code></pre><p>This function <code>f</code> takes <code>x</code>, and returns another function that takes <code>y</code>, and returns the sum <code>x + y</code>. We can call it once to get a function, and then call that returned function again to get a result. In effect, this is the same as a function that takes two arguments, like <code>(x, y) =&gt; x + y</code>. But here, we can see that two-argument functions are really just <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a> over the single-argument function!</p>
+<pre><code>f := x =&gt; y =&gt; x + y
+f(2)(3) `` =&gt; 5
+
+`` ^^ is the same as vv
+
+f := (x, y) =&gt; x + y
+f(2, 3) `` =&gt; 5
+</code></pre><p>This process of rewriting a multi-argument function as a bunch of single-argument functions that return other single-argument functions is called <a href="https://en.wikipedia.org/wiki/Currying">currying</a>, named after the computer scientist Haskell Curry.</p>
+<p>We can curry a function as many times as we&rsquo;d like, to produce multi-argument functions like</p>
+<pre><code>sumWithTen := a =&gt; b =&gt; c =&gt; a + b + c + 10
+
+sumWithTen(1)(2)(3) `` =&gt; 16
+</code></pre><p>It&rsquo;s helpful to recognize that a function written in the form <code>_ =&gt; _ =&gt; ... =&gt;  _</code> is just another way of writing multi-argument functions, because it shows up everywhere in the lambda calculus. With this in mind, we&rsquo;re ready to start defining the basic building blocks of programs in the lambda calculus.</p>
+<h3 id="a-note-on-notation">A note on notation</h3>
+<p>In the academic literature, computer scientists use a single mathematically defined notation for representing functions in the lambda calculus, rather than emulating any particular programming language. While we won&rsquo;t use it much in this post, it&rsquo;s useful to know when reading outside literature, so I&rsquo;ll summarize it here.</p>
+<p>The notation has two rules:</p>
+<ol>
+<li>
+<p>We define a function that takes variable \( x \) by using the lambda (\( \lambda \)) symbol. <code>x =&gt; x + 3</code> is written \( \lambda x . x + 3 \).</p>
+<p>We can also write curried, multi-argument functions this way. <code>a =&gt; b =&gt; a + b</code> is written \( \lambda a . \lambda b . a + b \) using two different lambda &ldquo;bindings&rdquo;. Sometimes you&rsquo;ll also see this abbreviated to \( \lambda a b . a + b \), but they mean the same thing.</p>
+</li>
+<li>
+<p>We apply a function \( f \) on a variable \( x \) by simply writing them next to each other, like \( f \ x \).</p>
+<p>We can define a function and immediately invoke it on a value. For example, we can write</p>
+<p>$$ (\lambda x . 2x) \ 10 = 20 $$
+$$ (\lambda abc . ab + c) \ 10 \ 20 \ 30 = 230 $$</p>
+<p>These would be written equivalently in Ink as functions</p>
+<pre><code>(x =&gt; 2 * x)(10) = 20
+((a, b, c) =&gt; a*b + c) (10, 20, 30) = 230
+</code></pre></li>
+</ol>
+<p>We&rsquo;ll mostly stick to more familiar (to us programmers) notations in this post, but as we reference ideas from the rest of the field, being able to read the lambda notation will come in handy.</p>
+<h2 id="church-numerals">Church numerals</h2>
+<p>To write programs in the lambda calculus, we first need to model some data that our functions can act on. To keep it simple, here we&rsquo;ll just define the natural numbers. But we can&rsquo;t just use the built-in numbers <code>1, 2, 3 ...</code> because we can <em>only use functions</em> in the lambda calculus. We need a way to <strong>represent the natural numbers using pure functions</strong>.</p>
+<p>The <strong><a href="https://en.wikipedia.org/wiki/Church_encoding">Church encoding</a></strong> is the most popular way to encode numbers in functions. It gives the following conversion rule:</p>
+<blockquote>
+<p>A number \( n \) is encoded as a function that takes another function <code>f</code> and an argument <code>x</code>, and invokes <code>f</code> \( n \) times on <code>x</code>.</p>
+</blockquote>
+<p>Let&rsquo;s define some numbers using this rule. A zero is simple: it&rsquo;s a function that takes an <code>f</code> and some argument <code>x</code>, but doesn&rsquo;t ever call <code>f</code> (or, calls <code>f</code> zero times, which is the same thing).</p>
+<pre><code>Zero := f =&gt; x =&gt; x
+</code></pre><p>We represent the number 1 as a function that calls the given function exactly once on <code>x</code>, and so on&hellip;</p>
+<pre><code>One := f =&gt; x =&gt; f(x)
+Two := f =&gt; x =&gt; f(f(x))
+Three := f =&gt; x =&gt; f(f(f(x)))
+</code></pre><p>How do we use Church numerals? One thing we might want to do is to convert these representations of numbers into the numbers we&rsquo;re familiar with. We can write a little helper function to do that, which looks like this</p>
+<pre><code>`` convert Church numerals to Ink numbers
+toNumber := c =&gt; c(n =&gt; n + 1)(0)
+
+toNumber(One) `` =&gt; 1
+toNumber(Three) `` =&gt; 3
+</code></pre><p><code>toNumber</code> converts Church numerals (which are functions) to Ink numbers by calling each Church numeral with <code>f</code> set to an &ldquo;add one&rdquo; function and the starting point <code>x</code> as zero. This means, for example, our definition of <code>Three</code> will call the &ldquo;add one&rdquo; function 3 times on 0, giving us the number <code>3</code>.</p>
+<p>To do anything useful with Church numerals, we need to define a few arithmetic functions, starting with a &ldquo;successor&rdquo; function, conventionally spelled <code>succ</code>, that increments a Church numeral. In other words, <code>succ(One) = Two</code> and <code>succ(Two) = Three</code>. The function <code>succ</code> can be written</p>
+<pre><code>`` Takes N and returns N + 1
+succ := n =&gt; f =&gt; x =&gt; f(n(f)(x))
+</code></pre><p>The <code>succ</code> function takes a Church number <code>n</code> (a function taking <code>f, x</code>) and gives us a function that calls <code>f</code> on <code>x</code> <em>one more time</em> than the function given to it.</p>
+<p>The fact that the definition above actually does this might not be obvious at first. But if you sit with it and play with some examples or code, it&rsquo;ll click.</p>
+<p>Using <code>succ</code>, we can define basic arithmetic. <code>add</code>, for example, is a function taking two numbers <code>a</code> and <code>b</code> and calling <code>succ</code> on <code>a</code>, <code>b</code> times. We can use this pattern to define multiplication (adding a number <code>n</code> times) and powers (multiplying a number <code>n</code> times).</p>
+<pre><code>` We can define arithmetic over Church numerals.
+    To add A and B, we add 1 to A, B times.
+    In other words, we apply succ to A, B times. `
+add := a =&gt; b =&gt; b(succ)(a)
+
+` A times B is A added to zero B times. `
+mul := a =&gt; b =&gt; b(add(a))(Zero)
+
+` A^B is 1 multiplied by A B times. `
+pow := a =&gt; b =&gt; b(mul(a))(One)
+</code></pre><p>Though we won&rsquo;t go into much detail, there is a complement to <code>succ</code> called <code>pred</code>, which is a &ldquo;subtract one&rdquo; function. In other words, <code>pred(Two) = One</code>. Using <code>pred</code>, we can define subtraction, division, and logarithms. It turns out the implementation of <code>pred</code> is quite a bit more complex than <code>succ</code>. Our implementation counts up from zero to find the number whose <code>succ</code> is the given number, but don&rsquo;t stress if you don&rsquo;t grok this function yet.</p>
+<pre><code>`` zero? uses booleans, defined later in the post
+zero? := n =&gt; n(_ =&gt; False)(True)
+pred := n =&gt; n (g =&gt; k =&gt; zero?(g(One))(k)(succ(g(k)))) (_ =&gt; Zero) (Zero)
+
+` subtraction is just repeated predication `
+sub := a =&gt; b =&gt; b(pred)(a)
+</code></pre><p>To recap, with the Church encoding of numbers, we&rsquo;ve found a way to represent all non-negative integers as <em>pure functions</em>, or &ldquo;lambdas&rdquo;. We&rsquo;ve also found ways to do basic arithmetic on that representation of numbers, built on the basic operation of incrementing numbers up and down by 1.</p>
+<p>We have invented numbers. Let&rsquo;s move on to booleans.</p>
+<h2 id="booleans">Booleans</h2>
+<p>Booleans in the lambda calculus are encoded as &ldquo;selector functions&rdquo; that choose between two arguments. Given two arguments, the lambda calculus representation of &ldquo;true&rdquo; will pick the first choice, and &ldquo;false&rdquo; will pick the second choice. Think of true and false values as an if-else check over two choices.</p>
+<pre><code>True := x =&gt; y =&gt; x
+False := x =&gt; y =&gt; y
+</code></pre><p>We can write a <code>toBool</code> function that converts our lambda calculus representation of a boolean into a normal Ink boolean value as follows. The boolean, which is a selector function, will pick <code>true</code> if it&rsquo;s <code>True</code>, and pick <code>false</code> if it&rsquo;s <code>False</code>.</p>
+<pre><code>toBool := c =&gt; c(true)(false)
+</code></pre><p>Using these representation of booleans as functions, we can define some boolean operators, like <code>not</code>, <code>and</code>, and <code>or</code>. These operations aren&rsquo;t immediately obvious, so sit with them for a bit and think about how the descriptions in comments are true about each operator.</p>
+<pre><code>` &lt;not&gt; x simply flips the given value's choice. `
+not := x =&gt; x(False)(True)
+
+` A &lt;and&gt; B returns B if A is true, and false if A is false. `
+and := a =&gt; b =&gt; a(b)(False)
+
+` A &lt;or&gt; B returns true if A is true, and B if A is false. `
+or := a =&gt; b =&gt; a(True)(b)
+</code></pre><p>Using these functions on boolean values, we can describe <em>any boolean predicate</em>.</p>
+<p>We can now break down and understand a function we saw earlier in the definition of <code>pred</code> called <code>zero?</code>. <code>zero?</code> returns whether the given argument is <code>Zero</code>. We can&rsquo;t compare the argument directly to <code>Zero</code>, because they might be two different functions that do the same thing, and are thus both technically Church-encoded &ldquo;zero&rdquo; values.</p>
+<p>Instead, our definition of <code>zero?</code> takes a Church-encoded number, and calls it with <code>f</code> set to an always-false function, and <code>x</code> set to <code>True</code>. If <code>f</code> is called a non-zero time on <code>x</code>, we get <code>False</code>. Otherwise, we get <code>True</code>, like we&rsquo;d expect.</p>
+<pre><code>zero? := n =&gt; n(_ =&gt; False)(True)
+</code></pre><p>We have now invented booleans in the lambda calculus.</p>
+<h2 id="recursion-and-fixed-point-combinators">Recursion and fixed-point combinators</h2>
+<p>To reach our goal of implementing a factorial function, we need numbers and booleans. However, we need one more missing piece: <em>recursion</em>. The basic lambda calculus doesn&rsquo;t support recursive definitions. In other words, we can&rsquo;t reference a function within its own definition, which we need to do to define the factorial function.</p>
+<p>To express recursion, we&rsquo;ll need the help of <strong><a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">fixed-point combinators</a></strong>.</p>
+<p>A <em>fixed point</em> of some function is a point where the input and output to the function match. In other words, if \( x \) is a fixed point of \( f \), then \( x = f(x) \). For example, for the function \( f(x) = x^2 \), the number 1 is a fixed point because \( f(1) = 1^2 = 1 \). \( 0 \) is another fixed point of this function.</p>
+<p>A <em>combinator</em> in the lambda calculus is simply a function without any un-bound (or &ldquo;free&rdquo;) variables. <code>x =&gt; y =&gt; x + y</code> has both variables &ldquo;bound&rdquo; to arguments, while <code>x =&gt; x + y</code> has a &ldquo;free&rdquo; <code>y</code> variable, since it was never defined as an argument. For our purposes here, you can think of a &ldquo;combinator&rdquo; intuitively as a &ldquo;completely defined function&rdquo;.</p>
+<p>A <strong>fixed-point combinator</strong> is a combinator (a function) that takes another function, say <code>g</code>, and <strong>returns a fixed point of the given function</strong>. In other words, a fixed-point combinator \( \mathrm{fix} \) is defined so that</p>
+<p>$$ \mathrm{fix} \ g = g(\mathrm{fix} \ g) $$</p>
+<p>This is a little mind-bending, and the definition isn&rsquo;t very intuitive. Let&rsquo;s see why we need a combinator like this to define recursion.</p>
+<p>When we define a recursive function like the factorial, we need to reference the function itself in its body. In pseudocode, this looks like</p>
+<pre><code>def factorial(x):
+    if x = 0:
+        return 1
+    else:
+        return x * factorial(x)
+</code></pre><p>The rules of the lambda calculus technically don&rsquo;t allow us to write such a function, because lambda calculus doesn&rsquo;t support <em>named functions</em> like <code>factorial</code> here. We can only give names to arguments, not functions defined in some &ldquo;global scope&rdquo;.</p>
+<p>Given this limitation, we might try to re-write a factorial like this:</p>
+<pre><code>def fakeFactorial(realFactorial):
+    return function(x):
+        if x = 0:
+            return 1
+        else:
+            return x * realFactorial(x)
+</code></pre><p>Defined this way, if we can <strong>call <code>fakeFactorial</code> with its own return value as its argument</strong>, we&rsquo;ll evaluate our factorial function. A fixed-point combinator lets us call a function with its return value as its own argument in an infinite loop, as we can see from its definition if we say \( g = \mathrm{fakeFactorial} \).</p>
+<p>$$ \mathrm{fix} \ g = g(\mathrm{fix} \ g) = g(g(\mathrm{fix} \ g)) = \cdots $$</p>
+<p>Let&rsquo;s explore a few common fixed-point combinators we can use.</p>
+<h3 id="the-y-combinator">The Y combinator</h3>
+<p>The Y combinator is the best-known fixed-point combinator in the lambda calculus. In the conventional notation, it&rsquo;s defined as</p>
+<p>$$ \mathrm{Y} = \lambda f . (\lambda x . f ( x \ x )) (\lambda x . f ( x \ x )) $$</p>
+<p>In our more familiar programming notation, the Y combinator is</p>
+<pre><code>Y := g =&gt; (x =&gt; g(x(x)))(x =&gt; g(x(x)))
+</code></pre><p>We can see that this Y combinator satisfies our definition if we expand it out.</p>
+<pre><code>Y(g) = (x =&gt; g(x(x)))(x =&gt; g(x(x)))  -&gt; definition of Y(g)
+     = g(x =&gt; g(x(x)))(x =&gt; g(x(x))) -&gt; apply the function (x =&gt; g(x(x)))
+                                        to its argument (x =&gt; g(x(x)))
+     = g(Y(g))                       -&gt; by definition of Y(g)
+</code></pre><p>Now, we should be able to define a <code>fakeFactorial</code> in the lambda calculus, and pass it to <code>Y</code> to create a recursive factorial function:</p>
+<pre><code>fakeFactorial := realFactorial =&gt; n =&gt; zero?(n) (_ =&gt; One) (_ =&gt; mul(n)(realFactorial(pred(n)))) ()
+factorial := Y(fakeFactorial)
+
+factorial(Three) `` =&gt; we should expect Six
+</code></pre><p>If we run this program, though, we&rsquo;ll quickly run into an infinite loop that never terminates. This is because Ink, like most programming languages, is <a href="https://en.wikipedia.org/wiki/Eager_evaluation">eagerly evaluated</a>, which means we compute arguments to functions regardless of whether the function needs them. While the Y combinator as defined works in the boundless world of mathematics, it turns out the assumption of infinite space and memory doesn&rsquo;t work for conventional programming languages.</p>
+<p>But not all hope is lost.</p>
+<h3 id="the-z-combinator">The Z combinator</h3>
+<p>The Z combinator is another fixed-point combinator, specifically designed to work within the constraints of eagerly evaluated languages. It&rsquo;s defined as</p>
+<p>$$ \mathrm{Z} = \lambda f . (\lambda x . f(\lambda v . x x v)) (\lambda x . f(\lambda v . x x v)) $$</p>
+<p>In the notation of code, this Z combinator is</p>
+<pre><code>Z := g =&gt; (x =&gt; g(v =&gt; x(x)(v)))(x =&gt; g(v =&gt; x(x)(v)))
+</code></pre><p>Although we won&rsquo;t prove the fixed-pointed-ness of the Z combinator here, you&rsquo;re welcome to try it at home if you feel so inspired by the Y combinator example earlier in this section.</p>
+<p>The Z combinator emulates laziness in eagerly evaluated environments by wrapping the parts that need to be lazy in something like closures. With this Z combinator, we&rsquo;re ready to write our factorial function in the lambda calculus.</p>
+<h2 id="the-factorial">The factorial</h2>
+<p>First, let&rsquo;s write our equivalent of the <code>fakeFactorial</code> function, defined without recursion.</p>
+<pre><code>fakeFactorial := fact =&gt; n =&gt;
+    zero?(n) (_ =&gt; One) (_ =&gt; mul(n)(fact(pred(n)))) ()
+</code></pre><p>Then we have our Z fixed-point combinator</p>
+<pre><code>Z := g =&gt; (x =&gt; g(v =&gt; x(x)(v)))(x =&gt; g(v =&gt; x(x)(v)))
+</code></pre><p>To test it, we can define our recursive factorial using the Z combinator and call it on a few values</p>
+<pre><code>factorial := Z(fakeFactorial)
+
+toNumber(factorial(Zero)) `` =&gt; 1
+toNumber(factorial(One)) `` =&gt; 1
+toNumber(factorial(Two)) `` =&gt; 2
+toNumber(factorial(Three)) `` =&gt; 6
+
+toNumber(factorial(Five)) `` =&gt; 120
+</code></pre><p>There we have it! A complete implementation of the factorial function in pure lambda calculus, with numbers and booleans represented as pure functions, and recursion achieved using a fixed-point combinator.</p>
+<h2 id="further-reading">Further reading</h2>
+<p>If you&rsquo;re interested in understanding these topics more deeply or reading further into the lambda calculus and its many cousins like the <em>typed lambda calculus</em> or the <em>SKI combinator calculus</em>, here are some links I found useful in my investigations:</p>
+<ul>
+<li>The Wikipedia entries on <a href="https://en.wikipedia.org/wiki/Lambda_calculus">the lambda calculus</a>, <a href="https://en.wikipedia.org/wiki/Fixed-point_combinator">fixed-point combinators</a>, and the <a href="https://en.wikipedia.org/wiki/Y_Combinator">Y combinator</a> are useful starting points</li>
+<li><a href="https://mvanier.livejournal.com/2897.html">An in depth guide to implementing fixed-point combinators in real programs</a></li>
+<li><a href="https://medium.com/swlh/y-and-z-combinators-in-javascript-lambda-calculus-with-real-code-31f25be934ec">Implementing the Y and Z combinators in JavaScript</a></li>
+</ul>
+<p>And lastly, you can find a complete, thoroughly commented implementation of everything covered in this blog in a runnable Ink program at <a href="https://github.com/thesephist/lambda">github.com/thesephist/lambda</a>.</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/bmp/"><em>BMP: the simple, underappreciated image file format</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+	<script>
+		window.MathJax = {
+			tex: {
+				inlineMath: [['\\(', '\\)']]
+			},
+			svg: {
+				fontCache: 'global'
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	
+</body>
