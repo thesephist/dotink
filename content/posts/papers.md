@@ -26,6 +26,14 @@ After the success of UNIX, Bell Labs took the core ideas behind UNIX, their lear
 
 <a href="https://9p.io/sys/doc/9.pdf" class="button">Read PDF &rarr;</a>
 
+### _Bicycles for the mind have to be see-through_, Kartik Agaram
+
+Software engineering is fundamentally the work of designing and implementing layers of abstractions. The central problem of software design, then, is to choose the right abstractions, and the right places in a system to place them. This paper is a more recent work, but one I really enjoyed reading and one that heavily influenced the way I think about software interface design. It's a more epistemological read than the other papers here, but I found it insightful nonetheless and broadly applicable in everything from talking about consumer productivity tools to creating API definitions in my day job.
+
+<a href="http://akkartik.name/akkartik-convivial-20200315.pdf" class="button">Read PDF &rarr;</a>
+
+## Programming languages
+
 ### _The Awk Programming Language_, Aho, Kernighan, Weinberger
 
 Okay, TAPL is really not a paper _per se_, but this manual book for the small language is one of my favorite "programming language books." Awk is a great example of a "small language" designed for a very specific domain of problems -- structured text manipulation, in this case. Awk is worth learning, since it's easy to pick up and will save you time in the long run if you do any kind of work with text data in the terminal, but the book itself is also worth reading. I think it's a good example of a kind of irreverent, easygoing, plain writing about software and computers that's an endangered species in technical writing these days.
@@ -34,11 +42,13 @@ If you like this kind of plain writing on early programming languages, the [orig
 
 <a href="https://ia802309.us.archive.org/25/items/pdfy-MgN0H1joIoDVoIC7/The_AWK_Programming_Language.pdf" class="button">Read PDF &rarr;</a>
 
-### _Bicycles for the mind have to be see-through_, Kartik Agaram
+### _Iterative Type Analysis and Extended Message Splitting_, Craig Chambers & David Ungar
 
-Software engineering is fundamentally the work of designing and implementing layers of abstractions. The central problem of software design, then, is to choose the right abstractions, and the right places in a system to place them. This paper is a more recent work, but one I really enjoyed reading and one that heavily influenced the way I think about software interface design. It's a more epistemological read than the other papers here, but I found it insightful nonetheless and broadly applicable in everything from talking about consumer productivity tools to creating API definitions in my day job.
+The full title of this paper is _Iterative Type Analysis and Extended Message Splitting: Optimizing Dynamically-Typed Object-Oriented Programs_. It details research from building an optimizing compiler for the [Self](https://en.wikipedia.org/wiki/Self_(programming_language)) programming language, a prototype-based object-oriented language from the 90's that had lasting impact on the design of languages that followed like Java and JavaScript. The paper demonstrates that compile-time static analysis of programs written in dynamic languages can bridge the performance gap between those languages and statically typed, compiled languages like C.
 
-<a href="http://akkartik.name/akkartik-convivial-20200315.pdf" class="button">Read PDF &rarr;</a>
+The optimization techniques first used in Self's compilers like type specialization and abstract interpretation would have a huge influence on the performance work that went into Java's virtual machines at Sun and modern JavaScript engines. These kinds of optimization techniques are the reason dynamic object-oriented languages like JavaScript have become ubiquitous high-performance mainstream languages today.
+
+<a href="https://bibliography.selflanguage.org/_static/iterative-type-analysis.pdf" class="button">Read PDF &rarr;</a>
 
 ## Theory
 
