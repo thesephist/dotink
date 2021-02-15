@@ -16,9 +16,17 @@ I've grouped these papers into three rough buckets.
 
 ### _The UNIX Time-Sharing System_, Dennis Ritchie & Ken Thompson
 
-Ritchie and Thompson are two of the "fathers of UNIX," which in turn is the spiritual ancestor for today's Internet infrastructure operating systems like Linux, Solaris, and BSD. The UNIX operating system pioneered both principles in systems design (like [the UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy)) and the seeds of a robust, cross-architecture operating system whose legacy we still enjoy today.
+Ritchie and Thompson are two of the "fathers of UNIX," which in turn is the spiritual ancestor for today's Internet infrastructure operating systems like Linux, Solaris, and BSD. The UNIX operating system pioneered both principles in systems design (like [the UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy)) and the seeds of a robust, cross-architecture operating system whose legacy we still enjoy today. The paper lays out in plain easy language the basic design principles behind UNIX, the core ideas that surprisingly hold up well today, and the reasons they think they could arrive at such an elegant design of the system. Even disregarding its commercial success and popularity, I think UNIX is one of the canonical examples in the software industry of elegantly designed, great timeless tools, and this paper offers a lot that tool builders can learn from even today.
 
 <a href="https://people.eecs.berkeley.edu/~brewer/cs262/unix.pdf" class="button">Read PDF &rarr;</a>
+
+### _A Note on Distributed Computing_, Jim Waldo et. al.
+
+_A Note on Distributed Computing_ is one of the classic papers on distributed systems. The authors provide a clean definition for distributed systems as systems where components don't share an address space, and they argue at a high level that distributed systems have emergent properties and failure modes that are fundamentally different from local systems. They extend the argument to claim that rather than designing components and programming paradigms that try to paper over the difference between local and distributed computation, we should make those differences and failure modes obvious in the design of protocols and interfaces so programmers can use them appropriately.
+
+Despite being from the dawn of the distributed systems era, I found many of the ideas in the paper timeless and useful in today's world of containers and microservices. I also think their argument for see-through APIs that open up the underlying failure modes is a generally useful design principle we can apply elsewhere in computing fruitfully.
+
+<a href="https://github.com/papers-we-love/papers-we-love/blob/master/distributed_systems/a-note-on-distributed-computing.pdf" class="button">Read PDF &rarr;</a>
 
 ### _Plan 9 from Bell Labs_, Rob Pike et. al.
 
