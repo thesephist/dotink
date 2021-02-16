@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Assembler in Ink, Part II: x86 assembly, instruction encoding, and debugging symbols | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/x86/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Assembler in Ink, Part II: x86 assembly, instruction encoding, and debugging symbols</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">15 February 2021</div>
+            <div class="meta-item readtime" itemprop="duration">14 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#assembling-x86-instructions">Assembling x86 instructions</a>
+      <ul>
+        <li><a href="#operand-size-prefixes">Operand size prefixes</a></li>
+        <li><a href="#memory-accesses-in-x86">Memory accesses in x86</a></li>
+      </ul>
+    </li>
+    <li><a href="#encoding-data-and-labels-into-program-text">Encoding data and labels into program text</a></li>
+    <li><a href="#disassemblers-and-symbol-tables">Disassemblers and symbol tables</a></li>
+    <li><a href="#assembler-at-last-and-future-work">Assembler at last, and future work</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p><em>This is the sequel to <a href="/posts/elf/">Assembler in Ink, Part I</a> where I started documenting my process of building an x86 assembler in Ink.</em></p>
+<p>In Part I, we looked at the high-level jobs of an assembler, and how August constructs an ELF file that an operating system (specifically Linux here) could understand and turn into a process. In this second part, we&rsquo;ll dive into how assembly source code is transformed into machine code and data that we can place into the ELF file. We&rsquo;ll also look at adding a symbol table into the generated binary, so a disassembly will show us functions and labels we&rsquo;ve defined in the source code.</p>
+<p><a href="https://github.com/thesephist/august" class="button">See August on GitHub →</a></p>
+<p>We&rsquo;ll start right where we left off. In Part I, we built a program that accepted a fully encoded chunk of machine code and some data and generated an ELF binary. This time, we need to transform assembly source code into that encoded machine code, so we can give it to the ELF library.</p>
+<h2 id="assembling-x86-instructions">Assembling x86 instructions</h2>
+<p>x86, especially 64-bit x86 that we&rsquo;re dealing with here, is a complex instruction set encumbered with lots of historical baggage and sprawling feature sets like vector instructions and addressing modes. But for building August, we only need to support a small subset we can use to validate our ideas and write some small programs. Namely, I elected to support:</p>
+<ul>
+<li>The basic arithmetic instructions like <code>add</code>, <code>sub</code>, <code>xor</code> and so on</li>
+<li>Basic read/writes to and from memory</li>
+<li>Function calls</li>
+<li>The <code>syscall</code> instruction so we could do basic I/O like printing Hello World</li>
+<li>Branch and jump instructions so we could write basic loops</li>
+</ul>
+<p>How machine instructions are encoded into bits differs pretty dramatically between architectures. Intel sticks to the style of having an opcode with optional prefixes, suffixes, and operands, while something like RISC-V sticks to a single-size instruction but with a much more complex encoding scheme that interleaves data with the instruction opcodes.</p>
+<p>In the case of our basic x86 arithmetic instructions, I used a few different reference resources available to understand what types of instruction layouts we need to know about. Specifically, these came in handy:</p>
+<ul>
+<li><a href="http://ref.x86asm.net/coder64.html">The x86asm.net ISA reference</a>, which is comprehensive enough for a toy assembler and easy to navigate once you get used to the compact notation</li>
+<li><a href="http://www.cs.loyola.edu/~binkley/371/Encoding_Real_x86_Instructions.html">Encoding x86 Instructions</a>, which was a helpful guide to understanding how x86 and x64 instructions are laid out into bytes</li>
+<li>The <a href="http://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf">x64 cheat sheet</a> for a handy list of the core x86/x64 instruction set</li>
+</ul>
+<p>Of those, the first link &ndash; the ISA reference &ndash; was most helpful, but there&rsquo;s a bit of a learning curve to understanding exactly what all the notations mean. I won&rsquo;t bore you with the details of that notation here, and instead tell you what I learned.</p>
+<p>First, there are what I&rsquo;d call the <strong>simple instructions</strong>, the ones that are trivial because they&rsquo;re just one value. For example, the <code>syscall</code> instruction for invoking a system call is just two bytes, <code>0x0f05</code>. <code>nop</code> (the no-op instruction) is another such instruction, but it&rsquo;s just one byte, <code>0x90</code>.</p>
+<p>Then, there are instructions that <strong>always take the same type of operand</strong>. The <code>jmp</code> instruction to jump to a different part of the program is one good example. <code>jmp</code> always takes one immediate value operand, which is the virtual address to which the program should jump relative to the current instruction&rsquo;s address. <code>jmp</code> is encoded with an opcode byte <code>0xe9</code> then a 32-bit <a href="https://en.wikipedia.org/wiki/Endianness">little-endian</a> number representing the offset to jump to. The branching instructions, like <code>call</code>, <code>jne</code> (jump if not equal), and <code>jg</code> (jump if greater than) are all laid out similarly.</p>
+<p>Simple arithmetic instructions like <code>inc</code> (increment register) and <code>neg</code> (negate register) are also straightforward, but their operands are register values, not immediates. So they&rsquo;re represented by an opcode byte, followed by an &ldquo;R/M byte&rdquo; encoding the operand register and some extra information about the instruction. For example, <code>neg eax</code> is encoded as byte <code>0xf7</code>, which corresponds to either <code>neg</code> or <code>not</code>, followed by the R/M byte <code>0xd8</code>, which does double-duty to encode <code>eax</code> and distinguish <code>neg</code> from <code>not</code>. By comparison, <code>not eax</code> is <code>0xf7d0</code>.</p>
+<p>There are also the <strong>arithmetic instructions with multiple operands</strong> like <code>add</code> and <code>and</code> and <code>mov</code>. These instructions are much more complex to encode not only because they take two arguments, but also because either of those two arguments could be any of (1) a register, (2) an immediate value encoded into the instruction, or (3) a pointer to a memory location. The same <code>add</code> instruction could be used in any of</p>
+<pre><code>add eax ebx     ; register &lt;- register
+add eax 0x1     ; register &lt;- immediate
+add eax [ebx]   ; register &lt;- memory
+add [ebx 2 ecx] eax
+                ; memory &lt;- register
+add [ebx 4 ecx 0x10] 0x10
+                ; memory &lt;- immediate
+</code></pre><p>Our instruction encoder needs to deal with all these cases for all the arithmetic instructions.</p>
+<p>For me, this part took the longest to get right. I ended up writing special-case branches to handle each of a few different cases. Here&rsquo;s the code that handles the <code>add</code> instruction, for example:</p>
+<pre><code>['add', _, _] -&gt; map(args, type) :: {
+    ['string', 'composite'] -&gt; operands := encodeMem(args.0, args.1) :: {
+        () -&gt; ()
+        _ -&gt; transform('03') + operands
+    }
+    ['composite', 'string'] -&gt; operands := encodeMem(args.1, args.0) :: {
+        () -&gt; ()
+        _ -&gt; transform('01') + operands
+    }
+    ['string', 'string'] -&gt; transform('01') + encodeRM(args.1, args.0)
+    ['string', 'number'] -&gt; transform('81') + encodeRM(0, args.0) + toBytes(args.1, 4)
+    _ -&gt; failWith(f('Unsupported instruction: {{0}}', [instString(inst)]))
+}
+</code></pre><p>The first case handles memory going to a register, the second case handles a register going to memory, the third handles register-to-register, and so on. In each case, the operands are encoded a little differently, and combined with a specific opcode variant for <code>add</code>.</p>
+<p>Lastly, there are a few <strong>special case instructions</strong>, like <code>mov</code>, which has its own rules, and <code>push</code> and <code>pop</code> that manipulate the program stack, which have their own rules too. These were pretty straightforward though.</p>
+<h3 id="operand-size-prefixes">Operand size prefixes</h3>
+<p>The last step in our instruction-encoding process is to handle instructions whose arguments are not 32-bit. 64-bit x86 instructions in August can take operands that are 2, 4, or 8 bytes in size, and memory operands that are 4 or 8 bytes in size. The full x86 instruction set supports an even greater combination of sizes, but I chose to implement these as a starting point.</p>
+<p>These specializations to the instructions are implemented as instruction prefixes &ndash; a special byte that comes before the opcode that signals a non-default operand size (with the default being 4 bytes). For example, a <code>mov eax ebx</code> (32-bit) is <code>0x89d8</code>, but <code>mov rax rbx</code> (the 64-bit variant) is <code>0x4889d8</code> with the <code>0x48</code> prefix for the 64-bit versions of the registers. To deal with these, August simply keeps track of the specified register and memory access sizes at parse time, and adds the right prefixes at the end of each instruction&rsquo;s encoding step.</p>
+<h3 id="memory-accesses-in-x86">Memory accesses in x86</h3>
+<p>x86, being a complex instruction set, has many memory <em>addressing modes</em>. These are represented in my little made-up assembly notation inside brackets, like <code>[eax]</code> or <code>[rbx 2 rax rcx]</code>. In general, x86 instructions refer to memory locations by referencing up to three register values:</p>
+<ul>
+<li>A <strong>base pointer</strong>, which is always required</li>
+<li>An <strong>index register</strong>, which can be multiplied by a <strong>scale</strong> of 1, 2, 4, or 8 and is added to the base</li>
+<li>A <strong>displacement</strong>, which is added to the total of the base and index + scale</li>
+</ul>
+<p>For example, a particular instruction may reference the memory address <code>eax + 2 * ebx + ecx</code>, with <code>eax</code> as the base.</p>
+<p>This complexity exists so that memory access into large contiguous arrays of data are fast. For example, say we have an array of objects each taking up 8 bytes in memory. We want to get the fifth element, and specifically the value that sits on the 4th byte of the fifth element.</p>
+<p>Normally, we&rsquo;d have to do a lot of arithmetic to figure out exactly what memory address we want to access. But with a complex addressing mode, we can let the CPU do that calculation for us, by encoding the instruction so that</p>
+<ul>
+<li>The base points to the start of the array</li>
+<li>The index is set to 5, with a scale of 8 (for 8 bytes-per-item)</li>
+<li>The displacement is 4, since we want the value in the middle of the 8-byte value</li>
+</ul>
+<p>Since we most likely have these individual values in these registers, even this kind of a complex memory access can be optimized by the processor. Some optimizing compilers also (ab?)use complex addressing modes like this to speed up addition and multiplication by constants.</p>
+<p>Any given memory access may come without a displacement, without an index register, or without both. And for each case, the encoding we need is slightly different. That&rsquo;s mildly annoying, but these are well-documented rules, and August simply implements these rules for these addressing modes in <a href="https://github.com/thesephist/august/blob/367229eef803e1cd12677a4da287fb1b0b44b13b/src/asm.ink#L215">the <code>encodeMem</code> function</a>.</p>
+<h2 id="encoding-data-and-labels-into-program-text">Encoding data and labels into program text</h2>
+<p>Encoding source code into machine instructions isn&rsquo;t just a simple matter of mapping each instruction to its encoding rule. Take this program that prints out Hello World or Goodbye to standard output, depending on a variable:</p>
+<pre><code>_start:
+    ; if 0, says hello world
+    ; if 1, says goodbye
+    mov eax 0
+    cmp eax 0
+
+    mov eax 0x1        ; write syscall
+    mov edi 0x1        ; stdout
+    jne goodbye
+
+hello:
+    mov esi msg_a
+    mov edx len_a    ; length
+    syscall
+    jmp exit
+
+goodbye:
+    mov esi msg_b
+    mov edx len_b    ; length
+    syscall
+    jmp exit
+
+exit:
+    mov eax 60
+    mov edi 0
+    syscall
+
+section .rodata
+msg_a:
+    db &quot;Hello, World!&quot; 0xa
+len_a:
+    eq 14
+msg_b:
+    db &quot;Goodbye!&quot; 10
+len_b:
+    eq 9
+</code></pre><p>Some of the operands to instructions here are <em>pointers to data</em>, like <code>msg_a</code> and <code>len_b</code>. Other operands are <em>labels</em>, like <code>hello</code> and <code>exit</code>. The assembler needs to replace references to these memory addresses with real addresses at time of assembly.</p>
+<p>This isn&rsquo;t trivial, because the encoding of instructions at the beginning of the program usually influence the location of the labels at the end of the program. To resolve our label references correctly, we need two passes over the assembly program &ndash; once to encode all the instructions and figure out where the labels are, and a second time to replace the references to labels and data with their real numerical values.</p>
+<p>In August&rsquo;s assembler, the end of the assembly step collects a list of symbols to be replaced in the first-pass program text in a list called <code>relocations</code>, and a second pass replaces slots in the first-pass output with correct locations gathered from the first-pass output in a second pass over the code.</p>
+<p>Finally, the generated program text, the symbols from the source code, and any read-only data included in the <code>.rodata</code> section are all gathered up and returned by the assembler to be passed to the ELF file generator function from Part I of this blog. And our assembler is complete!</p>
+<h2 id="disassemblers-and-symbol-tables">Disassemblers and symbol tables</h2>
+<p>There&rsquo;s one part of the assembler we haven&rsquo;t looked at in detail &ndash; the <strong>symbol table</strong>. The symbol table is a non-program section in the ELF file (meaning it isn&rsquo;t loaded into memory when the program runs) that tells other tools like disassemblers and debuggers where labels in the source code are in the final program text.</p>
+<p>In our <code>readelf</code> output from Part I, the symbol table looked like this:</p>
+<pre><code>Symbol table '.symtab' contains 3 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 0000000000401000     0 FUNC    LOCAL  DEFAULT    1 _start
+     2: 0000000000401016     0 FUNC    LOCAL  DEFAULT    1 exit
+</code></pre><p>&hellip; for the original assembly:</p>
+<pre><code>_start:
+    mov eax 0x1     ; write syscall
+    mov edi 0x1     ; stdout
+    mov esi msg     ; string to print
+    mov edx len     ; length
+    syscall
+
+exit:
+    mov eax 60      ; exit syscall
+    mov edi 0       ; exit code
+    syscall
+
+    ; ...
+</code></pre><p>The symbol table has an entry for every symbol in the source assembly, and some metadata about each. The most important piece of data for us is the <code>Value</code> column, which denotes the virtual address of the instruction that the symbol points to in the running program. In this case, our program text starts at virtual address <code>0x401000</code>, so our first symbol <code>_start</code> is at that address. <code>exit</code>, which appears <code>0x16</code> bytes later in the instruction stream, has virtual address <code>0x401016</code>. (Sometimes, for other kinds of symbols, &ldquo;value&rdquo; refers to something other than an address, but we won&rsquo;t dig into that detail today.)</p>
+<p>What&rsquo;s the use of a symbol table like this?</p>
+<p><a href="https://en.wikipedia.org/wiki/Symbol_table#Applications">Lots of uses</a>, it turns out. But for me, it was most useful when looking at disassembly of August&rsquo;s own output. As I started writing longer and longer assembly programs to test the assembler, I started using <code>objdump</code> to see a disassembly of the executable and check that it matched my input. An <code>objdump</code> of the Hello World program without symbols reads like</p>
+<pre><code>$ objdump -d ./hello-world
+
+./hello-world:     file format elf64-x86-64
+
+Disassembly of section .text:
+
+0000000000401000 &lt;.text&gt;:
+  401000:	b8 01 00 00 00       	mov    $0x1,%eax
+  401005:	bf 01 00 00 00       	mov    $0x1,%edi
+  40100a:	be 00 50 6b 00       	mov    $0x6b5000,%esi
+  40100f:	ba 0e 00 00 00       	mov    $0xe,%edx
+  401014:	0f 05                	syscall
+  401016:	b8 3c 00 00 00       	mov    $0x3c,%eax
+  40101b:	bf 00 00 00 00       	mov    $0x0,%edi
+  401020:	0f 05                	syscall
+	...
+</code></pre><p>Even though we had labels that held meaning in our source code, the disassembly can&rsquo;t find them within the instruction stream because that data isn&rsquo;t saved into our machine code. With our symbol table, though, <code>objdump</code> can map symbols back to their location in the disassembly:</p>
+<pre><code>$ objdump -d ./hello-world
+
+./hello-world:     file format elf64-x86-64
+
+Disassembly of section .text:
+
+0000000000401000 &lt;_start&gt;:
+  401000:       b8 01 00 00 00          mov    eax,0x1
+  401005:       bf 01 00 00 00          mov    edi,0x1
+  40100a:       be 00 50 6b 00          mov    esi,0x6b5000
+  40100f:       ba 0e 00 00 00          mov    edx,0xe
+  401014:       0f 05                   syscall
+
+0000000000401016 &lt;exit&gt;:
+  401016:       b8 3c 00 00 00          mov    eax,0x3c
+  40101b:       bf 00 00 00 00          mov    edi,0x0
+  401020:       0f 05                   syscall
+    ...
+</code></pre><p>Armed with these tools now, we can start writing real assembly programs and build and run them with August!</p>
+<h2 id="assembler-at-last-and-future-work">Assembler at last, and future work</h2>
+<p>With the ELF format library from Part I and x86 assembler from this post, we have the main components of a full assembler that can take x86 assembly source files and generate executable binaries.</p>
+<p>The only work left to do is to write some plumbing code in a CLI script that connects the two halves together. In August, this is done in <a href="https://github.com/thesephist/august/blob/master/src/cli.ink">src/cli.ink</a>. We read a source file, feed it to the assembler, and then feed its output to the ELF library to generate the file, which we save and mark as executable on disk.</p>
+<p>This is where August is today: an assembler for single-file 64-bit x86 programs that generates 64-bit ELF binaries. Real-world assemblers do far more in practice, and there are a few areas where I&rsquo;d like to experiment and expand August&rsquo;s features.</p>
+<p>Specifically, to make August useful to use in real programs, it first needs to be able to generate object files or executables that can be <strong>linked against other libraries</strong> like the system <a href="https://en.wikipedia.org/wiki/C_standard_library">libc</a>. This should allow programs assembled with August to, for example, <code>call printf</code> with arguments rather than issue the system call directly. Most modern operating system besides Linux actually require programs running on the platform to dynamically link against the system-provided libc library to make system calls, for reasons of security, performance, and forward-compatibility. So to assemble programs to run on non-Linux platforms, August needs to be able to output dynamically linked executables. This seems like mostly a matter of providing some extra metadata in the binary about the symbols to link and the libraries to link against, but I haven&rsquo;t had a chance to look closely yet.</p>
+<p>Many assemblers are also multi-architecture or multi-platform. While August currently only supports 64-bit ELF on x86, I think it would be a good challenge to try to expand the tool to support other architectures like ARM and RISC-V or other platforms that don&rsquo;t use ELF as the executable format, like macOS with its Mach-O format.</p>
+<p>Even still, in this prototype form, August was one of my most interesting technical projects in the last year because it pushed me to dig into areas of computing I wasn&rsquo;t familiar with before. And it runs on Ink!</p>
+<p>For me, building toy prototypes of components at different layers of the stack seems like the best way to keep expanding my understanding of systems up and down the stack, and I hope to keep investigating by building &ndash; perhaps the next one will be a browser. Maybe an operating system?</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/elf/"><em>Assembler in Ink, Part I: processes, assembly, and ELF files</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

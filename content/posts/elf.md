@@ -4,7 +4,7 @@ date: 2021-02-10T18:33:58-05:00
 toc: true
 ---
 
-Over the holidays, I decided to learn about the lower level components of programs by writing an assembler and linker from scratch. Assembly and linking are two of the last steps of a typical "compile" process that generates an executable file from an assembly program, and going through the process of building a basic x86 assembler revealed a lot about the inner workings of programs and operating systems I didn't know before.
+Over the holidays, I decided to learn about the lower level components of programs by writing an assembler and linker from scratch. Assembly and linking are two of the last steps of a typical "compile" process that generates an executable file from an assembly program. Going through the process of building a basic x86 assembler revealed a lot about the inner workings of programs and operating systems I didn't know before.
 
 The mini assembler/linker I built is written in Ink, of course, and is called _August_, like the autumn month. It contains some internal libraries to work with ELF files and assemble x86 instruction text, but is otherwise quite a simple learning project.
 
@@ -20,7 +20,7 @@ When I started out, what I really wanted was to bridge the gap between the lowes
 
 Here's our high level roadmap. We need to go from x86 assembly, which looks like this for a Hello World program:
 
-_(If you've written x86 assembly before, you might notice this isn't standard syntax. Because August is a toy assembler, I made some subjective aesthetic choices in syntax to make parsing a little simpler and syntax a little nicer, but it shouldn't get in the way of reading the code. Notably, we don't have commas separating arguments, we don't have the `global` directive because every symbol is global, and data segment syntax is a little different.)_
+_(If you've written x86 assembly before, you might notice this isn't standard syntax. Because August is a toy assembler, I started with the Intel syntax but made some subjective aesthetic choices to make parsing a little simpler and syntax a little nicer, but it shouldn't get in the way of reading the code. Notably, we don't have commas separating arguments, we don't have the `global` directive because every symbol is global, and data segment syntax is a little different.)_
 
 ```
 section .text
@@ -102,9 +102,9 @@ $ xxd -a ./hello-world
 
 So this is our end goal. In the file, the first chunk of data is the executable file's header containing metadata and some format description, and the following parts contain the machine code, debug symbols, and data contained within the program. The job of the assembler is to go from the assembly code to this generated file, and we'll build up to this end result in this blog post and the next.
 
-In most toolchains, there's a file format that sits in between these two representations of a program, called an [**object file**](https://en.wikipedia.org/wiki/Object_file). An object file is a packaged-up bundle of machine code and data that a program needs to run. But an object file might not be directly executable. For example, an object file for the `libc` library might contain code to implement `printf`, but it doesn't t make sense to run the library as an executable.
+In most toolchains, there's a file format that sits in between these two representations of a program, called an [**object file**](https://en.wikipedia.org/wiki/Object_file). An object file is a packaged-up bundle of machine code and data that a program needs to run. But an object file might not be directly executable. For example, an object file for the `libc` library might contain code to implement `printf`, but it doesn't make sense to run the library as an executable, so you can't.
 
-In most compilation steps, the compiler or assembler generates object files for each "compilation unit" of code -- usually a file or a library -- and then a _linker_ links the various parts of the different object files together into a final executable. For example, if we had an object file containing a Hello World program that then referenced the `printf` function in an external C library, we'd compile each of the two components, then link them together with a linker to generate a final executable binary file.
+In most compilation steps, the compiler or assembler generates object files for each "compilation unit" of code -- usually a file or a library -- and then a _linker_ links the various parts of the different object files together into a single final executable. For example, if we had an object file containing a Hello World program that then referenced the `printf` function in an external C library, we'd compile each of the two components, then link them together with a linker to generate a final executable binary file.
 
 August, being a small project, isn't capable of linking multiple object files (yet?). Instead, it takes in a single assembly program, generates an internal representation of the program's machine code and data, and then simply outputs an executable file. In the case of my system, that executable file needs to be an [ELF file](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format) because my computer runs the Linux kernel, which expects executable binary files to be ELF files.
 
@@ -117,9 +117,9 @@ The first piece of code I wrote for the assembler was a program that simply outp
 The first version of this "fake" assembler output the binary for this assembly program, hard-coded into the program itself:
 
 ```
-mov eax 0x1
-mov ebx 0x2a
-int 0x80
+mov eax 0x1     ; the "exit" syscall number
+mov ebx 0x2a    ; argument to exit()
+int 0x80        ; make the syscall
 ```
 
 All this program does is make an "exit" system call, so that the program exits with an exit status code of 42 (`0x2a`). This is the simplest valid assembly program I could make on x86 -- it uses two instructions, `mov` and `int`, two registers, `eax` and `ebx`, and a few [immediate](https://en.wikipedia.org/wiki/Value_(computer_science)#In_assembly_language) integer values.
@@ -136,28 +136,28 @@ The structure of an ELF file is pretty well specified on the [ELF manual page](h
 2. Any number of "sections", which can contain anything from program machine code to data to debugging information or really anything else
 3. Where some of the sections may also be "segments" that are loaded into memory when the program is executed
 
-All executable binary files on Linux systems are ELF files, and you can peer into the internal structure of any ELF file using `readelf` or `elfdump` (depending on your operating system). Somewhere in the ELF file are also a _program header table_ and a _section header table_. These tables can be anywhere in the file, and tell whoever's interpreting the ELF file where to find all the segments and sections in the ELF file. Since these tables can be located anywhere in the file, the ELF header at the start of the file point to a byte offset in the file where these tables live.
+All executable binary files on Linux systems are ELF files, and you can peer into the internal structure of any ELF file using `readelf` or `elfdump` (depending on your operating system). Somewhere in the ELF file are also a _program header table_ and a _section header table_. These tables can be anywhere in the file, and tell whoever's interpreting the ELF file where to find all the segments and sections in the ELF file. Since these tables can be located anywhere in the file, the ELF header at the start of the file point to a byte offset in the file where these two tables live.
 
 This is the high-level structure of an ELF file: a header, pointing to the program and section header tables, which in turn point to the rest of the segments and sections in the file. Sections are designed to hold arbitrary data, but segments are specifically for holding data useful in actually loading up a program to execute, like machine code, a pool of constants, and any global variables.
 
-An operating system that's trying to run an ELF binary _only looks for the program segments_, and disregards any sections and section headers, but other tools like the `objdump` disassembler and debugger rely on these sections holding meaningful data to work. If you're linking multiple object files together, these sections holding symbol data and the like also become useful.
+An operating system that's trying to run an ELF binary _only looks for the program segments_, and disregards any sections and section headers, but other tools like the `objdump` disassembler and `gdb` debugger rely on these sections holding meaningful data to work. If you're linking multiple object files together, these sections holding symbol data and the like also become useful.
 
 For building August, because I wanted to output executable files that I could disassemble and examine, I chose to include the following sections and segments.
 
 Sections...
 
-- A **null section**, which must be the first section in any ELF file
+- A **null section**, just an entry in the section header table of all zero bytes, which must be the first section in any ELF file
 - A **text section**, conventionally labelled `.text`, containing the machine code also commonly called the "text" of a program
 - A **read-only section**, conventionally called `.rodata`, containing any constants for the program like the string `"Hello, World!"`
 - A **symbol table section**, conventionally labelled `.symtab`, which holds a table of "symbols" in the program like function names
-- A **string table**, which we need to hold the names of the other sections in this list. This is conventionally labelled `.shstrtab`, for "Section Header STRing TABle".
+- A **string table**, which we need to hold the names of the other sections in this list and other items like symbols. This is conventionally labelled `.shstrtab`, for "Section Header STRing TABle".
 
 Segments...
 
 - One pointing to the text section, holding the machine code the program needs to run
-- One pointing to the read-only data section, holding the constants the machine code will reference when it runs.
+- One pointing to the read-only data section, holding the constants the machine code will reference when it runs, like string literals
 
-When we generate this ELF file and give it to the operating system, the operating system will spin up a new process in which our program can run. The OS will look at the two segments holding our machine code and constants, and reference the program header table to figure out where in the process's virtual address space these segments should be placed, and assign the segments their correct places in the process's virtual memory. Then it moves the CPU's [program counter](https://en.wikipedia.org/wiki/Program_counter) or instruction pointer register to the starting address of the executable, specified the ELF header. Finally, the OS task-switches to the new process, where the CPU will begin executing our machine code!
+When we generate this ELF file and give it to the operating system, the operating system will spin up a new process in which our program can run. The OS will look at the two segments holding our machine code and constants, and reference the program header table to figure out where in the process's virtual address space these segments should be placed, and assign the segments their correct places in the process's virtual memory. Then it moves the CPU's [program counter](https://en.wikipedia.org/wiki/Program_counter) or instruction pointer register to the starting address of the executable, specified in the ELF header. Finally, the OS task-switches to the new process, where the CPU will begin executing our machine code!
 
 This is the simplest model of an executable ELF binary. Most languages and compilers will produce binaries that involve more complex moving parts, like linking to interpreters or libc's, loading in other dynamically linked libraries, or referencing debugging information embedded in the binary. Binaries that include large runtimes like the Go programming language runtime might have many segments loaded into memory that are responsible for different tasks or data in the program.
 
@@ -165,9 +165,9 @@ For a simple toy assembler like August, though, these few sections and segments 
 
 ### Dissecting ELF files with `readelf`
 
-To start writing a program that can generate an ELF file that we want, we need two things. First, we need a detailed spec of exactly what bits and bytes we need to place into our ELF file to represent our sections and segments. We can find this information in the manual page (on Linux a simple `man elf` will get us there), or in various nooks and crannies of the low-level programming world online, some of which I've linked on the [August project readme](https://github.com/thesephist/august#references-and-further-reading). Second, we need to be able to easily inspect the ELF structure of any file we output. We can theoretically do this by using a binary file-dumping tool like `hexdump` and reading the bytes, but that's painful and time consuming. I chose to use `readelf` to get a continuous read-out of the data in ELF files my program output to make sure my code produced a valid ELF file.
+To start writing a program that can generate an ELF file that we want, we need two things. First, we need a detailed spec of exactly what bits and bytes we need to place into our ELF file to represent our sections and segments. We can find this information in the manual page (on Linux a simple `man elf` command will get us there), or in various nooks and crannies of the low-level programming world online, some of which I've linked on the [August project readme](https://github.com/thesephist/august#references-and-further-reading). Second, we need to be able to easily inspect the ELF structure of any file we output. We can theoretically do this by using a binary file-dumping tool like `hexdump` and reading the bytes, but that's painful and time consuming. I chose to use `readelf` to get a continuous read-out of the data in ELF files my program output to make sure my code produced a valid ELF file.
 
-A `readelf` output is pretty human-readable. Let's break it down.
+A `readelf` output is pretty readable. Let's break it down for the Hello World program that I used to open this blog.
 
 ```
 $ readelf --all ./hello-world
@@ -223,7 +223,7 @@ There are no section groups in this file.
 
 Next up is a list of sections `readelf` found in this file's section header. It found our five sections I outlined above: the null section, `.text`, `.rodata`, the symbol table, and the string table. We can also see some extra metadata, like that the `.text` section has `AX` (allocate and execute) flag bits set, and that the `.symtab` and `.shstrtab` sections have their "type" set to those respective types so another program like a debugger can recognize them.
 
-`readelf` also tells us that there are no "section groups" in this file. I'm not sure what section groups are, but I guess we don't have any.
+`readelf` also tells us that there are no "section groups" in this file. Section groups aren't particularly useful in executable files, but they're used sometimes in object files to group related sections together for a separate link step.
 
 ```
 Program Headers:
@@ -266,16 +266,16 @@ No version information found in this file.
 
 Lastly, we get our [symbol table](https://en.wikipedia.org/wiki/Symbol_table#Applications), which tells disassemblers and debuggers where various symbols in our program reside in our code. In the case of this program, which was built from an assembly source, these symbols correspond to labels in our assembly code. `_start`, for example, is our program entry point and lives at virtual address `0x401000`, the start of our text segment.
 
-If you have a Linux or BSD system, try using `readelf` to break open other programs you're familiar with, like `bash` or `vi`. You'll see extra sections, more debug symbols, and more complex link-time structures, but the basics high level structure of segments and sections will be the same across all ELF formats.
+If you have a Linux or BSD system, try using `readelf` to break open other programs you're familiar with, like `bash` or `vi`. You'll see extra sections, more debug symbols, and more complex link-time structures, but the basics high level structure of segments and sections will be the same across all ELF files.
 
-The first part of our assembler is a subprogram that can construct the simple ELF file we just dissected.
+The first part of our assembler is a program that can take data that needs to go in each section, and construct a simple ELF file like the one we just dissected.
 
 ## Generating an ELF binary in August
 
 If we simplify a bit, constructing an ELF file is mostly a matter of moving bytes of data around so they go in the right locations in a file. Because we're sticking to a simple structure, we can pre-determine a lot of constants to simplify our process. August's ELF library assumes the following.
 
 - An entry point address of `0x401000`
-- The start of read-only data segment of `0x6b5000`
+- The start of read-only data segment at `0x6b5000`
 - A pre-set order of parts:
     1. The ELF header
     2. The program header (table of segments)
@@ -289,7 +289,7 @@ These assumed constants are arbitrary, but they're useful to have, because it ma
 
 From this more concrete structure, I started to plan out my function to take program text and data, and emit an ELF binary.
 
-You can see the structure I ended up with at [`./src/elf.ink`](https://github.com/thesephist/august/blob/master/src/elf.ink) in the repository. For example, here is a little bit of logic in the library to generate each of the sections in the ELF file. For example, my definition for the `.text` section looks like this.
+You can see the structure I ended up with at [`./src/elf.ink`](https://github.com/thesephist/august/blob/master/src/elf.ink) in the repository. For example, here is a little bit of logic in the library to generate each of the sections in the ELF file. My definition for the `.text` section looks like this.
 
 ```
 TextSection := {
@@ -305,7 +305,7 @@ TextSection := {
 
 Most of this corresponds directly to the section metadata we saw in the `readelf` output. While debugging this part of August, I had a continuous `readelf` output up side-by-side with my editor so I could validate that what I wrote in the assembler matched the sections it generated.
 
-Here's the read-only data section, where I'll draw your attention to the different flag bits from the text section (just `Alloc` rather than `Alloc | ExecInstr`).
+Here's the read-only data section, where I'll draw your attention to the flag bits that differ from the flags in the text section (just `Alloc` rather than `Alloc | ExecInstr`).
 
 ```
 RODataSection := {
@@ -341,6 +341,10 @@ RODataProg := {
 This ELF-file-generating function also builds the symbol table. Given a dictionary of symbols and their virtual addresses, the `makeSymTab` function creates entries in the `.symtab` section and strings it all together.
 
 ```
+symtab := makeSymTab(symbols, registerString)
+
+` ... `
+
 SymTabSection := {
     name: toBytes(registerString('.symtab'), 4)
     type: toBytes(SectionType.SymTab, 4)
@@ -355,14 +359,13 @@ SymTabSection := {
 
 Given all these sections and segments, we simply map over all the descriptions of sections and segments to encode them into table entries and lay them out next to each other so we can place them in our resulting ELF file.
 
-The last task in the ELF library is to generate the ELF header. This step is counterintuitively left to the end so we know exactly how many sections we have, and exactly how big they ended up being. We need this information to store in the header the layout of our whole ELF file.
+The last task in the ELF library is to generate the ELF header. This step is left to the end so we know exactly how many sections we have, and exactly how big they ended up being. We need this information to store the layout of our whole ELF file in the ELF header.
 
 The final line of the ELF generation code stitches all the sections together.
 
 ```
 elfFile := padEndNull(ElfHeader + ProgHeaders, PageSize) +
-    SectionBodies +
-    SectionHeaders
+    SectionBodies + SectionHeaders
 ```
 
 There we have it. A small program to take in some encoded blob of machine code, some debug symbols, and some read-only data and produce an ELF file our operating system can execute!

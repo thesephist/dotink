@@ -68,8 +68,10 @@ Polyx is Linus's personal productivity suite which includes services like file s
 
 ### August
 
-August is an educational assembler written from scratch in Ink, supporting 64-bit x86 ELF executables to start with more under development. It features an instruction encoder and ELF file format library written in Ink.
+August is an educational assembler written from scratch in Ink, supporting 64-bit x86 ELF executables to start with more under development. It features an x86_64 instruction encoder and ELF file format library written in Ink.
 
+<a href="/posts/elf/" class="button">Blog Part I</a>
+<a href="/posts/x86/" class="button">Blog Part II</a>
 <a href="https://github.com/thesephist/august" class="button">See on GitHub &rarr;</a>
 
 ### Codeliner

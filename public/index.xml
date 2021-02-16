@@ -6,7 +6,26 @@
     <description>Recent content in The Ink blog on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Feb 2021 07:02:52 -0500</lastBuildDate><atom:link href="https://dotink.co/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Feb 2021 09:27:35 -0500</lastBuildDate><atom:link href="https://dotink.co/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Assembler in Ink, Part II: x86 assembly, instruction encoding, and debugging symbols</title>
+      <link>https://dotink.co/posts/x86/</link>
+      <pubDate>Mon, 15 Feb 2021 09:27:35 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/x86/</guid>
+      <description>This is the sequel to Assembler in Ink, Part I where I started documenting my process of building an x86 assembler in Ink.
+In Part I, we looked at the high-level jobs of an assembler, and how August constructs an ELF file that an operating system (specifically Linux here) could understand and turn into a process.</description>
+    </item>
+    
+    <item>
+      <title>Assembler in Ink, Part I: processes, assembly, and ELF files</title>
+      <link>https://dotink.co/posts/elf/</link>
+      <pubDate>Wed, 10 Feb 2021 18:33:58 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/elf/</guid>
+      <description>Over the holidays, I decided to learn about the lower level components of programs by writing an assembler and linker from scratch. Assembly and linking are two of the last steps of a typical &amp;ldquo;compile&amp;rdquo; process that generates an executable file from an assembly program.</description>
+    </item>
+    
     <item>
       <title>Taming infinities: adding tail call elimination to Ink runtimes</title>
       <link>https://dotink.co/posts/tce/</link>

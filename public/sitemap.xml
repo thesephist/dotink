@@ -3,17 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://dotink.co/posts/</loc>
-    <lastmod>2021-02-03T07:02:52-05:00</lastmod>
+    <loc>https://dotink.co/posts/x86/</loc>
+    <lastmod>2021-02-15T09:27:35-05:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dotink.co/posts/tce/</loc>
-    <lastmod>2021-02-03T07:02:52-05:00</lastmod>
+    <loc>https://dotink.co/posts/</loc>
+    <lastmod>2021-02-15T09:27:35-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://dotink.co/</loc>
+    <lastmod>2021-02-15T09:27:35-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/elf/</loc>
+    <lastmod>2021-02-10T18:33:58-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dotink.co/posts/tce/</loc>
     <lastmod>2021-02-03T07:02:52-05:00</lastmod>
   </url>
   
