@@ -43,7 +43,7 @@
         </div>
         <div class="meta overlay">
             <div class="meta-item date" itemprop="datepublished">26 July 2020</div>
-            <div class="meta-item readtime" itemprop="duration">7 mins</div>
+            <div class="meta-item readtime" itemprop="duration">8 mins</div>
         </div>
     </div>
     <article class="overlay">
@@ -64,15 +64,16 @@
     </li>
     <li><a href="#programming-languages">Programming languages</a>
       <ul>
-        <li><a href="#_the-awk-programming-language_-aho-kernighan-weinberger"><em>The Awk Programming Language</em>, Aho, Kernighan, Weinberger</a></li>
-        <li><a href="#_iterative-type-analysis-and-extended-message-splitting_-craig-chambers--david-ungar"><em>Iterative Type Analysis and Extended Message Splitting</em>, Craig Chambers &amp; David Ungar</a></li>
+        <li><a href="#_the-awk-programming-language_-aho-kernighan-and-weinberger"><em>The Awk Programming Language</em>, Aho, Kernighan, and Weinberger</a></li>
+        <li><a href="#_efficient-implementation-of-the-smalltalk-80-system_-deutsch--schiffman"><em>Efficient implementation of the Smalltalk-80 system</em>, Deutsch &amp; Schiffman</a></li>
+        <li><a href="#_iterative-type-analysis-and-extended-message-splitting_-chambers--ungar"><em>Iterative Type Analysis and Extended Message Splitting</em>, Chambers &amp; Ungar</a></li>
       </ul>
     </li>
     <li><a href="#theory">Theory</a>
       <ul>
         <li><a href="#_communicating-sequential-processes_-c-a-r-hoare"><em>Communicating Sequential Processes</em>, C. A. R. Hoare</a></li>
         <li><a href="#_notation-as-a-tool-of-thought_-ken-iverson"><em>Notation as a Tool of Thought</em>, Ken Iverson</a></li>
-        <li><a href="#_in-search-of-an-understandable-consensus-algorithm_-diego-ongaro--john-ousterhout"><em>In Search of an Understandable Consensus Algorithm</em>, Diego Ongaro &amp; John Ousterhout</a></li>
+        <li><a href="#_in-search-of-an-understandable-consensus-algorithm_-ongaro--ousterhout"><em>In Search of an Understandable Consensus Algorithm</em>, Ongaro &amp; Ousterhout</a></li>
       </ul>
     </li>
     <li><a href="#internet-and-the-web">Internet and the Web</a>
@@ -104,11 +105,14 @@
 <p>Software engineering is fundamentally the work of designing and implementing layers of abstractions. The central problem of software design, then, is to choose the right abstractions, and the right places in a system to place them. This paper is a more recent work, but one I really enjoyed reading and one that heavily influenced the way I think about software interface design. It&rsquo;s a more epistemological read than the other papers here, but I found it insightful nonetheless and broadly applicable in everything from talking about consumer productivity tools to creating API definitions in my day job.</p>
 <p><a href="http://akkartik.name/akkartik-convivial-20200315.pdf" class="button">Read PDF →</a></p>
 <h2 id="programming-languages">Programming languages</h2>
-<h3 id="_the-awk-programming-language_-aho-kernighan-weinberger"><em>The Awk Programming Language</em>, Aho, Kernighan, Weinberger</h3>
+<h3 id="_the-awk-programming-language_-aho-kernighan-and-weinberger"><em>The Awk Programming Language</em>, Aho, Kernighan, and Weinberger</h3>
 <p>Okay, TAPL is really not a paper <em>per se</em>, but this manual book for the small language is one of my favorite &ldquo;programming language books.&rdquo; Awk is a great example of a &ldquo;small language&rdquo; designed for a very specific domain of problems &ndash; structured text manipulation, in this case. Awk is worth learning, since it&rsquo;s easy to pick up and will save you time in the long run if you do any kind of work with text data in the terminal, but the book itself is also worth reading. I think it&rsquo;s a good example of a kind of irreverent, easygoing, plain writing about software and computers that&rsquo;s an endangered species in technical writing these days.</p>
 <p>If you like this kind of plain writing on early programming languages, the <a href="https://www.amazon.com/Programming-Language-2nd-Brian-Kernighan/dp/0131103628">original K&amp;R C language book</a> is of very similar style, not the least because it shares an author with the Awk book.</p>
 <p><a href="https://ia802309.us.archive.org/25/items/pdfy-MgN0H1joIoDVoIC7/The_AWK_Programming_Language.pdf" class="button">Read PDF →</a></p>
-<h3 id="_iterative-type-analysis-and-extended-message-splitting_-craig-chambers--david-ungar"><em>Iterative Type Analysis and Extended Message Splitting</em>, Craig Chambers &amp; David Ungar</h3>
+<h3 id="_efficient-implementation-of-the-smalltalk-80-system_-deutsch--schiffman"><em>Efficient implementation of the Smalltalk-80 system</em>, Deutsch &amp; Schiffman</h3>
+<p>Along with the paper on <em>Self</em> also highlighted in this section, this paper on the optimization of the Smalltalk-80 runtime pioneered performance work on highly dynamic object-oriented languages that were impractical for industrial usage at the time, but would become the dominant programming language paradigm. Techniques for implementing short-lived closures and dynamic dispatch first discussed here are found in modern JavaScript implementations, for example. In particular, the inline dynamic dispatch cache that the paper discusses is the conceptual predecessor to modern languages' polymorphic inline caches (PICs). This paper is one of my favorites in PL history because it&rsquo;s short and to the point, but delivers a result that has had an enormous impact on language research and implementation in the wild.</p>
+<p><a href="http://web.stanford.edu/class/cs343/resources/smalltalk-80.pdf" class="button">Read PDF →</a></p>
+<h3 id="_iterative-type-analysis-and-extended-message-splitting_-chambers--ungar"><em>Iterative Type Analysis and Extended Message Splitting</em>, Chambers &amp; Ungar</h3>
 <p>The full title of this paper is <em>Iterative Type Analysis and Extended Message Splitting: Optimizing Dynamically-Typed Object-Oriented Programs</em>. It details research from building an optimizing compiler for the <a href="https://en.wikipedia.org/wiki/Self_(programming_language)">Self</a> programming language, a prototype-based object-oriented language from the 90&rsquo;s that had lasting impact on the design of languages that followed like Java and JavaScript. The paper demonstrates that compile-time static analysis of programs written in dynamic languages can bridge the performance gap between those languages and statically typed, compiled languages like C.</p>
 <p>The optimization techniques first used in Self&rsquo;s compilers like type specialization and abstract interpretation would have a huge influence on the performance work that went into Java&rsquo;s virtual machines at Sun and modern JavaScript engines. These kinds of optimization techniques are the reason dynamic object-oriented languages like JavaScript have become ubiquitous high-performance mainstream languages today.</p>
 <p><a href="https://bibliography.selflanguage.org/_static/iterative-type-analysis.pdf" class="button">Read PDF →</a></p>
@@ -120,7 +124,7 @@
 <p>This celebrated paper is a Turing Award Lecture from the winner of the 1979 Turing Award. <a href="https://en.wikipedia.org/wiki/Kenneth_E._Iverson">Ken Iverson</a> is the inventor of the <a href="https://en.wikipedia.org/wiki/APL_(programming_language)">APL</a> programming language, and in the lecture Iverson discusses desirable traits of mathematical and programming notation to help us think better, and makes a case that APL is one such notational tool.</p>
 <p>Though I&rsquo;m not an APL programmer even a little bit, I enjoyed thinking about the traits that Iverson identifies for good, constructive notation for thought, and how we can apply this thinking more generally to abstractions in software tooling in general.</p>
 <p><a href="https://www.eecg.utoronto.ca/~jzhu/csc326/readings/iverson.pdf" class="button">Read PDF →</a></p>
-<h3 id="_in-search-of-an-understandable-consensus-algorithm_-diego-ongaro--john-ousterhout"><em>In Search of an Understandable Consensus Algorithm</em>, Diego Ongaro &amp; John Ousterhout</h3>
+<h3 id="_in-search-of-an-understandable-consensus-algorithm_-ongaro--ousterhout"><em>In Search of an Understandable Consensus Algorithm</em>, Ongaro &amp; Ousterhout</h3>
 <p><a href="https://raft.github.io/">Raft</a> is a modern distributed consensus algorithm. The Raft algorithm implements a way for a group of independent machines that are not 100% available in a network to work together and agree on a single version of reality and sequence of events. Before Raft, the de-fact open source consensus algorithm was <a href="https://en.wikipedia.org/wiki/Paxos_(computer_science)">Paxos</a> which is criticized for being extremely difficult to learn or implement correctly. One of Raft&rsquo;s goals is understandability, and I think it succeeds. Raft is an interesting entrypoint into the deep world of distributed computing primitives, the ideas baked into platforms like Cassandra and MongoDB that we often take for granted.</p>
 <p><a href="https://raft.github.io/raft.pdf" class="button">Read PDF →</a></p>
 <h2 id="internet-and-the-web">Internet and the Web</h2>

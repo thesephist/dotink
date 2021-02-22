@@ -42,7 +42,7 @@ Software engineering is fundamentally the work of designing and implementing lay
 
 ## Programming languages
 
-### _The Awk Programming Language_, Aho, Kernighan, Weinberger
+### _The Awk Programming Language_, Aho, Kernighan, and Weinberger
 
 Okay, TAPL is really not a paper _per se_, but this manual book for the small language is one of my favorite "programming language books." Awk is a great example of a "small language" designed for a very specific domain of problems -- structured text manipulation, in this case. Awk is worth learning, since it's easy to pick up and will save you time in the long run if you do any kind of work with text data in the terminal, but the book itself is also worth reading. I think it's a good example of a kind of irreverent, easygoing, plain writing about software and computers that's an endangered species in technical writing these days.
 
@@ -50,7 +50,13 @@ If you like this kind of plain writing on early programming languages, the [orig
 
 <a href="https://ia802309.us.archive.org/25/items/pdfy-MgN0H1joIoDVoIC7/The_AWK_Programming_Language.pdf" class="button">Read PDF &rarr;</a>
 
-### _Iterative Type Analysis and Extended Message Splitting_, Craig Chambers & David Ungar
+### _Efficient implementation of the Smalltalk-80 system_, Deutsch & Schiffman
+
+Along with the paper on _Self_ also highlighted in this section, this paper on the optimization of the Smalltalk-80 runtime pioneered performance work on highly dynamic object-oriented languages that were impractical for industrial usage at the time, but would become the dominant programming language paradigm. Techniques for implementing short-lived closures and dynamic dispatch first discussed here are found in modern JavaScript implementations, for example. In particular, the inline dynamic dispatch cache that the paper discusses is the conceptual predecessor to modern languages' polymorphic inline caches (PICs). This paper is one of my favorites in PL history because it's short and to the point, but delivers a result that has had an enormous impact on language research and implementation in the wild.
+
+<a href="http://web.stanford.edu/class/cs343/resources/smalltalk-80.pdf" class="button">Read PDF &rarr;</a>
+
+### _Iterative Type Analysis and Extended Message Splitting_, Chambers & Ungar
 
 The full title of this paper is _Iterative Type Analysis and Extended Message Splitting: Optimizing Dynamically-Typed Object-Oriented Programs_. It details research from building an optimizing compiler for the [Self](https://en.wikipedia.org/wiki/Self_(programming_language)) programming language, a prototype-based object-oriented language from the 90's that had lasting impact on the design of languages that followed like Java and JavaScript. The paper demonstrates that compile-time static analysis of programs written in dynamic languages can bridge the performance gap between those languages and statically typed, compiled languages like C.
 
@@ -74,7 +80,7 @@ Though I'm not an APL programmer even a little bit, I enjoyed thinking about the
 
 <a href="https://www.eecg.utoronto.ca/~jzhu/csc326/readings/iverson.pdf" class="button">Read PDF &rarr;</a>
 
-### _In Search of an Understandable Consensus Algorithm_, Diego Ongaro & John Ousterhout
+### _In Search of an Understandable Consensus Algorithm_, Ongaro & Ousterhout
 
 [Raft](https://raft.github.io/) is a modern distributed consensus algorithm. The Raft algorithm implements a way for a group of independent machines that are not 100% available in a network to work together and agree on a single version of reality and sequence of events. Before Raft, the de-fact open source consensus algorithm was [Paxos](https://en.wikipedia.org/wiki/Paxos_(computer_science)) which is criticized for being extremely difficult to learn or implement correctly. One of Raft's goals is understandability, and I think it succeeds. Raft is an interesting entrypoint into the deep world of distributed computing primitives, the ideas baked into platforms like Cassandra and MongoDB that we often take for granted.
 
