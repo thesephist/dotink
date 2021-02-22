@@ -279,7 +279,7 @@ blockquote {
     box-sizing: border-box;
     text-decoration: none;
     padding: .6em 1em;
-    margin: 1em .6em 1em 0;
+    margin: .5em .6em .5em 0;
 }
 
 .button:hover {
@@ -289,8 +289,9 @@ blockquote {
 /* LOGO IMAGE */
 
 .logo-img {
-    width: 128px;
+    width: 100px;
     height: auto;
+    margin-top: 0;
     margin-bottom: -2em;
 }
 
@@ -344,7 +345,7 @@ blockquote {
     }
 
     h1 {
-        font-size: 3.4em;
+        font-size: 3em;
     }
 
     h2 {

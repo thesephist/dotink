@@ -40,11 +40,22 @@
 <main aria-role="main">
     <div class="overlay">
         <p><img class="blend-multiply logo-img" src="/img/logo.png" alt="Ink programming language logo"></p>
-<h1 id="the-ink-language">The Ink language</h1>
-<p>This is my technical blog and website about a programming language I created called Ink, a functional language that takes after modern JavaScript and Go. I use Ink to do most of my day-to-day <a href="https://thesephist.com/posts/blog-analysis/">scripting</a> and build some of my core apps with it. This website is served by a <a href="https://github.com/thesephist/dotink/blob/master/src/fileserver.ink">server written in Ink</a>.</p>
-<p>I write here about programming languages, interpreters and compilers, frameworks, web applications, software architecture, and other things. You can <a href="/posts/">read them here</a>. This website is also home to the <a href="/docs/">Ink programming language documentation</a>, which is a work in progress.</p>
-<p>If you want to see other stuff I&rsquo;m up to, you can find more on my website at <a href="https://thesephist.com">thesephist.com</a> and on Twitter at <a href="https://twitter.com/thesephist">@thesephist</a>.</p>
-<p><a href="/docs/overview/" class="button">Get started with Ink →</a>
+<h1 id="the-ink-blog">The Ink blog</h1>
+<p><em>A blog by <a href="https://thesephist.com/">Linus</a> about the human-software interface.</em></p>
+<p>In 2019, I made a programming language for myself called <strong>Ink</strong>. Since then, I&rsquo;ve used it to <a href="/docs/projects/">build a number of side projects</a>, including a ray tracer, a compiler, an assembler, a Twitter client, and a few of my personal productivity tools. I write about Ink and software at large on this blog, and it&rsquo;s also served by a <a href="https://github.com/thesephist/dotink/blob/master/src/fileserver.ink">server written in Ink</a>.</p>
+<p>Ink takes after Go, JavaScript, and Lua. Here&rsquo;s a simple web server in Ink.</p>
+<pre><code>std := load('std')
+log := std.log
+
+listen('0.0.0.0:8080', evt =&gt; evt.type :: {
+    'error' -&gt; log('Error: ' + evt.message)
+    'req' -&gt; (evt.end)({
+        status: 200
+        headers: {'Content-Type': 'text/plain'}
+        body: 'Hello, World!'
+    })
+})
+</code></pre><p><a href="/docs/overview/" class="button">An overview of Ink →</a>
 <a href="https://inkbyexample.com/" class="button">Ink by Example →</a></p>
 
     </div>
