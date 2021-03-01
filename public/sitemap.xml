@@ -1,188 +1,112 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://dotink.co/posts/x86/</loc>
     <lastmod>2021-02-15T09:27:35-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/</loc>
     <lastmod>2021-02-15T09:27:35-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/</loc>
     <lastmod>2021-02-15T09:27:35-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/elf/</loc>
     <lastmod>2021-02-10T18:33:58-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/tce/</loc>
     <lastmod>2021-02-03T07:02:52-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/lambda/</loc>
     <lastmod>2021-02-03T05:30:36-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/bmp/</loc>
     <lastmod>2020-12-03T09:15:46-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/macros/</loc>
     <lastmod>2020-12-03T08:33:42-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/pl-design-mistakes/</loc>
     <lastmod>2020-11-26T21:13:28-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/nightvale/</loc>
     <lastmod>2020-11-26T07:35:59-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/klisp/</loc>
     <lastmod>2020-11-21T03:14:58-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/weight-of-abstraction/</loc>
     <lastmod>2020-11-14T23:34:45-05:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/histools/</loc>
     <lastmod>2020-10-24T22:53:37-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/schrift-code/</loc>
     <lastmod>2020-09-23T06:36:34-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/go-syscalls/</loc>
     <lastmod>2020-09-05T13:13:06-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/ink-vscode/</loc>
     <lastmod>2020-09-02T02:16:52-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/syntax-highlight/</loc>
     <lastmod>2020-08-17T02:03:23-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/september/</loc>
     <lastmod>2020-08-10T09:42:24-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/scale-free-software/</loc>
     <lastmod>2020-08-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/gpt3/</loc>
     <lastmod>2020-08-01T13:13:31-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/ansi/</loc>
     <lastmod>2020-07-28T15:51:01-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/rational-binary-search/</loc>
     <lastmod>2020-07-27T19:32:17-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/papers/</loc>
     <lastmod>2020-07-26T13:13:16-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/traceur/</loc>
     <lastmod>2020-07-21T10:12:27-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/inkfmt/</loc>
     <lastmod>2020-07-15T17:15:01-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/unix-setup/</loc>
     <lastmod>2020-06-21T11:44:30-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/pi-by-riemann-sum/</loc>
     <lastmod>2020-05-29T10:08:59-04:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/sales-learnings/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/composing-the-future/</loc>
     <lastmod>2019-08-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/visualizing-sorting-algorithms/</loc>
     <lastmod>2019-07-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/posts/how-i-side-project/</loc>
     <lastmod>2019-07-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/docs/overview/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/docs/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/docs/projects/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/docs/runtime/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/docs/lib/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://dotink.co/tags/</loc>
   </url>
-  
 </urlset>
