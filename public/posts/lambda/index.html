@@ -173,7 +173,7 @@ pow := a =&gt; b =&gt; b(mul(a))(One)
 zero? := n =&gt; n(_ =&gt; False)(True)
 pred := n =&gt; n (g =&gt; k =&gt; zero?(g(One))(k)(succ(g(k)))) (_ =&gt; Zero) (Zero)
 
-` subtraction is just repeated predication `
+` subtraction is just repeated predecession `
 sub := a =&gt; b =&gt; b(pred)(a)
 </code></pre><p>To recap, with the Church encoding of numbers, we&rsquo;ve found a way to represent all non-negative integers as <em>pure functions</em>, or &ldquo;lambdas&rdquo;. We&rsquo;ve also found ways to do basic arithmetic on that representation of numbers, built on the basic operation of incrementing numbers up and down by 1.</p>
 <p>We have invented numbers. Let&rsquo;s move on to booleans.</p>

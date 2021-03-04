@@ -167,7 +167,7 @@ Though we won't go into much detail, there is a complement to `succ` called `pre
 zero? := n => n(_ => False)(True)
 pred := n => n (g => k => zero?(g(One))(k)(succ(g(k)))) (_ => Zero) (Zero)
 
-` subtraction is just repeated predication `
+` subtraction is just repeated predecession `
 sub := a => b => b(pred)(a)
 ```
 
