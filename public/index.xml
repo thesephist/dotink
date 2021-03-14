@@ -6,7 +6,16 @@
     <description>Recent content in The Ink blog on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 15 Feb 2021 09:27:35 -0500</lastBuildDate><atom:link href="https://dotink.co/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 13 Mar 2021 16:03:53 -0500</lastBuildDate><atom:link href="https://dotink.co/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Eliza: an isomorphic Ink app for web and native</title>
+      <link>https://dotink.co/posts/eliza/</link>
+      <pubDate>Sat, 13 Mar 2021 16:03:53 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/eliza/</guid>
+      <description>Last month, I launched Eliza, a chatbot modeled after the classic MIT conversational program and written entirely in Ink. Though the project itself isn&amp;rsquo;t novel or interesting &amp;ndash; it&amp;rsquo;s mostly a port of existing implementations of ELIZA &amp;ndash; Eliza is built as an isomorphic Ink application, meaning a substantial part of the codebase can run both natively, on a server, and on the client (a Web browser).</description>
+    </item>
+    
     <item>
       <title>Assembler in Ink, Part II: x86 assembly, instruction encoding, and debugging symbols</title>
       <link>https://dotink.co/posts/x86/</link>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Eliza: an isomorphic Ink app for web and native | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/eliza/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Eliza: an isomorphic Ink app for web and native</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">13 March 2021</div>
+            <div class="meta-item readtime" itemprop="duration">8 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+
+        <p>Last month, I launched <strong><a href="https://eliza.dotink.co/">Eliza</a></strong>, a chatbot modeled after the classic MIT conversational program and written entirely in Ink. Though the project itself isn&rsquo;t novel or interesting &ndash; it&rsquo;s mostly a port of existing implementations of ELIZA &ndash; Eliza is built as an <em>isomorphic</em> Ink application, meaning a substantial part of the codebase can run both natively, on a server, and on the client (a Web browser).</p>
+<p><a href="https://github.com/thesephist/eliza" class="button">See Eliza on GitHub</a>
+<a href="https://eliza.dotink.co/" class="button">Try Eliza →</a></p>
+<p>This allows Eliza to have both a command-line interface and a Web app. The CLI runs on a native Ink interpreter like the <a href="https://github.com/thesephist/ink">Go-based interpreter</a> and the Web UI is Ink compiled down to JavaScript with <a href="/posts/september/">September</a>.</p>
+<p><img src="/img/eliza.png" alt="Screenshot of Eliza running in a browser"></p>
+<p>For an app like Eliza, where the critical business logic (the code for generating a response to a user query in this case) is independent of a particular runtime platform, writing Ink programs that can run anywhere is useful. It means we can write one implementation of some logic and literally reuse it in many different clients. In fact, the Ink standard libraries (<code>std</code> and <code>str</code>) have already been used in this way in the September compiler when compiling Ink programs to JavaScript. Eliza takes this to the next level and runs much more complex logic, like the conversational algorithm, across platforms.</p>
+<p>In this post, I want to give a brief overview of the Eliza project and share the process of building a real-world isomorphic app in Ink.</p>
+<h2 id="eliza-a-chatbot-written-in-ink">Eliza, a chatbot written in Ink</h2>
+<p>The original <a href="https://en.wikipedia.org/wiki/ELIZA">ELIZA</a> was one of the first &ldquo;chat bots&rdquo;. Invented in the MIT AI lab in the mid-60&rsquo;s, it demonstrated how a simple algorithm based on matching patterns in language against a database could emulate reasonable human conversations, and became one of the first candidates for real &ldquo;Turing tests&rdquo;.</p>
+<p>Eliza works by taking a line of input from the user and breaking it down into meaningful recognized pieces by running through a list of predefined rules called a &ldquo;script&rdquo;. Here&rsquo;s a sample of the &ldquo;doctor&rdquo; script, which is one of the most popular scripts for Eliza. It&rsquo;s the script that the Ink version also happens to use.</p>
+<pre><code>key: if 3
+  decomp: * if *
+    reasmb: Do you think its likely that (2) ?
+    reasmb: Do you wish that (2) ?
+    reasmb: What do you know about (2) ?
+    reasmb: Really, if (2) ?
+key: dreamed 4
+  decomp: * i dreamed *
+    reasmb: Really, (2) ?
+    reasmb: Have you ever fantasized (2) while you were awake ?
+    reasmb: Have you ever dreamed (2) before ?
+    reasmb: goto dream
+</code></pre><p>In general, a script file works a little bit like regular expressions. Each rule matches against a specific pattern, like <code>if 3</code>, and generates a list of possible responses by randomly selecting from the &ldquo;reassembly&rdquo; options outlined in the script, filled in with pieces of the user&rsquo;s original question or prompt.</p>
+<p>I ended up wrapping the conversational bot within a chat app-like interface, which you can try here.</p>
+<iframe src="https://eliza.dotink.co" frameborder="0" style="width:100%;min-height:500px"></iframe>
+<p>Eliza&rsquo;s algorithm is an interesting demonstration of the simplicity of most of our human conversations, because it often generates plausible responses (especially with more extensive predefined scripts), but there are also very clear limitations. For example, it can&rsquo;t generate completely original responses that aren&rsquo;t in a script, the way that modern <a href="/posts/gpt3/">language models</a> easily can.</p>
+<p>The Ink implementation of the Eliza algorithm is a modified port of a Python implementation at <a href="https://github.com/jezhiggins/eliza.py">gezhiggins/eliza.py</a>. Because semantics of Python and Ink are quite similar (they&rsquo;re both dynamically typed interpreted programming languages with objects and maps at core), it was straightforward to port a Python implementation into Ink. The algorithm works by first parsing the script file into a structure optimized for lookup, and then taking in one line of input at a time to generate potential responses. After a short conversation, if the user goes off topic into something the algorithm doesn&rsquo;t understand, there&rsquo;s even a memory-like mechanism to bring up previous topics to get back on track.</p>
+<p>Of course, the most interesting part about Eliza is not the algorithm itself, but the fact that it runs on both the server and the browser.</p>
+<h2 id="making-isomorphic-ink-possible">Making isomorphic Ink possible</h2>
+<p>The premise of isomorphic Ink is that Ink, the core language, is a platform-agnostic high-level language, and it can execute on a huge range of potential environments. Among them are native, enabled by the main Go interpreter and the <a href="/posts/schrift-code/">Rust interpreter</a>, and JavaScript, with the <a href="/posts/september/">September compiler</a>. To run the same nontrivial algorithm on multiple runtimes, we need to first ensure that the language implementation is identical across all the runtimes. Ink does this with an extensive <a href="https://github.com/thesephist/ink/blob/master/samples/test.ink">test suite</a> that tests implementations of not only the core language, but also a significant portion of the <a href="/docs/lib/">standard library</a>. This enabled me to use the same Ink program on multiple platforms fearlessly, without worrying that implementation differences in edge cases were going to get in the way and lead to bugs.</p>
+<p>The September compiler transforming Ink to JavaScript is the core of isomorphic Ink code, but to build a useful nontrivial web app like Eliza, we need more than just Ink programs running in the browser. We need, for example, an easy idiomatic way for Ink programs to access the DOM. To help bridge this interface gap, I brought in an older project of mine &ndash; Torus.</p>
+<h3 id="torus--ink">Torus ❤️ Ink</h3>
+<p><a href="https://github.com/thesephist/torus">Torus</a> is a small minimal JavaScript library for building user interfaces on the Web. The library includes a few tools for managing local state in JavaScript applications called Records and Stores, and a component-based UI rendering system for building web UIs productively with JavaScript. While those APIs provide elegant interfaces for their job for JavaScript programs, they&rsquo;re class-based and unideal for Ink apps to use. Instead, Ink borrows a deeper, more fundamental part of Torus that enables Torus to be fast and elegant, the virtual DOM-based UI rendering function <code>Torus.render</code>.</p>
+<p>Torus, like React, allows a program to define a user interface <em>declaratively</em> as a function from data to a tree of components. Both libraries have <em>renderers</em> that take the produced tree of components and compare it with the previously rendered tree to produce a list of DOM manipulations that they make to update the view. Torus&rsquo;s renderer is much simpler in design that React, and it&rsquo;s called <code>Torus.render</code>. Every UI component in Torus internally depends on <code>Torus.render</code> to take the virtual DOM produced and render any changes to the page.</p>
+<p>To build Eliza, I borrowed this renderer layer from Torus by importing the Torus library onto the page, and wrote a <a href="https://github.com/thesephist/eliza/blob/main/lib/torus.js.ink">small adapter library called <code>torus.js.ink</code></a> that provides an idiomatic Ink API for the Torus renderer.</p>
+<p>With the adapter, getting a basic web UI running as simple as the Ink program</p>
+<pre><code>` find an element into which we render the app `
+root := bind(document, 'querySelector')('#root')
+
+` define the app as a function of state =&gt; DOM tree `
+App := state =&gt; (
+    update := Renderer(root).update
+
+    ` we can call &quot;update(vdom)&quot; to re-render the app `
+    update(
+        h('div', ['app'], [
+            str('Hello, World!')
+        ])
+    )
+)
+</code></pre><p>The <code>Renderer</code> Ink function wraps Torus&rsquo;s <code>render</code> function so that calling <code>Renderer.update</code> will re-render an app with a new virtual DOM. Eliza&rsquo;s UI is written exactly this way &ndash; every time the application state changes, a global state variable is updated and the entire app is re-rendered with the minimum set of DOM mutations dispatched through the Torus renderer. The beautiful benefit of Ink and Torus working together like this is that Torus promotes a functional style of writing user interfaces &ndash; data flowing through functions &ndash; and Ink is primarily a functional programming language. So when they come together, they fit together very well. Dare I say, using Torus from Ink was as fun as using Torus from JavaScript.</p>
+<p>Personally, this is by far the coolest part of Eliza. Torus and Ink are two of my biggest side projects, and to see them fit and work together like this through an Ink-based compiler is a holy grail moment.</p>
+<h2 id="future-work">Future work</h2>
+<p>I enjoyed building Eliza across native and Web, but the overall experience of building a Web app in Ink still has lots of shortcomings. Two of the most important missing pieces are both shortfalls of the September compiler itself: module loading and source maps.</p>
+<p>So far, September has mostly been used for single-file programs, and September provided a pre-compiled JavaScript distribution of the Ink standard library. As a result, projects could get by without support for a way for Ink to <code>load()</code> other Ink programs when compiled to JavaScript. However, Eliza was a complex enough project that I would have appreciated <strong>proper module support</strong> in the September compiler. Without it, I had to manually clean up parts of the compiled JavaScript bundle to ensure different program files interacted correctly.</p>
+<p><strong><a href="https://sourcemaps.info/spec.html">Source maps</a></strong> are a standardized way for compiled JavaScript bundles to be debuggable. A JavaScript bundle can provide &ldquo;source map&rdquo; metadata so that a debugger can map offsets in the compiled bundle to offsets in the source file (an Ink source file in this case). Even for languages that don&rsquo;t resemble JavaScript at all, like ClojureScript, sourcemaps provide a usable debugging experience over the printf-style debugging I had to resort to without it while building Eliza. September currently has source map support on the roadmap &ndash; I&rsquo;m hopeful I can get to it soon.</p>
+<p>Eliza was a cool project for me in many ways. I think it looks slick, and it works well as a chat interface. But my favorite part about Eliza is obviously that it marries two of my longest-running projects, Torus and Ink, into a good developer experience for me. And now that the floodgates to Ink on the web has officially opened, I&rsquo;m excited to build many more projects on the Web with Ink going forward.</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/x86/"><em>Assembler in Ink, Part II: x86 assembly, instruction encoding, and debugging symbols</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>
