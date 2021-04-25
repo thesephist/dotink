@@ -219,12 +219,12 @@ x :: {
 
 In a match expression, the case clauses are checked from top to bottom, and the first path whose value matches the case is taken. If there are no matches, the expression does nothing.
 
-Both the expression being matched and the individual cases can contain complex expressions, if parenthesized. As a contrived example:
+Both the expression being matched and the individual cases can contain complex expressions. As a contrived example:
 
 ```
-(n % 2) :: {
-    (0 + 1) -> 'odd'
-    (0 + 0) -> 'even'
+n % 2 :: {
+    0 + 1 -> 'odd'
+    0 + 0 -> 'even'
 }
 ```
 

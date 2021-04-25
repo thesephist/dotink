@@ -213,10 +213,10 @@ x :: {
     false -&gt; 'X is false'
 } `` returns 'X is false'
 </code></pre><p>In a match expression, the case clauses are checked from top to bottom, and the first path whose value matches the case is taken. If there are no matches, the expression does nothing.</p>
-<p>Both the expression being matched and the individual cases can contain complex expressions, if parenthesized. As a contrived example:</p>
-<pre><code>(n % 2) :: {
-    (0 + 1) -&gt; 'odd'
-    (0 + 0) -&gt; 'even'
+<p>Both the expression being matched and the individual cases can contain complex expressions. As a contrived example:</p>
+<pre><code>n % 2 :: {
+    0 + 1 -&gt; 'odd'
+    0 + 0 -&gt; 'even'
 }
 </code></pre><p>Sometimes, we&rsquo;d like for a match expression to match against one or more particular cases, and then have a &ldquo;default&rdquo; or &ldquo;else&rdquo; branch that&rsquo;s taken if no other options match. Those cases are matched with an underscore <code>_</code>.</p>
 <pre><code>n :: {
