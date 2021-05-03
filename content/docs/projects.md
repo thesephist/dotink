@@ -15,6 +15,15 @@ Lucerne is a Twitter reader and web client designed to amplify my personal Twitt
 <a href="https://thesephist.com/posts/lucerne/" class="button">Blog post</a>
 <a href="https://github.com/thesephist/lucerne" class="button">See on GitHub &rarr;</a>
 
+### Merlot
+
+![Photos of Merlot running on various devices](/img/merlot-devices.png)
+
+Merlot is a writing app for the Web that supports drafting in Markdown, and was designed to fit neatly into my blogging and writing workflow. It's built entirely and purely with Ink: the Markdown engine that runs on both the backend and the web app is written in Ink. The backend is written in Ink to run natively, and the client is written in Ink and, alongside the Markdown library, compiled down to a single-page JavaScript application.
+
+<a href="https://merlot.vercel.app/" class="button">Try demo &rarr;</a>
+<a href="https://github.com/thesephist/merlot" class="button">See on GitHub &rarr;</a>
+
 ### Traceur
 
 ![Path traced scene generated with Traceur](/img/traceur.bmp)
