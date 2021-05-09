@@ -42,7 +42,7 @@
             <h1>An overview of Ink</h1>
         </div>
         <div class="meta overlay">
-            <div class="meta-item readtime" itemprop="duration">12 mins</div>
+            <div class="meta-item readtime" itemprop="duration">13 mins</div>
         </div>
     </div>
     <article class="overlay">
@@ -86,12 +86,26 @@
 <p>I made Ink as an experiment to study writing interpreters and compilers in mid-2019. Since then, I&rsquo;ve worked on several other related projects in the programming language space, but continue to write programs and apps in Ink in my day to day work. Because the language and runtime is so small, it&rsquo;s easy for me to understand the entire stack and debug Ink programs easily. Because Ink&rsquo;s interpreter is a single static binary that runs across operating systems, deploying Ink programs is also pretty simple.</p>
 <p>Ink is inspired primarily by JavaScript, as much in syntax as in semantics. Ink has data structures, lists and maps (called &ldquo;composite values&rdquo;), that work very similarly to JavaScript arrays and objects. Ink, like JavaScript, doesn&rsquo;t make a distinction between integer and floating-point numerical values. Most importantly, Ink takes after JavaScript&rsquo;s model of concurrency and asynchrony &ndash; event-driven tasks are scheduled onto a single execution thread in an event loop, and run deterministically.</p>
 <h2 id="quick-start">Quick start</h2>
-<p>One of the advantages of a small language is that it&rsquo;s easy to pick up and start using. Ink&rsquo;s interpreter and runtime weighs in at just under 10MB of a static executable, which makes it easy to download and experiment.</p>
+<p>One of the advantages of a small language is that it&rsquo;s easy to pick up and start using. Ink&rsquo;s interpreter and runtime weighs in at just under 6MB of a static executable, which makes it easy to download and experiment.</p>
 <h3 id="setup-and-installation">Setup and installation</h3>
-<p>You can download the Ink interpreter from <a href="https://github.com/thesephist/ink/releases">the GitHub releases page</a>. We current build release versions of Ink for Linux, macOS, Windows, and OpenBSD.</p>
-<p>Once you download the executable, mark it as executable if necessary, and try running it with the <code>--version</code> flag.</p>
+<p>You can download Ink from <a href="https://github.com/thesephist/ink/releases">the GitHub releases page</a>. I currently build release versions of Ink for Linux, macOS, Windows, and OpenBSD. To install, follow the instructions below for your operating system.</p>
+<h4 id="install-on-macos">Install on macOS</h4>
+<p>On macOS, you may be able to run the following commands to install Ink to your <code>$PATH</code>.</p>
+<pre><code># Download the released executable
+curl -L https://github.com/thesephist/ink/releases/download/v0.1.9/ink-darwin &gt; /usr/local/bin/ink
+
+# Mark the binary as executable
+chmod +x /usr/local/bin/ink
+</code></pre><p>If this doesn&rsquo;t work, see <em>Install on other platforms</em> below.</p>
+<h4 id="install-on-linux">Install on Linux</h4>
+<p>On Linux systems, you may be able to run the following commands to install Ink to your <code>$PATH</code>. You may need to become a superuser (<code>sudo -s</code>) to run these commands.</p>
+<pre><code>curl -L https://github.com/thesephist/ink/releases/download/v0.1.9/ink-linux &gt; /usr/local/bin/ink
+chmod +x /usr/local/bin/ink
+</code></pre><p>If this doesn&rsquo;t work, see <em>Install on other platforms</em> below.</p>
+<h4 id="install-on-other-platforms">Install on other platforms</h4>
+<p>Once you download the executable for your platform, mark it as an executable file if necessary, and try running it with the <code>--version</code> flag.</p>
 <pre><code>$ ./ink --version
-ink v0.1.7
+ink v0.1.9
 </code></pre><p>If you see a version number like above, you&rsquo;re all set. If you want to run Ink without the preceding <code>./</code>, add it to your <code>$PATH</code> environment variable. For the rest of this guide, we&rsquo;ll assume Ink is in your <code>$PATH</code>.</p>
 <h3 id="the-repl">The repl</h3>
 <p>If you start the interpreter with no input, an interactive repl will start.</p>

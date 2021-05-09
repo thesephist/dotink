@@ -14,17 +14,44 @@ Ink is inspired primarily by JavaScript, as much in syntax as in semantics. Ink 
 
 ## Quick start
 
-One of the advantages of a small language is that it's easy to pick up and start using. Ink's interpreter and runtime weighs in at just under 10MB of a static executable, which makes it easy to download and experiment.
+One of the advantages of a small language is that it's easy to pick up and start using. Ink's interpreter and runtime weighs in at just under 6MB of a static executable, which makes it easy to download and experiment.
 
 ### Setup and installation
 
-You can download the Ink interpreter from [the GitHub releases page](https://github.com/thesephist/ink/releases). We current build release versions of Ink for Linux, macOS, Windows, and OpenBSD.
+You can download Ink from [the GitHub releases page](https://github.com/thesephist/ink/releases). I currently build release versions of Ink for Linux, macOS, Windows, and OpenBSD. To install, follow the instructions below for your operating system.
 
-Once you download the executable, mark it as executable if necessary, and try running it with the `--version` flag.
+#### Install on macOS
+
+On macOS, you may be able to run the following commands to install Ink to your `$PATH`.
+
+```
+# Download the released executable
+curl -L https://github.com/thesephist/ink/releases/download/v0.1.9/ink-darwin > /usr/local/bin/ink
+
+# Mark the binary as executable
+chmod +x /usr/local/bin/ink
+```
+
+If this doesn't work, see _Install on other platforms_ below.
+
+#### Install on Linux
+
+On Linux systems, you may be able to run the following commands to install Ink to your `$PATH`. You may need to become a superuser (`sudo -s`) to run these commands.
+
+```
+curl -L https://github.com/thesephist/ink/releases/download/v0.1.9/ink-linux > /usr/local/bin/ink
+chmod +x /usr/local/bin/ink
+```
+
+If this doesn't work, see _Install on other platforms_ below.
+
+#### Install on other platforms
+
+Once you download the executable for your platform, mark it as an executable file if necessary, and try running it with the `--version` flag.
 
 ```
 $ ./ink --version
-ink v0.1.7
+ink v0.1.9
 ```
 
 If you see a version number like above, you're all set. If you want to run Ink without the preceding `./`, add it to your `$PATH` environment variable. For the rest of this guide, we'll assume Ink is in your `$PATH`.
