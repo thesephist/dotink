@@ -74,12 +74,12 @@ Recursively creates directories in `path`, like `mkdir -p`. If successful, sends
 
 ### `stat(path, cb)`
 
-Returns metadata about a given object in the file tree, of the form
+Returns metadata about a given path in the file tree, of the form
 
 ```
 {
     type: 'data'
-    data: list<{
+    data: {
         name: <string>
         `` if file, size in bytes; if dir, ambiguous
         len: <number>
@@ -87,11 +87,11 @@ Returns metadata about a given object in the file tree, of the form
         dir: <boolean>
         `` last-modified time, as a UNIX timestamp
         mod: <number>
-    }>
+    }
 }
 ```
 
-or an error event.
+if the object at the given path exists. If one does not exist, `data` is set to `()`. If the `stat` call errors, an error event is dispatched instead.
 
 ### `read(path, offset, length, cb)`
 
