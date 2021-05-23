@@ -24,6 +24,15 @@ Merlot is a writing app for the Web that supports drafting in Markdown, and was 
 <a href="https://merlot.vercel.app/" class="button">Try demo &rarr;</a>
 <a href="https://github.com/thesephist/merlot" class="button">See on GitHub &rarr;</a>
 
+### Sistine
+
+![Screenshot of Sistine's documentation site, built with Sistine](/img/sistine-screenshot.png)
+
+Sistine is a simple, flexible, productive static site generator written entirely in Ink and built on [Merlot](#merlot)'s Markdown engine. Although it's a work in progress, Sistine is meant to eventually become a part of my primary blogging infrastructure. The documentation site is built with Sistine already, and serves as a demo.
+
+<a href="https://sistine.vercel.app/" class="button">Visit demo site &rarr;</a>
+<a href="https://github.com/thesephist/sistine" class="button">See on GitHub &rarr;</a>
+
 ### Traceur
 
 ![Path traced scene generated with Traceur](/img/traceur.bmp)
