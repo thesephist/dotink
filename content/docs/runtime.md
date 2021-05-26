@@ -202,6 +202,19 @@ When the process ends, the callback `cb` is invoked with the event of shape
 }
 ```
 
+### `env()`
+
+Returns a composite of the current environment variables of the process. For example, to access the current user and working directory, write
+
+```
+env().USER
+env().PWD
+```
+
+### `exit(code)`
+
+Exits the current process with the exit code set to the integer `code`.
+
 ## Math builtins
 
 ### `sin(n)`

@@ -71,6 +71,8 @@
         <li><a href="#time"><code>time()</code></a></li>
         <li><a href="#waitduration-cb"><code>wait(duration, cb)</code></a></li>
         <li><a href="#execpath-args-stdin-stdoutfn"><code>exec(path, args, stdin, stdoutFn)</code></a></li>
+        <li><a href="#env"><code>env()</code></a></li>
+        <li><a href="#exitcode"><code>exit(code)</code></a></li>
       </ul>
     </li>
     <li><a href="#math-builtins">Math builtins</a>
@@ -216,7 +218,13 @@
     type: 'data'
     data: &lt;string&gt;
 }
-</code></pre><h2 id="math-builtins">Math builtins</h2>
+</code></pre><h3 id="env"><code>env()</code></h3>
+<p>Returns a composite of the current environment variables of the process. For example, to access the current user and working directory, write</p>
+<pre><code>env().USER
+env().PWD
+</code></pre><h3 id="exitcode"><code>exit(code)</code></h3>
+<p>Exits the current process with the exit code set to the integer <code>code</code>.</p>
+<h2 id="math-builtins">Math builtins</h2>
 <h3 id="sinn"><code>sin(n)</code></h3>
 <p>Takes the sine of a number.</p>
 <h3 id="cosn"><code>cos(n)</code></h3>
