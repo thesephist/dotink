@@ -129,7 +129,7 @@ true, false
 [1, 2, 3], {key: 'value'}
 ```
 
-You'll notice here hat Ink comments are demarcated with backticks. This is Ink's multiline comment. We can also prepend two backticks to the start of a line to comment just the line.
+You'll notice here that Ink comments are demarcated with backticks. This is Ink's multiline comment. We can also prepend two backticks to the start of a line to comment just the line.
 
 We define variables in Ink with the `:=` assignment operator. The assignment operator binds a value to a variable name (or a composite value's key) in the current scope. Variables in Ink are lexically scoped.
 
