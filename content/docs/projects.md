@@ -111,7 +111,7 @@ Codeliner generates graphics from program source files that mimic the shape of c
 
 ### September
 
-September is an Ink to JavaScript compiler, written in Ink itself and tested against Ink's standard library tests. September aims to become self-hosting, but is not there yet.
+September is an Ink to JavaScript compiler, written in Ink itself and tested against Ink's standard library tests. September is also self-hosting -- it can compile itself on Node.js or in the browser.
 
 <a href="/posts/september/" class="button">Blog post</a>
 <a href="https://github.com/thesephist/september" class="button">See on GitHub &rarr;</a>
