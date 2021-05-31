@@ -115,7 +115,8 @@ Codeliner generates graphics from program source files that mimic the shape of c
 
 Maverick is a simple web IDE and REPL for Ink, written in pure Ink and built on a self-hosted September compiler toolchain that runs entirely in the browser. September, the Ink-to-JavaScript compiler, was compiled to JavaScript using itself for this project so that it could compile other Ink programs in the browser.
 
-<a href="https://maverick.vercel.app" class="button">Try demo &rarr;</a>
+<a href="/posts/maverick/" class="button">Blog post</a>
+<a href="https://play.dotink.co" class="button">Try demo &rarr;</as>
 <a href="https://github.com/thesephist/maverick" class="button">See on GitHub &rarr;</a>
 
 ### September

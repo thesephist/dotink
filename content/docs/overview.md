@@ -8,13 +8,29 @@ toc: true
 
 Ink is a functional, general-purpose, interpreted scripting language. It's dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks. Ink is designed to be minimal and simple, first and foremost.
 
+Here's a simple Ink program: a basic web server.
+
+```
+std := load('std')
+log := std.log
+
+listen('0.0.0.0:8080', evt => evt.type :: {
+    'error' -> log('Error: ' + evt.message)
+    'req' -> (evt.end)({
+        status: 200
+        headers: {'Content-Type': 'text/plain'}
+        body: 'Hello, World!'
+    })
+})
+```
+
 I made Ink as an experiment to study writing interpreters and compilers in mid-2019. Since then, I've worked on several other related projects in the programming language space, but continue to write programs and apps in Ink in my day to day work. Because the language and runtime is so small, it's easy for me to understand the entire stack and debug Ink programs easily. Because Ink's interpreter is a single static binary that runs across operating systems, deploying Ink programs is also pretty simple.
 
 Ink is inspired primarily by JavaScript, as much in syntax as in semantics. Ink has data structures, lists and maps (called "composite values"), that work very similarly to JavaScript arrays and objects. Ink, like JavaScript, doesn't make a distinction between integer and floating-point numerical values. Most importantly, Ink takes after JavaScript's model of concurrency and asynchrony -- event-driven tasks are scheduled onto a single execution thread in an event loop, and run deterministically.
 
 ## Quick start
 
-One of the advantages of a small language is that it's easy to pick up and start using. Ink's interpreter and runtime weighs in at just under 6MB of a static executable, which makes it easy to download and experiment.
+One of the advantages of a small language is that it's easy to pick up and start using. Ink's interpreter and runtime weighs in at just around 5MB of a static executable, which makes it easy to download and experiment.
 
 ### Setup and installation
 
@@ -106,7 +122,7 @@ autocmd BufNewFile,BufRead *.ink set filetype=ink
 
 ## A brief tour of Ink
 
-Let's get into the building blocks of Ink programs. If you like to learn from studying short example programs, you might also like [Ink by Example](https://inkbyexample.com/).
+Let's get into the building blocks of Ink programs. You can follow along by installing the Ink interpreter from above, or on [Ink playground](https://play.dotink.co/). If you like to learn from studying short example programs, you might also like [Ink by Example](https://inkbyexample.com/).
 
 ### Values and operators
 
