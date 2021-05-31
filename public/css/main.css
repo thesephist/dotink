@@ -332,6 +332,16 @@ blockquote {
     transform: translateY(-.2em);
 }
 
+/* MAVERICK PLAYGROUND */
+
+.maverick {
+    width: 100%;
+    min-height: 520px;
+    box-sizing: border-box;
+    border: 2px solid var(--foreground-fill);
+    border-radius: 6px;
+}
+
 @media only screen and (min-width: 600px) {
     .overlay {
         max-width: 740px;

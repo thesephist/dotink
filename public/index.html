@@ -41,21 +41,10 @@
     <div class="overlay">
         <p><img class="blend-multiply logo-img" src="/img/logo.png" alt="Ink programming language logo"></p>
 <h1 id="the-ink-blog">The Ink blog</h1>
-<p><em>A blog by <a href="https://thesephist.com/">Linus</a> about the human-software interface.</em></p>
-<p>In 2019, I made a programming language for myself called <strong>Ink</strong>. Since then, I&rsquo;ve used it to <a href="/docs/projects/">build a number of side projects</a>, including a ray tracer, a compiler, an assembler, a Twitter client, and a few of my personal productivity tools. I write about Ink and software at large on this blog, and it&rsquo;s also served by a <a href="https://github.com/thesephist/dotink/blob/master/src/fileserver.ink">server written in Ink</a>.</p>
-<p>Ink takes after Go, JavaScript, and Lua. Here&rsquo;s a simple web server in Ink.</p>
-<pre><code>std := load('std')
-log := std.log
-
-listen('0.0.0.0:8080', evt =&gt; evt.type :: {
-    'error' -&gt; log('Error: ' + evt.message)
-    'req' -&gt; (evt.end)({
-        status: 200
-        headers: {'Content-Type': 'text/plain'}
-        body: 'Hello, World!'
-    })
-})
-</code></pre><p><a href="/docs/overview/" class="button">An overview of Ink →</a>
+<p>I&rsquo;m <a href="https://thesephist.com">Linus</a>. In 2019, I made a programming language called <strong>Ink</strong>. Since then, I&rsquo;ve used it to <a href="/docs/projects/">build a number of side projects</a>, including a ray tracer, a compiler, an assembler, a Twitter client, a writing app, and some personal productivity tools. I write about Ink, programming languages, and software at large on this blog, which is served by a <a href="https://github.com/thesephist/dotink/blob/master/src/fileserver.ink">server written in Ink</a>.</p>
+<p>Ink takes after Go, JavaScript, and Lua. Here&rsquo;s a simple Ink program.</p>
+<iframe src="https://play.dotink.co/?embed=1&code=%60%20Ink%20prime%20sieve%20%60%0A%0A%60%20is%20a%20single%20number%20prime%3F%20%60%0Aprime%3F%20%3A%3D%20n%20%3D%3E%20(%0A%09%60%20is%20n%20coprime%20with%20nums%20%3C%20p%3F%20%60%0A%09max%20%3A%3D%20floor(pow(n%2C%200.5))%20%2B%201%0A%09(ip%20%3A%3D%20p%20%3D%3E%20p%20%3A%3A%20%7B%0A%09%09max%20-%3E%20true%0A%09%09_%20-%3E%20n%20%25%20p%20%3A%3A%20%7B%0A%09%09%090%20-%3E%20false%0A%09%09%09_%20-%3E%20ip(p%20%2B%201)%0A%09%09%7D%0A%09%7D)(2)%0A)%0A%0A%60%20primes%20under%20N%20are%20numbers%202%20..%20N%2C%20filtered%20by%20prime%3F%20%60%0AgetPrimesUnder%20%3A%3D%20n%20%3D%3E%20filter(range(2%2C%20n%2C%201)%2C%20prime%3F)%0A%0A%60%20log%20result%20%60%0Aprimes%20%3A%3D%20getPrimesUnder(100)%0Alog(f('Primes%20under%20100%3A%20%7B%7B%200%20%7D%7D'%2C%20%5BstringList(primes)%5D))" frameborder="0" class="maverick"></iframe>
+<p><a href="/docs/overview/" class="button">An overview of Ink →</a>
 <a href="https://inkbyexample.com/" class="button">Ink by Example →</a></p>
 
     </div>
