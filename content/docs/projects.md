@@ -75,6 +75,7 @@ Histools is a collection of tools for generating heatmaps and data visualization
 
 Eliza is an implementation of the classic 1960's chat bot written in isomorphic Ink, so that the same algorithm can run on the server (through the native interpreter) and the browser (through [September](/posts/september/)). This Ink version of Eliza provides a command-line chat interface and a web app powered by the same Ink algorithm.
 
+<a href="/posts/eliza/" class="button">Blog post</a>
 <a href="https://github.com/thesephist/eliza" class="button">See on GitHub &rarr;</a>
 <a href="https://eliza.dotink.co/" class="button">Try Eliza &rarr;</a>
 
