@@ -63,7 +63,7 @@
         
 
         <p>The <a href="https://play.dotink.co"><strong>Ink playground</strong></a>, named project <em>&ldquo;Maverick&rdquo;</em>, is a web IDE and REPL for Ink. It&rsquo;s a single-page web application written in pure Ink, and makes it possible to write and run Ink programs entirely in the browser.</p>
-<p>With the playground, we can experiment with and program in Ink on the go on a mobile device, or on a system that doesn&rsquo;t have Ink installed. It also allows me to embed an Ink programming environment directly into a website or blog, like this.</p>
+<p>With the playground, we can program in Ink on the go on a mobile device, or on a system that doesn&rsquo;t have Ink installed. It also allows me to embed an Ink programming environment directly into a website or blog, like this.</p>
 <iframe src="https://play.dotink.co/?embed=1" frameborder="0" class="maverick"></iframe>
 <p><a href="https://github.com/thesephist/maverick" class="button">See on GitHub</a>
 <a href="https://play.dotink.co/" class="button">Try Ink playground →</a></p>
@@ -79,11 +79,11 @@
 </ul>
 <p>Given these downsides, at the time, I didn&rsquo;t launch this REPL prototype or make it widely available.</p>
 <p>A little while later, I built <a href="/posts/september/">September</a>, a compiler that can transform Ink programs to equivalent JavaScript programs. The original purpose of September was to let me run Ink programs in the browser, so I could write front-end applications in Ink. But recently, I had an interesting idea.</p>
-<p>September is written in Ink. Could we <em>compile September with itself</em>, to get an Ink compiler that runs in the browser? And if we can do that, could we use that to make an Ink REPL that runs entirely in the browser, without needing a backend?</p>
+<p>September is written in Ink. Could we <em>compile September using itself</em>, to get an Ink compiler that runs in the browser? And if we can do that, could we use that to make an Ink REPL that runs entirely in the browser, without needing a backend?</p>
 <h2 id="self-hosting-an-ink-compiler-in-javascript">Self-hosting an Ink compiler in JavaScript</h2>
 <p>The September compiler is written entirely in Ink, and <a href="https://en.wikipedia.org/wiki/Self-hosting_(compilers)">self-hosting</a> (compiling the compiler with itself) was one of the goals of the project from the beginning. I knew it was <em>probably</em> possible, but hadn&rsquo;t had a reason to attempt it until this idea came to me.</p>
-<p>September&rsquo;s compiler has two completely separate parts: the part that reads the command-line arguments, reads files from disk, and handles any errors; and the &ldquo;translation&rdquo; function that performed the actual compilation, taking Ink source code as input and returning JavaScript source code.</p>
-<p>To begin, I simply gave all the source files belonging to the translation part of the compiler to itself, and stuck the result in the browser. This was as simple as</p>
+<p>September&rsquo;s compiler has two completely separate parts: the part that reads the command-line arguments, reads files from disk, and handles any errors; and the &ldquo;translation&rdquo; function that performs the actual compilation, taking Ink source code as input and returning JavaScript source code.</p>
+<p>To begin, I simply gave all the source files belonging to the translation part of the compiler to itself, and stuck the result into the browser. This was as simple as</p>
 <pre><code>september translate \
           ../september/src/iota.ink \
           ../september/src/tokenize.ink \
@@ -110,19 +110,19 @@
 --(which runs in)-&gt; JavaScript's eval() function
 --(which returns)-&gt; the result!
 </code></pre><p>That&rsquo;s quite a compiler rabbit hole. But simply compiling Ink programs to JavaScript in the browser isn&rsquo;t the end of it. To have a full Ink programming environment, we need to get a few more things working.</p>
-<p>First, most Ink programs require the standard library, at least the <code>std</code> (standard library core), <code>str</code> (string functions), and <code>quicksort</code> (list sorting) libraries. Fortunately, these three libraries are also dependencies of the compiler, so they were already compiled into the JavaScript bundle and available as global variables in the browser. This meant Ink programs running in the playground can simply call, for example, <code>sort!([1, 3, 2])</code> without having to import other libraries.</p>
-<p>Second, many Ink programs we could run in the playground resulted in errors. When that error occurs, the <code>eval()</code> function would simply propagate that error through to the surrounding application, causing crashes. We obviously don&rsquo;t want this, so rather than calling <code>eval()</code> directly on the compiler output, I updated the code to evaluate something like</p>
+<p>First, most Ink programs require the <strong>standard library</strong>, at least the <code>std</code> (standard library core), <code>str</code> (string functions), and <code>quicksort</code> (list sorting) libraries. Fortunately, these three libraries are also dependencies of the compiler, so they were already compiled into the JavaScript bundle and available as global variables in the browser. This meant Ink programs running in the playground can simply call, for example, <code>sort!([1, 3, 2])</code> without having to import other libraries.</p>
+<p>Second, many Ink programs we could run in the playground resulted in <strong>errors</strong>. When an error occurs, the <code>eval()</code> function would simply propagate that error through to the surrounding application, causing the playground to crash. We obviously don&rsquo;t want this, so rather than calling <code>eval()</code> directly on the compiler output, I updated the code to evaluate something like</p>
 <pre><code>eval(`
-	try {
-		${translateInkToJS(...)}
-	} catch (e) {
-		// render the error to the REPL
-	}
+    try {
+        ${translateInkToJS(...)}
+    } catch (e) {
+        // render the error to the REPL
+    }
 `)
 </code></pre><p>This meant, if an error occurred in the compiled program (for example, if a variable was <code>undefined</code>), the error would be caught and displayed in the REPL rather than propagate up to the rest of the playground app.</p>
 <p>Lastly, there are some quirks to the fact that the playground runs the compiler in a new environment. September&rsquo;s parser and compiler isn&rsquo;t designed to process completely untrusted input, because it was originally meant to compile Ink programs that ran correctly using the native interpreter. So September sometimes errors and crashes on blatantly incorrect Ink programs. Because the compiled Ink program runs in the same global scope as the rest of the playground app, an Ink program may also modify the surrounding app state in strange ways. For example, defining a variable named <code>Math</code> in Ink will crash the playground, because it conflicts with JavaScript&rsquo;s built-in <code>Math</code> object.</p>
 <p>Some of these issues I chose to keep as acceptable quirks of this environment, and others (like compiler crashes) I&rsquo;m hoping to fix slowly going forward.</p>
-<p>I&rsquo;m very excited to have a browser-native REPL for Ink for experimenting with Ink on the go, and for writing and testing small things in Ink. Though it obviously isn&rsquo;t perfect, it&rsquo;ll also help me demonstrate how Ink works in more places around the web and make the language more accessible to people who are interested in trying to write small Ink programs.</p>
+<p>I&rsquo;m very excited to have a browser-native REPL for Ink for experimenting with Ink on the go, and for writing and testing small things in Ink in a more lightweight environment. Though it obviously isn&rsquo;t perfect, it&rsquo;ll also help me demonstrate how Ink works in more places around the web and make the language more accessible to people who are interested in trying to write small Ink programs.</p>
 
         <hr/>
         <p class="prevInSection">

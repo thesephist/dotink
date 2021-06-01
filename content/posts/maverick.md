@@ -6,7 +6,7 @@ toc: true
 
 The [**Ink playground**](https://play.dotink.co), named project _"Maverick"_, is a web IDE and REPL for Ink. It's a single-page web application written in pure Ink, and makes it possible to write and run Ink programs entirely in the browser.
 
-With the playground, we can experiment with and program in Ink on the go on a mobile device, or on a system that doesn't have Ink installed. It also allows me to embed an Ink programming environment directly into a website or blog, like this.
+With the playground, we can program in Ink on the go on a mobile device, or on a system that doesn't have Ink installed. It also allows me to embed an Ink programming environment directly into a website or blog, like this.
 
 <iframe src="https://play.dotink.co/?embed=1" frameborder="0" class="maverick"></iframe>
 
@@ -31,15 +31,15 @@ Given these downsides, at the time, I didn't launch this REPL prototype or make 
 
 A little while later, I built [September](/posts/september/), a compiler that can transform Ink programs to equivalent JavaScript programs. The original purpose of September was to let me run Ink programs in the browser, so I could write front-end applications in Ink. But recently, I had an interesting idea.
 
-September is written in Ink. Could we _compile September with itself_, to get an Ink compiler that runs in the browser? And if we can do that, could we use that to make an Ink REPL that runs entirely in the browser, without needing a backend?
+September is written in Ink. Could we _compile September using itself_, to get an Ink compiler that runs in the browser? And if we can do that, could we use that to make an Ink REPL that runs entirely in the browser, without needing a backend?
 
 ## Self-hosting an Ink compiler in JavaScript
 
 The September compiler is written entirely in Ink, and [self-hosting](https://en.wikipedia.org/wiki/Self-hosting_(compilers)) (compiling the compiler with itself) was one of the goals of the project from the beginning. I knew it was _probably_ possible, but hadn't had a reason to attempt it until this idea came to me.
 
-September's compiler has two completely separate parts: the part that reads the command-line arguments, reads files from disk, and handles any errors; and the "translation" function that performed the actual compilation, taking Ink source code as input and returning JavaScript source code.
+September's compiler has two completely separate parts: the part that reads the command-line arguments, reads files from disk, and handles any errors; and the "translation" function that performs the actual compilation, taking Ink source code as input and returning JavaScript source code.
 
-To begin, I simply gave all the source files belonging to the translation part of the compiler to itself, and stuck the result in the browser. This was as simple as
+To begin, I simply gave all the source files belonging to the translation part of the compiler to itself, and stuck the result into the browser. This was as simple as
 
 ```
 september translate \
@@ -87,17 +87,17 @@ Ink interpreter (written in Go)
 
 That's quite a compiler rabbit hole. But simply compiling Ink programs to JavaScript in the browser isn't the end of it. To have a full Ink programming environment, we need to get a few more things working.
 
-First, most Ink programs require the standard library, at least the `std` (standard library core), `str` (string functions), and `quicksort` (list sorting) libraries. Fortunately, these three libraries are also dependencies of the compiler, so they were already compiled into the JavaScript bundle and available as global variables in the browser. This meant Ink programs running in the playground can simply call, for example, `sort!([1, 3, 2])` without having to import other libraries.
+First, most Ink programs require the **standard library**, at least the `std` (standard library core), `str` (string functions), and `quicksort` (list sorting) libraries. Fortunately, these three libraries are also dependencies of the compiler, so they were already compiled into the JavaScript bundle and available as global variables in the browser. This meant Ink programs running in the playground can simply call, for example, `sort!([1, 3, 2])` without having to import other libraries.
 
-Second, many Ink programs we could run in the playground resulted in errors. When that error occurs, the `eval()` function would simply propagate that error through to the surrounding application, causing crashes. We obviously don't want this, so rather than calling `eval()` directly on the compiler output, I updated the code to evaluate something like
+Second, many Ink programs we could run in the playground resulted in **errors**. When an error occurs, the `eval()` function would simply propagate that error through to the surrounding application, causing the playground to crash. We obviously don't want this, so rather than calling `eval()` directly on the compiler output, I updated the code to evaluate something like
 
 ```
 eval(`
-	try {
-		${translateInkToJS(...)}
-	} catch (e) {
-		// render the error to the REPL
-	}
+    try {
+        ${translateInkToJS(...)}
+    } catch (e) {
+        // render the error to the REPL
+    }
 `)
 ```
 
@@ -107,5 +107,5 @@ Lastly, there are some quirks to the fact that the playground runs the compiler 
 
 Some of these issues I chose to keep as acceptable quirks of this environment, and others (like compiler crashes) I'm hoping to fix slowly going forward.
 
-I'm very excited to have a browser-native REPL for Ink for experimenting with Ink on the go, and for writing and testing small things in Ink. Though it obviously isn't perfect, it'll also help me demonstrate how Ink works in more places around the web and make the language more accessible to people who are interested in trying to write small Ink programs.
+I'm very excited to have a browser-native REPL for Ink for experimenting with Ink on the go, and for writing and testing small things in Ink in a more lightweight environment. Though it obviously isn't perfect, it'll also help me demonstrate how Ink works in more places around the web and make the language more accessible to people who are interested in trying to write small Ink programs.
 
