@@ -24,6 +24,15 @@ Merlot is a writing app for the Web that supports drafting in Markdown, and was 
 <a href="https://merlot.vercel.app/" class="button">Try demo &rarr;</a>
 <a href="https://github.com/thesephist/merlot" class="button">See on GitHub &rarr;</a>
 
+### Ink codebase browser, _"Kin"_
+
+![Screenshots of Ink codebase browser running on a browser window and an iPhone](/img/kin.png)
+
+The Ink codebase browser is a refined tool for exploring open-source projects on GitHub. Compared to the experience of clicking through file hierarchies and previews on GitHub's website, this app provides you with a file tree, rich Markdown and image previews, multi-pane multi-tab layouts and first-class support for Ink syntax highlighting.
+
+<a href="https://code.dotink.co" class="button">Try demo &rarr;</as>
+<a href="https://github.com/thesephist/kin" class="button">See on GitHub &rarr;</a>
+
 ### Sistine
 
 ![Screenshot of Sistine's documentation site, built with Sistine](/img/sistine-screenshot.png)
