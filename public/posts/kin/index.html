@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Behind the scenes: building the Ink codebase browser | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/kin/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Behind the scenes: building the Ink codebase browser</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">21 June 2021</div>
+            <div class="meta-item readtime" itemprop="duration">10 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+        <details class="toc" open>
+            <summary>
+                <div class="toc-title">Contents</div>
+            </summary>
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#it-starts-with-an-experiment">It starts with an experiment</a></li>
+    <li><a href="#getting-the-code-editor-feel">Getting the &ldquo;code editor&rdquo; feel</a></li>
+    <li><a href="#adding-syntax-highlighting">Adding syntax highlighting</a></li>
+    <li><a href="#panes-tabs-and-splits">Panes, tabs, and splits</a></li>
+    <li><a href="#finishing-polishes">Finishing polishes</a></li>
+    <li><a href="#the-final-product">The final product</a></li>
+  </ul>
+</nav>
+        </details>
+        
+
+        <p>The <a href="https://code.dotink.co/"><strong>Ink Codebase Browser</strong></a> is a refined tool for exploring open-source projects on GitHub. Compared to the experience of clicking through file hierarchies and previews on GitHub’s website, this project aims to provide a much better &ldquo;browsing&rdquo; experience for online codebases on GitHub with a file tree, rich Markdown and image previews, and multi-pane multi-tab layouts. Because I&rsquo;ve always found it annoying that I couldn&rsquo;t yet add Ink syntax highlighting to GitHub, ICB also has first-class support for Ink syntax highlighting.</p>
+<p><img src="/img/kin.png" alt="Screenshots of Ink codebase browser running on various devices"></p>
+<p><a href="https://github.com/thesephist/kin" class="button">See on GitHub</a>
+<a href="https://code.dotink.co/" class="button">Try the demo →</a></p>
+<p>The Ink codebase browser is one of the most complex pieces of software written in Ink to date. It&rsquo;s a full-stack Ink application, with a server that interfaces with the GitHub API and a client that renders a multi-pane multi-tab UI for a file explorer. It also depends on <a href="/posts/september/">September</a> for Ink syntax highlighting and <a href="/docs/projects/#merlot">Merlot</a> to generate Markdown previews.</p>
+<p>This post is a story of going from zero to one, and then to a first &ldquo;launched&rdquo; version of the project, in a weekend. Since most of my projects only become public once they&rsquo;re done, I wanted to take a non-trivial project like this to share how I think about experimenting and prototyping a side project from scratch.</p>
+<h2 id="it-starts-with-an-experiment">It starts with an experiment</h2>
+<p>I started work on ICB with a couple of vague problem statements:</p>
+<ol>
+<li>I wanted a wrapper around the GitHub file browser that syntax highlighted Ink code</li>
+<li>I wanted to make a better interface for browsing a codebase than GitHub&rsquo;s folder-by-folder interface</li>
+</ol>
+<p>The first problem was borne out of my frustration whenever I need to go back and read Ink code from my past projects on GitHub. GitHub is frequently the quickest way for me to reference how I achieved something in another project, but without syntax highlighting, it takes me longer to get my bearings in the code. The second problem was inspired by my thinking about the concept of &ldquo;browsing a codebase&rdquo;. One way to think of browsing a codebase is to simply iterate through the files and folders, but a much more exciting concept is to also include actions like go-to-definition, running code snippets directly from files, and of course being able to view multiple files together in the same view.</p>
+<p>I didn&rsquo;t have any existing tool for doing the kind of semantic analysis necessary to build go-to-definition for Ink code yet, so I chose to instead build the complex UI component of this idea first. I was inspired by the Unison programming language&rsquo;s <a href="https://share.unison-lang.org/latest/data-constructors/@ags0v5hfe5u4j6f19bjbtr2vtf3mnje0kvu1a5so9hvkfpl5p745kbsul9sc1sf283chl1feplnu8gh90qenb7aa7p99m6k3lpuchr8@d16">Unison Share</a> interface, and planned to build a code editor-like UI with a file tree on the left and open files on the right.</p>
+<p>The very first thing I made after a brief project setup was an interface to GitHub&rsquo;s API. GitHub conveniently has a JSON API, so I used Ink&rsquo;s JSON library to validate that I could build functions that correctly interfaced with GitHub. And then I built a server around those functions, to end up with a simple backend server that supported two API endpoints: (1) get some information about a specific repository, and (2) get some information about a specific file path in a given repository. This was enough for me to start building some UI on top.</p>
+<p>Next, I tackled the file tree.</p>
+<p>This is the first screenshot I have of ICB in progress. At this point, the app could render two things:</p>
+<ul>
+<li>A &ldquo;sidebar&rdquo; (stuck at the top of the page here because of the lack of any CSS) that displayed some metadata about a repository</li>
+<li>A file tree which is just a nested list of <code>&lt;ul&gt;</code>s. Any &ldquo;directory&rdquo; items were expandable with the &ldquo;v&rdquo; button, and expanding it would talk to the API to fetch files under that folder and display a new child list of its contents.</li>
+</ul>
+<p><img src="/img/kin-start.jpg" alt=""></p>
+<p>While this is crude, it was enough for me to validate that an interactive file tree sidebar like this could work for me. Next, I started building a way to open files. All I really cared for at first were source code files, which are text files. So the next screenshot shows a version of the app where clicking on any file would download the contents of that file from the API and dump it into a <code>&lt;pre&gt;</code> tag on the right side of the page.</p>
+<p><img src="/img/kin-mvp.jpg" alt=""></p>
+<p>At this point, I had a skeleton of my app starting to emerge. Even though it looked sloppy and had a few bugs, it could navigate me to a GitHub repository and let me open multiple files at once from a hierarchical file tree &ndash; meaning it did its job, and was already somewhat more useful than GitHub&rsquo;s own interface already!</p>
+<h2 id="getting-the-code-editor-feel">Getting the &ldquo;code editor&rdquo; feel</h2>
+<p>My next round of work focused on making the source code previews more hospitable. First, I needed line numbers next to each line of code. This took me two attempts to get it right. First, I tried to divide up the source code into lines, and then make one <code>&lt;div&gt;</code> per line that included the line number and the code itself. This worked okay, but had two issues:</p>
+<ol>
+<li>If I wanted to copy multiple lines of code from the preview, I would also inadvertently copy the line numbers, which I almost never want to copy.</li>
+<li>Syntax highlighters need a single contiguous block of text to syntax-highlight, and will often deliver inconsistent or buggy results because of parsing errors if the code is sliced up into lines.</li>
+</ol>
+<p>There are possible workarounds for both of these issues, but I elected to instead find a simpler solution: A single long and skinny <code>&lt;pre&gt;</code> for line numbers on the left, and another long <code>&lt;pre&gt;</code> for the code, spaced out just right so they line up with each other.</p>
+<p><img src="/img/kin-line-numbers.jpg" alt=""></p>
+<p>Next up, I reconsidered the split-pane design from my first attempt above. Initially, I wanted to see if simply having panes without tabs could work. In that approach, opening a new file would simply add a pane to the right of other open panes. But the more I played with my existing prototype, the more I realized I would probably eventually want each pane to have a few tabs I could switch between. So rather than push it off, I decided to re-design the code to support tabs inside panes.</p>
+<p>My &ldquo;open files&rdquo; state went from a list of files&hellip;</p>
+<pre><code>panes: [
+    { file object }
+    { file object }
+    { file object }
+]
+</code></pre><p>&hellip; to a list of panes, each of which contained files.</p>
+<pre><code>panes: [
+    [ { file }, { file } ] ` 1st pane `
+    [ { file }, { file }, { file } ] ` 2nd pane `
+]
+</code></pre><p>And as a result, all new files now opened in a single pane, in tabs!</p>
+<p><img src="/img/kin-tabs.jpg" alt=""></p>
+<p>These tab buttons were an eyesore, so I added a bit of CSS to make the tabs look more natural and appealing. (The example codebase below is from the <a href="https://www.unisonweb.org/">Unison</a> programming language.)</p>
+<p><img src="/img/kin-tab-styles.jpg" alt=""></p>
+<p>When I began to test my code so far with example repositories, I kept accidentally opening non-text files like image files. This was an issue, since my code assumed up until this point that every file was a text file that should be displayed as text. To stop myself from running into this issue over and over, I added support for image previews for files that had common image format file extensions like .jpg and .png.</p>
+<p><img src="/img/kin-image-preview.jpg" alt=""></p>
+<h2 id="adding-syntax-highlighting">Adding syntax highlighting</h2>
+<p>One of my important goals with this project was to make ICB a genuinely better experience for browsing codebases than GitHub. And to hit that goal, ICB was missing one critical feature for me: proper syntax highlighting for most common languages. So that&rsquo;s what I tackled next.</p>
+<p>I needed two different syntax highlighting strategies, one for Ink programs (for which there&rsquo;s really only one solution) and one for all other popular languages. I chose to use <a href="https://highlightjs.org/">highlight.js</a> for highlighting common languages, because I&rsquo;ve used it before in the <a href="https://github.com/thesephist/litterate">Litterate</a> documentation generator project. As for highlighting Ink code, I knew that the syntax highlighter from the <a href="/posts/september/">September</a> toolchain could be modified to generate HTML (rather than terminal) output, because Andrew Healey had achieved it for the <a href="https://inkbyexample.com/">Ink by Example</a> project. So I decided to take that approach. Both highlighters would run on the client-side, in the browser.</p>
+<p>First up, I added highlight.js&rsquo;s syntax highlighting. Here&rsquo;s a CSS file highlighted with the default theme.</p>
+<p><img src="/img/kin-syntax-highlight.jpg" alt=""></p>
+<p>That&rsquo;s easier to read, but now the colors don&rsquo;t match! That&rsquo;s ok &ndash; I would correct this later by matching the highlighting colors to the color theme of the rest of the app. Next up, I compiled September&rsquo;s syntax highlighter to JavaScript to add highlighting for Ink source code.</p>
+<p><img src="/img/kin-ink-highlight.jpg" alt=""></p>
+<p>With colors corrected, the syntax highlighting looked much better.</p>
+<p><img src="/img/kin-ink-highlight-styles.jpg" alt=""></p>
+<h2 id="panes-tabs-and-splits">Panes, tabs, and splits</h2>
+<p>Until this point, the app only supported opening new files in a single pane with multiple tabs. With most of the core features proven out, I wanted to return to pane and tab organization and improve this situation.</p>
+<p>I thought for a while on the fastest way to add support for panes. Most real IDEs allow you to drag and drop tabs anywhere on the screen to split panes into multiple panes or move tabs around, but writing a full drag and drop split-pane system in Ink seemed like a tall order, and I wanted to wrap up a first version soon. So, instead, I came up with a hacky solution that still made panes very usable: In this revision, the currently open tab got a &ldquo;split →&rdquo; button to &ldquo;send this tab to the next pane&rdquo;.</p>
+<p><img src="/img/kin-panes.jpg" alt=""></p>
+<p>Clicking the &ldquo;split →&rdquo; button opens that specific file in the pane that&rsquo;s to the right of the current pane. If one doesn&rsquo;t exist, a new pane is split off from the old one. This is a little clunky, but I found that I could get basically any kind of arrangement I practically needed by opening files in the first pane and sending them to other panes with a few clicks.</p>
+<p>Eventually, that button was incorporated into the design of the active tab itself. It took up less horizontal space on the tab bar, and I felt it was more representative of what was actually happening &ndash; the button splits a tab, not a whole pane.</p>
+<p><img src="/img/kin-image-panes.jpg" alt=""></p>
+<p>After some experimentation, I decided this was sufficient for me to move on.</p>
+<h2 id="finishing-polishes">Finishing polishes</h2>
+<p>I hadn&rsquo;t anticipated adding Markdown preview support, but once I started browsing real repositories, I found many repositories (including most of mine) where the README held important information, but wasn&rsquo;t very readable in source-code format because of text wrapping and other issues. Since I had already written a Markdown engine in Ink called <a href="/docs/projects/#merlot">Merlot</a>, I decided to just use it to render Markdown file previews. Merlot isn&rsquo;t GitHub Markdown-compliant, so it frequently misses images or inline HTML code, but for the most part it does the job.</p>
+<p><img src="/img/kin-markdown-preview.jpg" alt=""></p>
+<p>I finally spent some time cleaning up the interface around navigating to a new repository.</p>
+<p><img src="/img/kin-edit-repo.jpg" alt=""></p>
+<p>Good error handling is important, and until this point, navigating to a nonexistent or private repository simply left the app hanging in a loading state. To improve this, I added some error alert boxes to the interface that pop up whenever something fails over the network.</p>
+<p><img src="/img/kin-error-messages.jpg" alt=""></p>
+<p>Lastly, I used the built-in router API from my <a href="https://github.com/thesephist/torus">Torus</a> library to let anyone deep-link to a specific file in a specific repository using the URL. For example, <a href="https://code.dotink.co/facebook/react#packages/react/src/ReactHooks.js">this link directly opens the React Hooks file in the React repository</a>.</p>
+<p><img src="/img/kin-deep-link.jpg" alt=""></p>
+<h2 id="the-final-product">The final product</h2>
+<p>After some final debugging work and small UI touches for mobile, we had a version one! I set the default repository to be the now-public repository for the Ink codebase browser itself, and released it into the public.</p>
+<p><img src="/img/kin-final.jpg" alt=""></p>
+<p>Altogether, the ICB project took about three days of hacking on the side from zero to where it is today. It&rsquo;s probably the most complex piece of UI I&rsquo;ve written so far with Ink, and the project with the most sophisticated set of dependencies. In addition to developing some new tricks for organizing Ink code (especially UI code) in this project, I&rsquo;m starting to realize I probably need to give Ink a proper package registry and manager. So perhaps that will be my next.</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/maverick/"><em>Ink playground: the magic of self-hosting a compiler on JavaScript</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>
