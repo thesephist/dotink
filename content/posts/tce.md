@@ -237,7 +237,7 @@ Although this adds some overhead to recursive tail calls, the benefit of the sim
 
 ### Schrift, the bytecode VM
 
-[Schrift](/posts/schrift-code/) is a Rust-based bytecode VM interpreter for Ink. It's still in an unfinished state, but the interpreter supports almost all core language features, including reliable tali call elimination.
+[Schrift](/posts/schrift-code/) is a Rust-based bytecode VM interpreter for Ink. It's still in an unfinished state, but the interpreter supports almost all core language features, including reliable tail call elimination.
 
 The main difference between Ink's Go interpreter and Schrift is that the Go interpreter uses Go's native call stack as Ink's "call stack", while Schrift creates an explicit call stack for Ink code. In other words, when the Go interpreter calls a function, it simply calls a corresponding Go function under the hood. Schrift, by comparison, keeps an explicit "call stack" data structure in memory for Ink bytecode where all stack variables and function calls live. This means Schrift can manipulate the stack with more control than the Go interpreter, and true tail call elimination with stack reuse is possible.
 
