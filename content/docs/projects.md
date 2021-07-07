@@ -33,6 +33,16 @@ The Ink codebase browser is a refined tool for exploring open-source projects on
 <a href="https://code.dotink.co" class="button">Try demo &rarr;</as>
 <a href="https://github.com/thesephist/kin" class="button">See on GitHub &rarr;</a>
 
+### Monocle
+
+![Screenshot of Monocle running on iPads](/img/monocle-banner.png)
+
+Monocle is my universal, personal search engine. It can query across tens of thousands of documents from my blog posts, journal entries, notes, Tweets, contacts, and more to act as my extended memory spanning my entire life. Monocle is designed with a focus on speed, privacy, and hackability. It's built on top of a full text search engine built from scratch in Ink that runs both natively and in the browser.
+
+<a href="https://thesephist.com/posts/monocle/" class="button">Blog post</a>
+<a href="https://monocle.surge.sh" class="button">Try demo &rarr;</as>
+<a href="https://github.com/thesephist/monocle" class="button">See on GitHub &rarr;</a>
+
 ### Sistine
 
 ![Screenshot of Sistine's documentation site, built with Sistine](/img/sistine-screenshot.png)
