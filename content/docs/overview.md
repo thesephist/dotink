@@ -327,7 +327,7 @@ A tail call optimized implementation wraps loop variables into the arguments.
 ```
 fibRec := (n, a, b) => n :: {
     0 -> a
-    _ -> fibRec(b, a + b, n - 1)
+    _ -> fibRec(n - 1, b, a + b)
 }
 
 fib := n => fibRec(n, 0, 1)

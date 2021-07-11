@@ -276,7 +276,7 @@ x :: {
 </code></pre><p>A tail call optimized implementation wraps loop variables into the arguments.</p>
 <pre><code>fibRec := (n, a, b) =&gt; n :: {
     0 -&gt; a
-    _ -&gt; fibRec(b, a + b, n - 1)
+    _ -&gt; fibRec(n - 1, b, a + b)
 }
 
 fib := n =&gt; fibRec(n, 0, 1)
