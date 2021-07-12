@@ -214,7 +214,7 @@ We can also group such a list of expressions into a single expression with paren
 
 ### Strings
 
-Ink supports string values. An Ink string is simply a byte slice, in the style of [Lua](https://www.lua.org/pil/2.4.html), and doesn't know about Unicode. We can construct a string literal by surrounding data ih single quotes, and we can escape single quotes within a string literal with a backslash.
+Ink supports string values. An Ink string is simply a byte slice, in the style of [Lua](https://www.lua.org/pil/2.4.html), and doesn't know about Unicode. We can construct a string literal by surrounding data in single quotes, and we can escape single quotes within a string literal with a backslash.
 
 We can access individual characters in a string with the dot `.` operator followed by an index into the string. Since Ink strings are mutable, we can also change sub-slices of a string in the same way by assigning to it.
 
