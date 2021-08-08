@@ -6,6 +6,16 @@ toc: true
 
 ## Projects
 
+### Monocle
+
+![Screenshot of Monocle running on iPads](/img/monocle-banner.png)
+
+Monocle is my universal, personal search engine. It can query across tens of thousands of documents from my blog posts, journal entries, notes, Tweets, contacts, and more to act as my extended memory spanning my entire life. Monocle is designed with a focus on speed, privacy, and hackability. It's built on top of a full text search engine built from scratch in Ink that runs both natively and in the browser.
+
+<a href="https://thesephist.com/posts/monocle/" class="button">Blog post</a>
+<a href="https://monocle.surge.sh" class="button">Try demo &rarr;</as>
+<a href="https://github.com/thesephist/monocle" class="button">See on GitHub &rarr;</a>
+
 ### Lucerne
 
 ![A screenshot of Lucerne displaying a timeline](/img/lucerne.png)
@@ -14,15 +24,6 @@ Lucerne is a Twitter reader and web client designed to amplify my personal Twitt
 
 <a href="https://thesephist.com/posts/lucerne/" class="button">Blog post</a>
 <a href="https://github.com/thesephist/lucerne" class="button">See on GitHub &rarr;</a>
-
-### Merlot
-
-![Photos of Merlot running on various devices](/img/merlot-devices.png)
-
-Merlot is a writing app for the Web that supports drafting in Markdown, and was designed to fit neatly into my blogging and writing workflow. It's built entirely and purely with Ink: the Markdown engine that runs on both the backend and the web app is written in Ink. The backend is written in Ink to run natively, and the client is written in Ink and, alongside the Markdown library, compiled down to a single-page JavaScript application.
-
-<a href="https://merlot.vercel.app/" class="button">Try demo &rarr;</a>
-<a href="https://github.com/thesephist/merlot" class="button">See on GitHub &rarr;</a>
 
 ### Ink codebase browser, _"Kin"_
 
@@ -33,15 +34,14 @@ The Ink codebase browser is a refined tool for exploring open-source projects on
 <a href="https://code.dotink.co" class="button">Try demo &rarr;</as>
 <a href="https://github.com/thesephist/kin" class="button">See on GitHub &rarr;</a>
 
-### Monocle
+### Merlot
 
-![Screenshot of Monocle running on iPads](/img/monocle-banner.png)
+![Photos of Merlot running on various devices](/img/merlot-devices.png)
 
-Monocle is my universal, personal search engine. It can query across tens of thousands of documents from my blog posts, journal entries, notes, Tweets, contacts, and more to act as my extended memory spanning my entire life. Monocle is designed with a focus on speed, privacy, and hackability. It's built on top of a full text search engine built from scratch in Ink that runs both natively and in the browser.
+Merlot is a writing app for the Web that supports drafting in Markdown, and was designed to fit neatly into my blogging and writing workflow. It's built entirely and purely with Ink: the Markdown engine that runs on both the backend and the web app is written in Ink. The backend is written in Ink to run natively, and the client is written in Ink and, alongside the Markdown library, compiled down to a single-page JavaScript application.
 
-<a href="https://thesephist.com/posts/monocle/" class="button">Blog post</a>
-<a href="https://monocle.surge.sh" class="button">Try demo &rarr;</as>
-<a href="https://github.com/thesephist/monocle" class="button">See on GitHub &rarr;</a>
+<a href="https://merlot.vercel.app/" class="button">Try demo &rarr;</a>
+<a href="https://github.com/thesephist/merlot" class="button">See on GitHub &rarr;</a>
 
 ### Sistine
 
@@ -115,6 +115,12 @@ Matisse is a minimalistic gallery of generative art pieces that are written in I
 
 <a href="https://github.com/thesephist/matisse" class="button">See on GitHub &rarr;</a>
 <a href="https://matisse.vercel.app/" class="button">Try demo &rarr;</a>
+
+### Micropress
+
+Micropress is an Ink library for _automatic text summarization_, using an extractive algorithm built on a custom tokenizer from the [Monocle](#monocle) project. Micropress can take an arbitrarily long document, like a blog post, and generate a summary of much shorter length by finding key sentences in the document that are most representative of the main ideas in the text.
+
+<a href="https://github.com/thesephist/micropress" class="button">See on GitHub &rarr;</a>
 
 ### Polyx
 
