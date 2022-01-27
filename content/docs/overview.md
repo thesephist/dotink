@@ -405,9 +405,9 @@ list.len(list) := newItem
 
 ### Imports and libraries
 
-An Ink program can be distributed across multiple files and folders. To import values defined at the top level scope in another file, we use the `load()` builtin function. `load()` takes the path to another Ink program, minus the `.ink` file extension, and imports all values in that file to the current program, inside a new map.
+An Ink program can be distributed across multiple files and folders. To import values defined at the top level scope in another file, we use the `load()` builtin function. `load()` takes the path to another Ink program, minus the `.ink` file extension, and imports all values in that file to the current program, inside a new object.
 
-If we have two files:
+For example, we can reference the `myFunc` function in `a.ink` within the program `b.ink` with `load('./a')`.
 
 ```
 ` a.ink `

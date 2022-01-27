@@ -326,8 +326,8 @@ map.three `` -&gt; 3
 <pre tabindex="0"><code>`` append to the end of LIST
 list.len(list) := newItem
 </code></pre><h3 id="imports-and-libraries">Imports and libraries</h3>
-<p>An Ink program can be distributed across multiple files and folders. To import values defined at the top level scope in another file, we use the <code>load()</code> builtin function. <code>load()</code> takes the path to another Ink program, minus the <code>.ink</code> file extension, and imports all values in that file to the current program, inside a new map.</p>
-<p>If we have two files:</p>
+<p>An Ink program can be distributed across multiple files and folders. To import values defined at the top level scope in another file, we use the <code>load()</code> builtin function. <code>load()</code> takes the path to another Ink program, minus the <code>.ink</code> file extension, and imports all values in that file to the current program, inside a new object.</p>
+<p>For example, we can reference the <code>myFunc</code> function in <code>a.ink</code> within the program <code>b.ink</code> with <code>load('./a')</code>.</p>
 <pre tabindex="0"><code>` a.ink `
 
 myFunc := () =&gt; 2 + 3
