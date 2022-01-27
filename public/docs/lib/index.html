@@ -186,7 +186,7 @@
 <p>Writes a string buffer, given as <code>data</code>, to the file at <code>path</code>. If a file is already present, <code>writeFile</code> truncates the existing file. If the file is not there, <code>writeFile</code> creates it. If write is successful, <code>cb</code> is called with <code>true</code>. On any error, <code>()</code> is passed instead to the callback.</p>
 <h3 id="formatraw-values"><code>format(raw, values)</code></h3>
 <p>Returns a format string with the string formatting substrings replaced with their referenced values from <code>values</code>, which can be a map or a list. For example:</p>
-<pre><code>format('{{ 0 }} {{ 1 }} {{ 0 }}', ['A', 'B'])
+<pre tabindex="0"><code>format('{{ 0 }} {{ 1 }} {{ 0 }}', ['A', 'B'])
 `` -&gt; 'A B A'
 
 format('{{ steve }} met {{ jony }}', {

@@ -105,24 +105,24 @@
 
         <h2 id="operating-system-interfaces">Operating system interfaces</h2>
 <p>Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response. Such an event object is of a semi-standard form, on success</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'data'
     data: [... some data]
 }
 </code></pre><p>and on error, frequently the error interface</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'error'
     message: &lt;string&gt;
 }
 </code></pre><p>When a system-interface builtin is capable of returning such an error event, we&rsquo;ll simply state so, without repeating the shape of the object again every time. Some builtin functions also need to send a &ldquo;the task is complete successfully&rdquo; event without sending any data. In such instances, an end event, shown below, is sent.</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'end'
 }
 </code></pre><h3 id="args"><code>args()</code></h3>
 <p>Returns the list of command-line arguments as strings.</p>
 <h3 id="incb"><code>in(cb)</code></h3>
 <p>Reads from standard input, calls <code>cb</code> with an event of the form</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'data'
     data: &lt;string&gt;
 }
@@ -132,7 +132,7 @@
 <p>Prints the exact string <code>s</code> to standard out. Notably, <code>out</code> will not append a newline to the end of <code>s</code>.</p>
 <h3 id="dirpath-cb"><code>dir(path, cb)</code></h3>
 <p>Returns a directory listing of the given path, in an event of the form</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'data'
     data: list&lt;FileInfo&gt;
 }
@@ -141,7 +141,7 @@
 <p>Recursively creates directories in <code>path</code>, like <code>mkdir -p</code>. If successful, sends an end event, otherwise an error event.</p>
 <h3 id="statpath-cb"><code>stat(path, cb)</code></h3>
 <p>Returns metadata about a given path in the file tree, of the form</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'data'
     data: {
         name: &lt;string&gt;
@@ -156,7 +156,7 @@
 </code></pre><p>if the object at the given path exists. If one does not exist, <code>data</code> is set to <code>()</code>. If the <code>stat</code> call errors, an error event is dispatched instead.</p>
 <h3 id="readpath-offset-length-cb"><code>read(path, offset, length, cb)</code></h3>
 <p>Reads a file in the given path, at the byte offset <code>offset</code> for a length <code>length</code>. The callback is invoked with an event of shape</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'data'
     data: &lt;string&gt;
 }
@@ -168,7 +168,7 @@
 <p>Deletes a file or directory, recursively, at a given path. <code>delete()</code> sends either an end event or an error event.</p>
 <h3 id="listenhost-handler"><code>listen(host, handler)</code></h3>
 <p>Starts an HTTP web server. <code>host</code> should specify the host the server should bind to, like <code>localhost:80</code>. The handler is invoked per each HTTP request received, with an event of the form</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'req'
     data: {
         method: &lt;string&gt;
@@ -179,7 +179,7 @@
     end: &lt;function&gt;
 }
 </code></pre><p>After the handler processes the request, it should call <code>end(response)</code> to respond, with the response object of the shape</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     status: &lt;number&gt;
     headers: map&lt;string, string&gt;
     body: &lt;string&gt;
@@ -187,14 +187,14 @@
 </code></pre><p>On any server error, the handler is called with an error event. The <code>listen()</code> call returns a <code>close</code> callback, which can be invoked to stop the server.</p>
 <h3 id="reqdata-callback"><code>req(data, callback)</code></h3>
 <p>Makes an HTTP request. Complementary to <code>listen</code>, <code>req</code> takes a request object of the form</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     method: &lt;string&gt;
     url: &lt;string&gt;
     headers: map&lt;string, string&gt;
     body: &lt;string&gt;
 }
 </code></pre><p>The callback is called with a response event, of the form</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'resp'
     data: {
         status: &lt;number&gt;
@@ -214,13 +214,13 @@
 <h3 id="execpath-args-stdin-stdoutfn"><code>exec(path, args, stdin, stdoutFn)</code></h3>
 <p>Spawns a child process with the executable at <code>path</code>, with command line arguments given in the list <code>args</code>, and a standard input <code>stdin</code>.</p>
 <p>When the process ends, the callback <code>cb</code> is invoked with the event of shape</p>
-<pre><code>{
+<pre tabindex="0"><code>{
     type: 'data'
     data: &lt;string&gt;
 }
 </code></pre><h3 id="env"><code>env()</code></h3>
 <p>Returns a composite of the current environment variables of the process. For example, to access the current user and working directory, write</p>
-<pre><code>env().USER
+<pre tabindex="0"><code>env().USER
 env().PWD
 </code></pre><h3 id="exitcode"><code>exit(code)</code></h3>
 <p>Exits the current process with the exit code set to the integer <code>code</code>.</p>

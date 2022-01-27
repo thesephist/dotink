@@ -85,7 +85,7 @@
 <li>The null value in Klisp <code>()</code> is the same in Ink</li>
 </ul>
 <p>There are three values that require more consideration: lists, functions, and symbols. The only composite type in Klisp is the <em>pair</em>, a cons cell, used to build up lists. Klisp represents a cons cell with a length-2 list in Ink: <code>[_, _]</code>. Klisp also has two kinds of function-like values: functions and macros. Klisp stores these as length-3 Ink lists, <code>[_, _, _]</code>, with the first slot reporting whether a function is a macro, the second containing the runnable function, and the third disambiguating this value from list nodes (but containing no useful value). For example, the <code>car</code> built-in function is represented as the Ink list</p>
-<pre><code>[
+<pre tabindex="0"><code>[
     false   `` not a macro
     L =&gt; L.'0'.0 `` the function itself
     _ `` empty value
@@ -106,18 +106,18 @@
 <p><code>print</code> is the shortest function of the triplet, and by far the simplest.</p>
 <h2 id="a-taste-of-klisp">A taste of Klisp</h2>
 <p>In many ways, Klisp is just a syntactically minimal Lisp. You won&rsquo;t find reader macros or complex data types in Klisp, but the basic building blocks are all present. One simple Klisp program here defines a function and invokes it on a number.</p>
-<pre><code>; square is a function x -&gt; x^2
+<pre tabindex="0"><code>; square is a function x -&gt; x^2
 (defn square (x)
       (* x x))
 
 (square 11) ; =&gt; 121
 </code></pre><p>Here, <code>defn</code> is a core library macro that expands the first few lines to:</p>
-<pre><code>; square is a function x -&gt; x^2
+<pre tabindex="0"><code>; square is a function x -&gt; x^2
 (def square
      (fn (x) (* x x)))
 </code></pre><p>In either case, we bind the variable <code>square</code> in the top-level scope to a function returning a number multiplied with itself, then call that function on <code>11</code>.</p>
 <p>The core data structure of Klisp is a list, which is a recursive sequence of S-expressions. The Klisp core library offers many common functions that operate on lists.</p>
-<pre><code>(def nums (range 0 10 1))
+<pre tabindex="0"><code>(def nums (range 0 10 1))
 ; =&gt; (0 1 2 3 4 5 6 7 8 9)
 
 (map nums inc) ; &quot;inc&quot; increments a number
@@ -133,7 +133,7 @@
 (sum even-nums)
 ; =&gt; 30
 </code></pre><p>Klisp also allows for macros, and the core library offers a few useful macros for declarative control flow. <code>cond</code> and <code>match</code> are two such good examples. <code>cond</code> lets you concisely express a list of if-else cases in a single block, and a <code>match</code> block implements a switch-case. Here&rsquo;s a simple FizzBuzz implementation using the <code>cond</code> macro.</p>
-<pre><code>(defn fizzbuzz (n)
+<pre tabindex="0"><code>(defn fizzbuzz (n)
   ; for each natural number through n,
   ; evaluate the following function:
   (each (nat n)

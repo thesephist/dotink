@@ -89,16 +89,15 @@
 <p>That is what inkfmt does today.</p>
 <h3 id="what-inkfmt-does">What inkfmt does</h3>
 <p>inkfmt is currently just an MVP, and does exactly one thing. It takes a single input file, formats the code inside, and returns the output. And it does that job reasonably well, though there still definitely are <a href="#case-study-hanging-indents">rough edges</a>. It takes input from <code>/dev/stdin</code> and outputs to <code>/dev/stdout</code>. This means we can run inkfmt on a file like this in the shell.</p>
-<pre><code>inkfmt &lt; input.ink &gt; output.ink
+<pre tabindex="0"><code>inkfmt &lt; input.ink &gt; output.ink
 </code></pre><p>Eventually, I want to build out a command-line tool that allows me to do this for a large tree of files and format code in-place.</p>
 <p>inkfmt currently makes four types of code transformations.</p>
 <ol>
 <li><strong>Remove trailing commas at line endings</strong>. In C-like programs, statements are terminated with the semicolon. Ink&rsquo;s analogous line terminator is the comma. But this isn&rsquo;t enforced at the source-code level, only in the language grammar. The Ink interpreter uses automatic comma insertion (like JavaScript&rsquo;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion">ASI</a>) to insert missing commas where appropriate. This means in idiomatic Ink code, lines don&rsquo;t end with commas. inkfmt removes such trailing commas at line endings.</li>
 <li><strong>Remove trailing commas in lists</strong>. Ink also allows commas to follow a list of items:
-<pre><code>list := [1, 2, 3, 4, ]
+<pre tabindex="0"><code>list := [1, 2, 3, 4, ]
 object := { key: 'value', apple: 'fruit', }
-</code></pre><p>In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.</p>
-</li>
+</code></pre>In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.</li>
 <li><strong>Re-indent code</strong>. Indentation is one of the main ways we visually make sense of code before diving into it. inkfmt uses a deterministic algorithm to calculate a single correct indentation for a source file and applies it to the code. The current algorithm isn&rsquo;t perfect, but gets us 90% there.</li>
 <li><strong>Canonicalize whitespace between symbols</strong>. Within each line, whitespace (and the lack thereof) between expressions help readability. Ink also deterministically adds and removes whitespace between symbols on the same line to settle on a single correct format, opting for spaces between binary operations like <code>+</code> and <code>&amp;</code>, and no spaces within parentheses and brackets.</li>
 </ol>
@@ -114,7 +113,7 @@ object := { key: 'value', apple: 'fruit', }
 <p>The <a href="https://github.com/thesephist/inkfmt/blob/master/lex.ink"><strong>lexer</strong></a> takes a single string of source code and cuts it up into meaningful pieces called <a href="https://craftinginterpreters.com/scanning.html">tokens</a>. This is sometimes called <em>tokenization</em> or <em>scanning</em> or <em>lexing</em>, but they all mean the same thing. We want to take a single string and cut it up into only meaningful pieces. This tokenization step is also a critical part of most compilers.</p>
 <p>the <a href="https://github.com/thesephist/inkfmt/blob/master/render.ink"><strong>renderer</strong></a> is the inverse of the lexer: it takes a stream of tokens and joins them back together into a single string of source code, albeit one where all the formatting inconsistencies have been ripped out and replaced with what inkfmt thinks is the best solution. inkfmt&rsquo;s renderer does this by first assembling tokens into lines of text, and then joining those lines together while paying close attention to the indentation between lines.</p>
 <p>inkfmt can aptly be described as a program that does the following</p>
-<pre><code>print(render(lex(getInput())))
+<pre tabindex="0"><code>print(render(lex(getInput())))
 </code></pre><p>Indeed, the current version of the formatter program does <a href="https://github.com/thesephist/inkfmt/blob/8763529b7f677c419e1c3bbfa1170d245301f13c/fmt.ink#L15">exactly that</a> and little else.</p>
 <h3 id="tokenizers-vs-parsers">Tokenizers vs. parsers</h3>
 <p>A tokenizer produces a flat list of symbols, but often, analyzing a program requires something more structured than a list of symbols. Source code usually represents nested, recursive structures &ndash; functions and expressions inside other functions and expressions. It&rsquo;s often useful to have a more complex data structure to represent these nested groups of symbols in programs. We call this next level of representation a <em>syntax tree</em>. A syntax tree describes the nested relationships between different parts of a program. We call the program that generates a syntax tree a <em>parser</em>.</p>
@@ -128,7 +127,7 @@ object := { key: 'value', apple: 'fruit', }
 <h3 id="constraints-of-running-without-the-ast">Constraints of running without the AST</h3>
 <p>My choice to forego writing a full parser came with some consequences later on in the process. Ones that I&rsquo;ve mostly worked around, but issues nonetheless. There are a class of small problems in code formatting that are difficult to solve without constructing a syntax tree for a program. Some of these problems can be hacked around, others can&rsquo;t.</p>
 <p>As an example, take this bit of Ink code.</p>
-<pre><code>(A)
+<pre tabindex="0"><code>(A)
 1  doSomething(request =&gt; (
 2      returnResponse(request)
 3  )).then(data =&gt; (
@@ -136,7 +135,7 @@ object := { key: 'value', apple: 'fruit', }
 5  ))
 </code></pre><p>There are two places for us to indent the code, contained within two nested pairs of parentheses. It seems like we could keep track of how deeply nested we are in parentheses at each line of code, and use that to tell us how far to indent each line. But this doesn&rsquo;t quite get us to the formatting above, which is the desired output.</p>
 <p>If we indent each line simply by keeping track of open and closed parentheses, line 3 shouldn&rsquo;t be indented any differently than line 2. In line 3, we open two parentheses, and close two parentheses. So we&rsquo;ve opened net-zero parentheses, and we should keep the previous line&rsquo;s indentation, which is a sensible thing to do in <code>(B)</code> here:</p>
-<pre><code>(B)
+<pre tabindex="0"><code>(B)
 1  doSomething(request =&gt; (
 2      returnResponse(request)
 3      data := otherThing(f(request))
@@ -149,7 +148,7 @@ object := { key: 'value', apple: 'fruit', }
 <p>What looks like &ldquo;good&rdquo; indentation, it turns out, is a fairly complicated question. This is because there&rsquo;s a mismatch between the data we&rsquo;re trying to understand, and the format in which we&rsquo;d like to have it displayed. Source code is one-dimensional, a single string of text. But displayed on your screen, well-formatted code takes a rich two-dimensional form, and the purpose of indentation is to separate and place these chunks of one-dimensional text in a two-dimensional space, so it&rsquo;s most readable.</p>
 <p>This mismatch means that there isn&rsquo;t a single simple algorithm to compute how far we should indent every line.</p>
 <p>Let&rsquo;s start with the basics. The first and most obvious rule I implemented was that lines of code inside parentheses and brackets should be indented one level deeper that its surrounding lines. Seems sensible enough. Let&rsquo;s try to apply it to this snippet.</p>
-<pre><code>1  user := {
+<pre tabindex="0"><code>1  user := {
 2      name: 'Linus'
 3      place: {
 4          city: 'Berkeley'
@@ -158,7 +157,7 @@ object := { key: 'value', apple: 'fruit', }
 7  }
 </code></pre><p>Lines 2 - 6 are easy to think about. We&rsquo;re inside the curly braces of <code>user := {...}</code>, so we should indent the block one level deeper. But what about line 7? When we reach the start of line 7, we are still inside the curly braces. But we intuitively want line 7 not to be indented, because line 7 <em>closes</em> the group we&rsquo;ve been indented by.</p>
 <p>Okay, I thought, we can simply indent each line after fully processing it, with knowledge of all opening and closing symbols inside it. I then came across this test case.</p>
-<pre><code>1  longFunc := (a, b, c
+<pre tabindex="0"><code>1  longFunc := (a, b, c
 2      d, e) =&gt; a + b + c + d + e
 </code></pre><p>Here, we intuitively want line 2 to be indented, because at the end of line 1, our list of arguments is incomplete. But by our rule we just agreed on above, line 2 shouldn&rsquo;t be indented, because line 2 contains the parenthesis that closes the group it&rsquo;s indented by.</p>
 <p>Okay, what if we only indent a group-closing line if it doesn&rsquo;t start with some list of values? It&rsquo;s at this point I started to realize that indentation was a messier problem than I had initially expected.</p>
@@ -166,12 +165,12 @@ object := { key: 'value', apple: 'fruit', }
 <p>If you&rsquo;d rather skip to the conclusion, you can <a href="#code-formatting-is-complicated-because-it-s-a-human-problem">click here</a>.</p>
 <h3 id="case-study-indentation-collapsing">Case study: indentation collapsing</h3>
 <p>Indentation collapsing is a phrase I made up for a particular condition where the indentation <em>style</em> matches what we want, but some blocks are indented much farther in that we would like. Take this fairly common pattern of passing callbacks into a function.</p>
-<pre><code>1  readFile('/my-file', data =&gt; (
+<pre tabindex="0"><code>1  readFile('/my-file', data =&gt; (
 2      doSomething(data)
 3  ))
 </code></pre><p>Let&rsquo;s continue with our earlier rule of adding an indent level when we enter a parenthesized or bracketed group. That rule tells us that line 2 should be indented twice inwards, because line 2 is contained by two nested groups. First, the <code>readFile(...)</code> group, and then the <code>data =&gt; (...)</code> group. But that&rsquo;s obviously not what we want. We want to indent exactly once for these two nested groups.</p>
 <p>So perhaps we can enforce a rule that each line can indent at most one level from the previous line? Not so fast. Consider these more thorny edge cases:</p>
-<pre><code>(A)
+<pre tabindex="0"><code>(A)
 1  [[
 2      a, b, c,
 3      d, e, f,
@@ -206,7 +205,7 @@ object := { key: 'value', apple: 'fruit', }
 <h3 id="case-study-hanging-indents">Case study: hanging indents</h3>
 <p>Hanging indents is the most challenging edge case I&rsquo;ve had to solve today. I&rsquo;m not completely happy with my current solution, but it works well enough to pass for code that occurs in the wild.</p>
 <p>How should we indent this piece of rather gnarly code?</p>
-<pre><code>1  addManyNumbers := (a, b, c
+<pre tabindex="0"><code>1  addManyNumbers := (a, b, c
 2      d, e, f) =&gt; 
 3      a + b + c + d +
 4      e + f
@@ -217,7 +216,7 @@ object := { key: 'value', apple: 'fruit', }
 <li>We want to indent the last line, <code>e + f</code>, because it follows an incomplete addition expression from the line above.</li>
 </ul>
 <p>Let&rsquo;s check out our options.</p>
-<pre><code>(A)
+<pre tabindex="0"><code>(A)
 1  addManyNumbers := (a, b, c
 2      d, e, f) =&gt;
 3      a + b + c + d +

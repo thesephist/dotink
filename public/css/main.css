@@ -214,7 +214,6 @@ main {
 p img {
     margin: 1.5em 0;
     width: 100%;
-    max-width: 700px;
 }
 
 pre, code {
@@ -270,7 +269,10 @@ blockquote {
 }
 
 .type-section a.summaryLink:hover .summaryTitle::after {
-    content: ' →';
+    content: '→';
+    width: 0;
+    display: inline-block;
+    margin-left: 8px;
 }
 
 .button {
@@ -374,7 +376,6 @@ blockquote {
 @media only screen and (max-width: 600px) {
     p img {
         width: 100vw;
-        max-width: unset;
         position: relative;
         top: 0;
         left: -16px;

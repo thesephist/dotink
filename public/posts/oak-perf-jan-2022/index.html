@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600|IBM+Plex+Sans:400,400i,600,600i&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-61182692-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+  gtag('config', 'UA-61182692-7');
+</script>
+
+
+	<title>Optimizing the Oak compiler for 30% smaller, 40% faster bundles | Ink</title>
+	
+	<link rel="canonical" href="https://dotink.co/posts/oak-perf-jan-2022/" />
+	
+</head>
+
+<body class="type-page">
+	<header>
+    <div class="overlay">
+        <div class="home">
+            <a href="/">.ink</a>
+        </div>
+        <nav>
+            <a href="/docs/">docs</a>
+            <a href="/posts/">posts</a>
+            <a href="https://github.com/thesephist/ink">github</a>
+        </nav>
+    </div>
+</header>
+
+
+	
+
+<main aria-role="main">
+    <div class="hero inverted">
+        <div class="overlay">
+            <h1>Optimizing the Oak compiler for 30% smaller, 40% faster bundles</h1>
+        </div>
+        <div class="meta overlay">
+            <div class="meta-item date" itemprop="datepublished">26 January 2022</div>
+            <div class="meta-item readtime" itemprop="duration">7 mins</div>
+        </div>
+    </div>
+    <article class="overlay">
+        
+
+        <p>I made a couple of much-needed optimizations to the JavaScript code generator in <code>oak build</code> this week, focused on runtime performance and generated code size. As usual for these focused optimizations, I tried to run some benchmarks and comparisons to validate the changes. This is a summary of exactly what changes I made, and how they improved the compiler.</p>
+<h2 id="reducing-code-size">Reducing code size</h2>
+<p>The first round of changes were focused on <a href="https://github.com/thesephist/oak/commit/caeb51748879bc8d87d70348a116dcab8e8c5c22">reducing generated code size</a>. Compiling Oak into JavaScript already results in quite large files, compared to their original source counterparts. This is because the compilation to JavaScript wraps Oak constructs in calls to the JS runtime for Oak (like <code>__oak_eq</code> and <code>__as_oak_string</code>), and because certain constructs like assignments need to be expanded out into longer sequences of expressions in JavaScript to preserve Oak semantics. However, a naive approach to codegen frequently resulted in redundant, computationally expensive expressions being generated when a much simpler one would have done.</p>
+<p>As an example, let&rsquo;s take this trivial expression to index into a list of children of some <code>node</code> object.</p>
+<pre tabindex="0"><code>node.children.(childIndex + 1)
+</code></pre><p>Before these optimizations, a naive codegen for this would produce the JavaScript expression below. (Note that all generated code is minified. I&rsquo;ve expanded it out here for, uh, readability.)</p>
+<pre tabindex="0"><code>(() =&gt; {
+  let __oak_acc_trgt = __as_oak_string(
+    (() =&gt; {
+      let __oak_acc_trgt = __as_oak_string(node);
+      return __is_oak_string(__oak_acc_trgt)
+        ? __as_oak_string(__oak_acc_trgt.valueOf()[children]) || null
+        : __oak_acc_trgt.children !== undefined
+        ? __oak_acc_trgt.children
+        : null;
+    })()
+  );
+  return __is_oak_string(__oak_acc_trgt)
+    ? __as_oak_string(
+        __oak_acc_trgt.valueOf()[
+          (() =&gt; {
+            let __oak_node = __as_oak_string(childIndex + 1);
+            return typeof __oak_node === &quot;symbol&quot; ? Symbol.keyFor(__oak_node) : __oak_node;
+          })()
+        ]
+      ) || null
+    : __oak_acc_trgt[
+        (() =&gt; {
+          let __oak_node = __as_oak_string(childIndex + 1);
+          return typeof __oak_node === &quot;symbol&quot; ? Symbol.keyFor(__oak_node) : __oak_node;
+        })()
+      ] !== undefined
+    ? __oak_acc_trgt[
+        (() =&gt; {
+          let __oak_node = __as_oak_string(childIndex + 1);
+          return typeof __oak_node === &quot;symbol&quot; ? Symbol.keyFor(__oak_node) : __oak_node;
+        })()
+      ]
+    : null;
+})();
+</code></pre><p>Most of these conditionals and function expressions are here to deal with different runtime types that can usually be statically verified never to occur. For example, it is illegal to index into a string value with a property name, like <code>myString.children</code>. Using these compile-time cues, we can eliminate these branches and shorten other ones. After this round of optimizations, the same Oak expression generates much simpler code.</p>
+<pre tabindex="0"><code>__oak_acc(
+  ((__oak_acc_tgt) =&gt;
+    __oak_acc_tgt.children !== undefined
+      ? __oak_acc_tgt.children
+      : null)(node),
+  __oak_obj_key(__as_oak_string(childIndex + 1))
+)
+</code></pre><p>Without reducing the size of individual variable names, this is the simplest way to express the semantics of the original Oak expression &ndash; we cannot predict the runtime value of the <code>.children</code> property (without static type checking, which I might pursue in the future), so we must be ready to handle <code>undefined</code> values. We need to reference the value of <code>node</code> twice in the ternary expression, and we can&rsquo;t do that without wrapping the whole conditional in a new function scope. The <code>__oak_acc</code> and <code>__oak_obj_key</code> runtime calls are needed to ensure that property accesses with certain types of keys follow Oak&rsquo;s language rules.</p>
+<p>One other codegen pattern that was useful enough to note here is moving variable declarations from <code>let</code> statements to function arguments. In other words, declaring new lexical scopes for variables like this</p>
+<pre tabindex="0"><code>() =&gt; {
+  let first, second;
+  first + second;
+}
+</code></pre><p>is equivalent to writing the much more concise expression</p>
+<pre tabindex="0"><code>(first, second) =&gt; first + second
+</code></pre><p>This pattern leads to shorter generated code in many cases, because of additional optimizations it enables like eliminating the wrapping <code>{ ... }</code> block.</p>
+<h3 id="speeding-things-up">Speeding things up</h3>
+<p>The next significant change impacted how Oak&rsquo;s <a href="https://github.com/thesephist/oak/commit/3652bfdfa7fc6488be32fcd6fc335ebb6ee2b7b8">if expressions were compiled down to JavaScript</a>. Oak has exactly one universal way to express conditionals, which looks like this.</p>
+<pre tabindex="0"><code>if n % 2 {
+    0 -&gt; :even
+    _ -&gt; :odd
+}
+</code></pre><p>Depending on the context, if expressions can take on a few other shorthand forms.</p>
+<pre tabindex="0"><code>if MobileWeb? -&gt; {
+    client.addTouchHandlers()
+}
+
+if {
+    MinWidth &lt; width
+    width &lt; MaxWidth
+    config.overrideAspectRatio? -&gt; lockAspectRatio()
+    _ -&gt; unlockAspectRatio()
+}
+</code></pre><p>Oak&rsquo;s compiler had inherited a pattern from Ink&rsquo;s <a href="/posts/september/">September</a> compiler when I first wrote it, and it used to generate</p>
+<pre tabindex="0"><code>__oak_if(n % 2, [
+  [() =&gt; 0, () =&gt; Symbol.for(&quot;even&quot;)],
+  [() =&gt; __Oak_Empty, () =&gt; Symbol.for(&quot;odd&quot;)],
+]);
+</code></pre><p>The most recent version of <code>oak build</code> compiles the same Oak expression down to</p>
+<pre tabindex="0"><code>((__oak_cond) =&gt; __oak_eq(__oak_cond, 0)
+  ? Symbol.for(&quot;even&quot;)
+  : Symbol.for(&quot;odd&quot;))(n % 2)
+</code></pre><p>This version invokes JavaScript&rsquo;s ternary (conditional) expressions directly. It pays no overhead cost for closures, arrays, and the <code>__oak_if</code> function call we needed to express the same logic prior to the change. Using JavaScript&rsquo;s native conditionals also enables JS engines to JIT compile the conditional to efficient machine code that can take better advantage of the CPU branch predictor. As we&rsquo;ll see, all of this results in a huge performance bump at runtime.</p>
+<h2 id="the-results">The results</h2>
+<p>To measure the impact of these optimizations on something that resembles real-world code, I ran these comparisons on the compiled output of Oak&rsquo;s behavioral test suite, which consists of around 850 unit tests written in Oak. The total sum of these tests is pretty close to &ldquo;real-world&rdquo; code, but I validated these results against a (currently private) repository of around 3k LOC of Oak code, which showed similar improvements.</p>
+<p>I also used this opportunity to try out <a href="https://github.com/sharkdp/hyperfine">Hyperfine</a>, a pretty sleek command-line benchmarking tool. I can pass it a couple of shell commands to run, and Hyperfine will take care of warming up (or clearing) the filesystem cache, measuring statistical variance across multiple runs, pointing out any outliers, and neatly summarizing the result into a quickly digestible &ldquo;X ± Y seconds&rdquo; format. This is the first time I&rsquo;ve used Hyperfine, despite having seen it in the wild many times, and I was immediately sold.</p>
+<p>But before we get to Hyperfine&rsquo;s measurements of runtime performance, here is a look at the raw code size of generated binaries.</p>
+<pre tabindex="0"><code>$ ls -l *.js
+-rw-r--r--  thesephist  639563 Jan 26 18:32 /tmp/oak-preopt.js
+-rw-r--r--  thesephist  427482 Jan 26 18:32 /tmp/oak-midopt.js
+-rw-r--r--  thesephist  431806 Jan 26 18:32 /tmp/oak-postopt.js
+</code></pre><p>In these comparisons:</p>
+<ul>
+<li><code>preopt</code> refers to the &ldquo;pre-optimization&rdquo; version of Oak at commit <a href="https://github.com/thesephist/oak/commit/9ab1dcd2e32fc084e6a3b82fb9b4ff494f7965ce">9ab1dcd</a>, before any of the changes discussed in this post,</li>
+<li><code>midopt</code> refers to the version after code size changes but before the if-expression codegen optimization at <a href="https://github.com/thesephist/oak/commit/caeb51748879bc8d87d70348a116dcab8e8c5c22">caeb517</a>, and</li>
+<li><code>postopt</code> refers to the compiled output after all the above optimizations, at the current head of <code>main</code> which is <a href="https://github.com/thesephist/oak/commit/1e82d64be0baaa2eadf08c927ab9959c720fc16a">1e82d64</a>.</li>
+</ul>
+<p>Our code size-focused optimizations reduced the total bundle size by almost exactly <em>one third</em>, which is a pretty significant improvement! The if-expression codegen optimization added back about 1% to the binary size, but I&rsquo;m pretty satisfied by that figure given the gains we see in runtime speedups.</p>
+<p><img src="/img/oak-node-hyperfine-bench.jpg" alt="Hyperfine benchmark of the Oak compiler&rsquo;s JavaScript output, before and after change"></p>
+<p>The code size optimizations by themselves get us about an 8% improvement in runtime, but together with the if-expression optimization, the final binary runs <strong>43% faster</strong>! This also means running Oak programs by first compiling them to JavaScript to run on a modern JS engine like V8 is now about twice as fast as running Oak programs natively using the <code>oak</code> CLI, which I&rsquo;m pretty happy with.</p>
+<p>Despite these improvements, there are many compiler optimizations that haven&rsquo;t been possible yet in <code>oak build</code> due to the current architecture. <code>oak build</code>&rsquo;s current semantic analysis is quite weak, only transforming recursive functions and annotating variable declarations. With further passes on the AST before codegen, we should be able to perform more advanced optimizations like dead code elimination and common subexpression elimination, which should show further marked improvements to both code size and runtime performance of ahead-of-time compiled Oak programs.</p>
+<p>A more ambitious future goal for Oak is to have a strictly-typed subset, something along the lines of the <a href="https://github.com/teal-language/tl">Teal</a> type checker for Lua. Static type annotations should let us take the optimizations discussed above much further, by predicting runtime types and eliminating branches that won&rsquo;t be taken.</p>
+<p>But all of this is a dream, and I think this week&rsquo;s changes are a good start. As I build more complex applications in Oak, it&rsquo;s good to feel the performance ceiling lift ever so slightly higher. Onwards!</p>
+
+        <hr/>
+        <p class="prevInSection">
+            
+            &larr;
+            <a href="https://dotink.co/posts/kin/"><em>Behind the scenes: building the Ink codebase browser</em></a>
+            
+        </p>
+        <p class="nextInSection">
+            
+        </p>
+    </article>
+</main>
+
+
+
+	<footer>
+    <div class="overlay">
+        <div class="left">
+            <p>- Linus</p>
+        </div>
+        <div class="right">
+            <span class="square"></span>
+        </div>
+    </div>
+</footer>
+
+
+	
+</body>

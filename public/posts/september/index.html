@@ -83,13 +83,13 @@
 </ul>
 <p>Autumn months are great, especially because <a href="https://genius.com/Taylor-swift-august-lyrics">august</a> is the best song on <a href="https://en.wikipedia.org/wiki/Folklore_(Taylor_Swift_album)">folklore</a> which is a lyrical and aural masterpiece by the queen of pop Taylor Swift herself, but that&rsquo;s for me to go on about on a different website. Back to the point:</p>
 <p><strong>September compiles Ink programs to equivalent (though not necessarily <em>elegant</em>) JavaScript programs</strong>. What does this mean? It means September can transform Ink code like this</p>
-<pre><code>a := 2
+<pre tabindex="0"><code>a := 2
 b := 3
 
 log(a + b)
 log('Hello, World!')
 </code></pre><p>to valid JavaScript code like this, which performs the exact same computation.</p>
-<pre><code>let a = 2;
+<pre tabindex="0"><code>let a = 2;
 let b = 3;
 log(__as_ink_string(a + b));
 log(__Ink_String(`Hello, World!`))
@@ -115,16 +115,16 @@ log(__Ink_String(`Hello, World!`))
 <h2 id="how-it-works">How it works</h2>
 <p>I&rsquo;ve written an in-depth guide to how September works in the <a href="https://github.com/thesephist/september/blob/master/README.md">readme</a> to the project. Here, I&rsquo;ll just give you a taste with a small but illustrative example.</p>
 <p>Let&rsquo;s take this simple Ink program.</p>
-<pre><code>a := 3
+<pre tabindex="0"><code>a := 3
 b := 17
 log(a + b)
 </code></pre><p>When we&rsquo;re done, we&rsquo;ll end up with this equivalent JavaScript program.</p>
-<pre><code>a = 3;
+<pre tabindex="0"><code>a = 3;
 b = 17;
 log(__as_ink_string(a + b))
 </code></pre><h3 id="tokenization">Tokenization</h3>
 <p>The first step in the September compiler is scanning, handled by the <strong><a href="https://github.com/thesephist/september/blob/master/src/tokenize.ink">tokenizer</a></strong>. The tokenizer scans through the program text as a string, and produces a list of tokens, or symbols. In the Ink tokenizer, these tokens are also sometimes tagged with their type, like &ldquo;number literal&rdquo; or &ldquo;string literal&rdquo; or &ldquo;addition operator&rdquo;. For our small program, September yields the following tokens. I&rsquo;ve added some blank lines and comments to make the output easier to read.</p>
-<pre><code># a := 3
+<pre tabindex="0"><code># a := 3
 Ident(a) @ 1:1
 DefineOp(()) @ 1:3
 NumberLiteral(3) @ 1:5
@@ -149,7 +149,7 @@ Separator(()) @ 3:11
 <p>You might be wondering where the <code>Separator</code> token came from. This is an implicit detail of the Ink language syntax, and functions like the semicolon in most C-style languages, as an expression terminator. It&rsquo;s not necessary most of the time, and inferred by the interpreter or compiler. Here, our tokenizer has inferred where the implicit Separator tokens should be and added them for us. This makes the next step easier. If this bit about the <code>Separator</code> token doesn&rsquo;t make sense, don&rsquo;t worry &ndash; it&rsquo;s not important to the compilation process.</p>
 <h3 id="parsing">Parsing</h3>
 <p>Next up, we need to group these tokens into meaningful hierarchies. We want to know, for example, that the <code>a + b</code> expression is a single expression, while <code>log(a</code> is not. This work is done by the <strong><a href="https://github.com/thesephist/september/blob/master/src/parse.ink">parser</a></strong>, which builds up a recursive data structure called the <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree</a>. The AST for our program looks like this.</p>
-<pre><code>BinExpr(Ident(a) DefineOp Lit(3))
+<pre tabindex="0"><code>BinExpr(Ident(a) DefineOp Lit(3))
 BinExpr(Ident(b) DefineOp Lit(17))
 Call(Ident(log) (BinExpr(Ident(a) AddOp Ident(b))))
 </code></pre><p>We can see our parser has grouped tokens into meaningful hierarchies. This representation of our program is meaningful enough for the rest of the compiler to draw good conclusions about what the program does.</p>
@@ -162,14 +162,14 @@ Call(Ident(log) (BinExpr(Ident(a) AddOp Ident(b))))
 <p>Code generation is the step where we walk through the annotated syntax tree and output the equivalent JavaScript code for each node in the tree. This is handled in September by the <strong><a href="https://github.com/thesephist/september/blob/master/src/gen.ink">code generator</a></strong>.</p>
 <p>The code generator contains a comprehensive list of every possible node in the syntax tree, and knows what JavaScript snippet is a faithful translation of each node type. For example, the generator knows that the syntax tree node <code>BinExpr(Ident(a) MulOp Ident(b))</code>, which is <code>a * b</code>, gets translated into <a href="https://github.com/thesephist/september/blob/master/src/gen.ink#L112"><code>(a * b)</code> in JavaScript</a>. This is a simple example &ndash; the generator encodes much more complex transformations I won&rsquo;t explain here, but you can explore them for yourself in the source code I linked in this paragraph, if you&rsquo;re curious.</p>
 <p>When the code generator steps through our syntax tree and outputs the resulting Ink code, we get the final output, a valid JavaScript program.</p>
-<pre><code>a = 3;
+<pre tabindex="0"><code>a = 3;
 b = 17;
 log(__as_ink_string(a + b))
 </code></pre><p>&hellip; nearly. You might be wondering what the <code>__as_ink_string()</code> function is doing in our code. This is an example of a <strong>runtime library</strong> function.</p>
 <h3 id="the-runtime-library">The runtime library</h3>
 <p>There are some parts of Ink&rsquo;s semantics that are better emulated not by translating code directly to JavaScript, but by calling out to some special piece of functionality written in JavaScript and packaged with the resulting JavaScript program. These pre-written pieces of functionality are collectively called the runtime library, or <em>runtime</em> for short. All languages have runtime libraries of varying sizes, and low-level languages like C have much smaller runtimes than rich, dynamic languages like JavaScript or Python.</p>
 <p>In September, the runtime library implements small pieces of Ink&rsquo;s behavior that are different from JavaScript. An example is the negation operator <code>~</code> in Ink, which negates a number or negates a boolean, depending on the type of the operand.</p>
-<pre><code># Ink
+<pre tabindex="0"><code># Ink
 ~true `` -&gt; false
 ~1    `` -&gt; negative 1
       `` same operator!

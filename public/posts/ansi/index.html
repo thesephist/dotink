@@ -75,7 +75,7 @@
 <p>For example, to print <code>Hello, World!</code> we&rsquo;d normally print the string <code>'Hello, World!'</code>. To print it as red text, we precede the string with the escape sequence <code>^[[0;31m</code>. If we print <code>'\x1b[0;31mHello, World!'</code> to an ANSI compliant terminal, we&rsquo;ll get <code>Hello, World!</code> in red.</p>
 <p>Similar commands exist for <a href="http://ascii-table.com/ansi-escape-sequences-vt-100.php">other types of command and operations</a> like moving the cursor, or clearing the screen.</p>
 <p>As another example, the <code>clear</code> utility to clear your terminal doesn&rsquo;t do anything fancy to talk to the system or terminal. <code>clear</code> really just outputs a string of two ANSI escape sequences:</p>
-<pre><code>$ clear | xxd -
+<pre tabindex="0"><code>$ clear | xxd -
 00000000: 1b5b 481b 5b4a        .[H.[J
 </code></pre><p>Here, we can see <code>clear</code> outputs six bytes, which <code>xxd</code> has rather unhelpfully grouped into sets of 2. But we can interpret them correctly:</p>
 <ul>

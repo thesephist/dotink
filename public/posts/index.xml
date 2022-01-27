@@ -6,7 +6,16 @@
     <description>Recent content in Posts on .ink</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 21 Jun 2021 00:03:11 -0400</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 26 Jan 2022 15:37:28 -0500</lastBuildDate><atom:link href="https://dotink.co/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Optimizing the Oak compiler for 30% smaller, 40% faster bundles</title>
+      <link>https://dotink.co/posts/oak-perf-jan-2022/</link>
+      <pubDate>Wed, 26 Jan 2022 15:37:28 -0500</pubDate>
+      
+      <guid>https://dotink.co/posts/oak-perf-jan-2022/</guid>
+      <description>I made a couple of much-needed optimizations to the JavaScript code generator in oak build this week, focused on runtime performance and generated code size.</description>
+    </item>
+    
     <item>
       <title>Behind the scenes: building the Ink codebase browser</title>
       <link>https://dotink.co/posts/kin/</link>

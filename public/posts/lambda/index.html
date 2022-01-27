@@ -84,7 +84,7 @@
 <p><a href="https://github.com/thesephist/lambda" class="button">See lambda.ink on GitHub →</a></p>
 <h2 id="the-world-of-pure-functions">The world of (pure) functions</h2>
 <p>For simplicity, we&rsquo;ll only consider functions that take one input, and return one output value. Some examples of such functions are</p>
-<pre><code>`` identity
+<pre tabindex="0"><code>`` identity
 x =&gt; x
 
 `` doubles the input
@@ -93,15 +93,15 @@ x =&gt; 2 * x
 `` square
 x =&gt; x * x
 </code></pre><p>Functions can also take other functions as input, and operate on them. For example, a function may take a function and invoke it with a constant</p>
-<pre><code>`` calls a given function with 2
+<pre tabindex="0"><code>`` calls a given function with 2
 f =&gt; f(2)
 </code></pre><h3 id="currying">Currying</h3>
 <p>A more interesting thing a function can do is to <em>return another function</em>. In other words, a function might be defined as</p>
-<pre><code>f := x =&gt; (y =&gt; x + y)
+<pre tabindex="0"><code>f := x =&gt; (y =&gt; x + y)
 
 f(2)(3) `` =&gt; 5
 </code></pre><p>This function <code>f</code> takes <code>x</code>, and returns another function that takes <code>y</code>, and returns the sum <code>x + y</code>. We can call it once to get a function, and then call that returned function again to get a result. In effect, this is the same as a function that takes two arguments, like <code>(x, y) =&gt; x + y</code>. But here, we can see that two-argument functions are really just <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a> over the single-argument function!</p>
-<pre><code>f := x =&gt; y =&gt; x + y
+<pre tabindex="0"><code>f := x =&gt; y =&gt; x + y
 f(2)(3) `` =&gt; 5
 
 `` ^^ is the same as vv
@@ -110,7 +110,7 @@ f := (x, y) =&gt; x + y
 f(2, 3) `` =&gt; 5
 </code></pre><p>This process of rewriting a multi-argument function as a bunch of single-argument functions that return other single-argument functions is called <a href="https://en.wikipedia.org/wiki/Currying">currying</a>, named after the computer scientist Haskell Curry.</p>
 <p>We can curry a function as many times as we&rsquo;d like, to produce multi-argument functions like</p>
-<pre><code>sumWithTen := a =&gt; b =&gt; c =&gt; a + b + c + 10
+<pre tabindex="0"><code>sumWithTen := a =&gt; b =&gt; c =&gt; a + b + c + 10
 
 sumWithTen(1)(2)(3) `` =&gt; 16
 </code></pre><p>It&rsquo;s helpful to recognize that a function written in the form <code>_ =&gt; _ =&gt; ... =&gt;  _</code> is just another way of writing multi-argument functions, because it shows up everywhere in the lambda calculus. With this in mind, we&rsquo;re ready to start defining the basic building blocks of programs in the lambda calculus.</p>
@@ -128,7 +128,7 @@ sumWithTen(1)(2)(3) `` =&gt; 16
 <p>$$ (\lambda x . 2x) \ 10 = 20 $$
 $$ (\lambda abc . ab + c) \ 10 \ 20 \ 30 = 230 $$</p>
 <p>These would be written equivalently in Ink as functions</p>
-<pre><code>(x =&gt; 2 * x)(10) = 20
+<pre tabindex="0"><code>(x =&gt; 2 * x)(10) = 20
 ((a, b, c) =&gt; a*b + c) (10, 20, 30) = 230
 </code></pre></li>
 </ol>
@@ -140,25 +140,25 @@ $$ (\lambda abc . ab + c) \ 10 \ 20 \ 30 = 230 $$</p>
 <p>A number \( n \) is encoded as a function that takes another function <code>f</code> and an argument <code>x</code>, and invokes <code>f</code> \( n \) times on <code>x</code>.</p>
 </blockquote>
 <p>Let&rsquo;s define some numbers using this rule. A zero is simple: it&rsquo;s a function that takes an <code>f</code> and some argument <code>x</code>, but doesn&rsquo;t ever call <code>f</code> (or, calls <code>f</code> zero times, which is the same thing).</p>
-<pre><code>Zero := f =&gt; x =&gt; x
+<pre tabindex="0"><code>Zero := f =&gt; x =&gt; x
 </code></pre><p>We represent the number 1 as a function that calls the given function exactly once on <code>x</code>, and so on&hellip;</p>
-<pre><code>One := f =&gt; x =&gt; f(x)
+<pre tabindex="0"><code>One := f =&gt; x =&gt; f(x)
 Two := f =&gt; x =&gt; f(f(x))
 Three := f =&gt; x =&gt; f(f(f(x)))
 </code></pre><p>How do we use Church numerals? One thing we might want to do is to convert these representations of numbers into the numbers we&rsquo;re familiar with. We can write a little helper function to do that, which looks like this</p>
-<pre><code>`` convert Church numerals to Ink numbers
+<pre tabindex="0"><code>`` convert Church numerals to Ink numbers
 toNumber := c =&gt; c(n =&gt; n + 1)(0)
 
 toNumber(One) `` =&gt; 1
 toNumber(Three) `` =&gt; 3
 </code></pre><p><code>toNumber</code> converts Church numerals (which are functions) to Ink numbers by calling each Church numeral with <code>f</code> set to an &ldquo;add one&rdquo; function and the starting point <code>x</code> as zero. This means, for example, our definition of <code>Three</code> will call the &ldquo;add one&rdquo; function 3 times on 0, giving us the number <code>3</code>.</p>
 <p>To do anything useful with Church numerals, we need to define a few arithmetic functions, starting with a &ldquo;successor&rdquo; function, conventionally spelled <code>succ</code>, that increments a Church numeral. In other words, <code>succ(One) = Two</code> and <code>succ(Two) = Three</code>. The function <code>succ</code> can be written</p>
-<pre><code>`` Takes N and returns N + 1
+<pre tabindex="0"><code>`` Takes N and returns N + 1
 succ := n =&gt; f =&gt; x =&gt; f(n(f)(x))
 </code></pre><p>The <code>succ</code> function takes a Church number <code>n</code> (a function taking <code>f, x</code>) and gives us a function that calls <code>f</code> on <code>x</code> <em>one more time</em> than the function given to it.</p>
 <p>The fact that the definition above actually does this might not be obvious at first. But if you sit with it and play with some examples or code, it&rsquo;ll click.</p>
 <p>Using <code>succ</code>, we can define basic arithmetic. <code>add</code>, for example, is a function taking two numbers <code>a</code> and <code>b</code> and calling <code>succ</code> on <code>a</code>, <code>b</code> times. We can use this pattern to define multiplication (adding a number <code>n</code> times) and powers (multiplying a number <code>n</code> times).</p>
-<pre><code>` We can define arithmetic over Church numerals.
+<pre tabindex="0"><code>` We can define arithmetic over Church numerals.
     To add A and B, we add 1 to A, B times.
     In other words, we apply succ to A, B times. `
 add := a =&gt; b =&gt; b(succ)(a)
@@ -169,7 +169,7 @@ mul := a =&gt; b =&gt; b(add(a))(Zero)
 ` A^B is 1 multiplied by A B times. `
 pow := a =&gt; b =&gt; b(mul(a))(One)
 </code></pre><p>Though we won&rsquo;t go into much detail, there is a complement to <code>succ</code> called <code>pred</code>, which is a &ldquo;subtract one&rdquo; function. In other words, <code>pred(Two) = One</code>. Using <code>pred</code>, we can define subtraction, division, and logarithms. It turns out the implementation of <code>pred</code> is quite a bit more complex than <code>succ</code>. Our implementation counts up from zero to find the number whose <code>succ</code> is the given number, but don&rsquo;t stress if you don&rsquo;t grok this function yet.</p>
-<pre><code>`` zero? uses booleans, defined later in the post
+<pre tabindex="0"><code>`` zero? uses booleans, defined later in the post
 zero? := n =&gt; n(_ =&gt; False)(True)
 pred := n =&gt; n (g =&gt; k =&gt; zero?(g(One))(k)(succ(g(k)))) (_ =&gt; Zero) (Zero)
 
@@ -179,12 +179,12 @@ sub := a =&gt; b =&gt; b(pred)(a)
 <p>We have invented numbers. Let&rsquo;s move on to booleans.</p>
 <h2 id="booleans">Booleans</h2>
 <p>Booleans in the lambda calculus are encoded as &ldquo;selector functions&rdquo; that choose between two arguments. Given two arguments, the lambda calculus representation of &ldquo;true&rdquo; will pick the first choice, and &ldquo;false&rdquo; will pick the second choice. Think of true and false values as an if-else check over two choices.</p>
-<pre><code>True := x =&gt; y =&gt; x
+<pre tabindex="0"><code>True := x =&gt; y =&gt; x
 False := x =&gt; y =&gt; y
 </code></pre><p>We can write a <code>toBool</code> function that converts our lambda calculus representation of a boolean into a normal Ink boolean value as follows. The boolean, which is a selector function, will pick <code>true</code> if it&rsquo;s <code>True</code>, and pick <code>false</code> if it&rsquo;s <code>False</code>.</p>
-<pre><code>toBool := c =&gt; c(true)(false)
+<pre tabindex="0"><code>toBool := c =&gt; c(true)(false)
 </code></pre><p>Using these representation of booleans as functions, we can define some boolean operators, like <code>not</code>, <code>and</code>, and <code>or</code>. These operations aren&rsquo;t immediately obvious, so sit with them for a bit and think about how the descriptions in comments are true about each operator.</p>
-<pre><code>` &lt;not&gt; x simply flips the given value's choice. `
+<pre tabindex="0"><code>` &lt;not&gt; x simply flips the given value's choice. `
 not := x =&gt; x(False)(True)
 
 ` A &lt;and&gt; B returns B if A is true, and false if A is false. `
@@ -195,7 +195,7 @@ or := a =&gt; b =&gt; a(True)(b)
 </code></pre><p>Using these functions on boolean values, we can describe <em>any boolean predicate</em>.</p>
 <p>We can now break down and understand a function we saw earlier in the definition of <code>pred</code> called <code>zero?</code>. <code>zero?</code> returns whether the given argument is <code>Zero</code>. We can&rsquo;t compare the argument directly to <code>Zero</code>, because they might be two different functions that do the same thing, and are thus both technically Church-encoded &ldquo;zero&rdquo; values.</p>
 <p>Instead, our definition of <code>zero?</code> takes a Church-encoded number, and calls it with <code>f</code> set to an always-false function, and <code>x</code> set to <code>True</code>. If <code>f</code> is called a non-zero time on <code>x</code>, we get <code>False</code>. Otherwise, we get <code>True</code>, like we&rsquo;d expect.</p>
-<pre><code>zero? := n =&gt; n(_ =&gt; False)(True)
+<pre tabindex="0"><code>zero? := n =&gt; n(_ =&gt; False)(True)
 </code></pre><p>We have now invented booleans in the lambda calculus.</p>
 <h2 id="recursion-and-fixed-point-combinators">Recursion and fixed-point combinators</h2>
 <p>To reach our goal of implementing a factorial function, we need numbers and booleans. However, we need one more missing piece: <em>recursion</em>. The basic lambda calculus doesn&rsquo;t support recursive definitions. In other words, we can&rsquo;t reference a function within its own definition, which we need to do to define the factorial function.</p>
@@ -206,14 +206,14 @@ or := a =&gt; b =&gt; a(True)(b)
 <p>$$ \mathrm{fix} \ g = g(\mathrm{fix} \ g) $$</p>
 <p>This is a little mind-bending, and the definition isn&rsquo;t very intuitive. Let&rsquo;s see why we need a combinator like this to define recursion.</p>
 <p>When we define a recursive function like the factorial, we need to reference the function itself in its body. In pseudocode, this looks like</p>
-<pre><code>def factorial(x):
+<pre tabindex="0"><code>def factorial(x):
     if x = 0:
         return 1
     else:
         return x * factorial(x)
 </code></pre><p>The rules of the lambda calculus technically don&rsquo;t allow us to write such a function, because lambda calculus doesn&rsquo;t support <em>named functions</em> like <code>factorial</code> here. We can only give names to arguments, not functions defined in some &ldquo;global scope&rdquo;.</p>
 <p>Given this limitation, we might try to re-write a factorial like this:</p>
-<pre><code>def fakeFactorial(realFactorial):
+<pre tabindex="0"><code>def fakeFactorial(realFactorial):
     return function(x):
         if x = 0:
             return 1
@@ -226,14 +226,14 @@ or := a =&gt; b =&gt; a(True)(b)
 <p>The Y combinator is the best-known fixed-point combinator in the lambda calculus. In the conventional notation, it&rsquo;s defined as</p>
 <p>$$ \mathrm{Y} = \lambda f . (\lambda x . f ( x \ x )) (\lambda x . f ( x \ x )) $$</p>
 <p>In our more familiar programming notation, the Y combinator is</p>
-<pre><code>Y := g =&gt; (x =&gt; g(x(x)))(x =&gt; g(x(x)))
+<pre tabindex="0"><code>Y := g =&gt; (x =&gt; g(x(x)))(x =&gt; g(x(x)))
 </code></pre><p>We can see that this Y combinator satisfies our definition if we expand it out.</p>
-<pre><code>Y(g) = (x =&gt; g(x(x)))(x =&gt; g(x(x)))  -&gt; definition of Y(g)
+<pre tabindex="0"><code>Y(g) = (x =&gt; g(x(x)))(x =&gt; g(x(x)))  -&gt; definition of Y(g)
      = g(x =&gt; g(x(x)))(x =&gt; g(x(x))) -&gt; apply the function (x =&gt; g(x(x)))
                                         to its argument (x =&gt; g(x(x)))
      = g(Y(g))                       -&gt; by definition of Y(g)
 </code></pre><p>Now, we should be able to define a <code>fakeFactorial</code> in the lambda calculus, and pass it to <code>Y</code> to create a recursive factorial function:</p>
-<pre><code>fakeFactorial := realFactorial =&gt; n =&gt; zero?(n) (_ =&gt; One) (_ =&gt; mul(n)(realFactorial(pred(n)))) ()
+<pre tabindex="0"><code>fakeFactorial := realFactorial =&gt; n =&gt; zero?(n) (_ =&gt; One) (_ =&gt; mul(n)(realFactorial(pred(n)))) ()
 factorial := Y(fakeFactorial)
 
 factorial(Three) `` =&gt; we should expect Six
@@ -243,17 +243,17 @@ factorial(Three) `` =&gt; we should expect Six
 <p>The Z combinator is another fixed-point combinator, specifically designed to work within the constraints of eagerly evaluated languages. It&rsquo;s defined as</p>
 <p>$$ \mathrm{Z} = \lambda f . (\lambda x . f(\lambda v . x x v)) (\lambda x . f(\lambda v . x x v)) $$</p>
 <p>In the notation of code, this Z combinator is</p>
-<pre><code>Z := g =&gt; (x =&gt; g(v =&gt; x(x)(v)))(x =&gt; g(v =&gt; x(x)(v)))
+<pre tabindex="0"><code>Z := g =&gt; (x =&gt; g(v =&gt; x(x)(v)))(x =&gt; g(v =&gt; x(x)(v)))
 </code></pre><p>Although we won&rsquo;t prove the fixed-pointed-ness of the Z combinator here, you&rsquo;re welcome to try it at home if you feel so inspired by the Y combinator example earlier in this section.</p>
 <p>The Z combinator emulates laziness in eagerly evaluated environments by wrapping the parts that need to be lazy in something like closures. With this Z combinator, we&rsquo;re ready to write our factorial function in the lambda calculus.</p>
 <h2 id="the-factorial">The factorial</h2>
 <p>First, let&rsquo;s write our equivalent of the <code>fakeFactorial</code> function, defined without recursion.</p>
-<pre><code>fakeFactorial := fact =&gt; n =&gt;
+<pre tabindex="0"><code>fakeFactorial := fact =&gt; n =&gt;
     zero?(n) (_ =&gt; One) (_ =&gt; mul(n)(fact(pred(n)))) ()
 </code></pre><p>Then we have our Z fixed-point combinator</p>
-<pre><code>Z := g =&gt; (x =&gt; g(v =&gt; x(x)(v)))(x =&gt; g(v =&gt; x(x)(v)))
+<pre tabindex="0"><code>Z := g =&gt; (x =&gt; g(v =&gt; x(x)(v)))(x =&gt; g(v =&gt; x(x)(v)))
 </code></pre><p>To test it, we can define our recursive factorial using the Z combinator and call it on a few values</p>
-<pre><code>factorial := Z(fakeFactorial)
+<pre tabindex="0"><code>factorial := Z(fakeFactorial)
 
 toNumber(factorial(Zero)) `` =&gt; 1
 toNumber(factorial(One)) `` =&gt; 1

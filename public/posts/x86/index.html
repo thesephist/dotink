@@ -93,7 +93,7 @@
 <p>Then, there are instructions that <strong>always take the same type of operand</strong>. The <code>jmp</code> instruction to jump to a different part of the program is one good example. <code>jmp</code> always takes one immediate value operand, which is the virtual address to which the program should jump relative to the current instruction&rsquo;s address. <code>jmp</code> is encoded with an opcode byte <code>0xe9</code> then a 32-bit <a href="https://en.wikipedia.org/wiki/Endianness">little-endian</a> number representing the offset to jump to. The branching instructions, like <code>call</code>, <code>jne</code> (jump if not equal), and <code>jg</code> (jump if greater than) are all laid out similarly.</p>
 <p>Simple arithmetic instructions like <code>inc</code> (increment register) and <code>neg</code> (negate register) are also straightforward, but their operands are register values, not immediates. So they&rsquo;re represented by an opcode byte, followed by an &ldquo;R/M byte&rdquo; encoding the operand register and some extra information about the instruction. For example, <code>neg eax</code> is encoded as byte <code>0xf7</code>, which corresponds to either <code>neg</code> or <code>not</code>, followed by the R/M byte <code>0xd8</code>, which does double-duty to encode <code>eax</code> and distinguish <code>neg</code> from <code>not</code>. By comparison, <code>not eax</code> is <code>0xf7d0</code>.</p>
 <p>There are also the <strong>arithmetic instructions with multiple operands</strong> like <code>add</code> and <code>and</code> and <code>mov</code>. These instructions are much more complex to encode not only because they take two arguments, but also because either of those two arguments could be any of (1) a register, (2) an immediate value encoded into the instruction, or (3) a pointer to a memory location. The same <code>add</code> instruction could be used in any of</p>
-<pre><code>add eax ebx     ; register &lt;- register
+<pre tabindex="0"><code>add eax ebx     ; register &lt;- register
 add eax 0x1     ; register &lt;- immediate
 add eax [ebx]   ; register &lt;- memory
 add [ebx 2 ecx] eax
@@ -102,7 +102,7 @@ add [ebx 4 ecx 0x10] 0x10
                 ; memory &lt;- immediate
 </code></pre><p>Our instruction encoder needs to deal with all these cases for all the arithmetic instructions.</p>
 <p>For me, this part took the longest to get right. I ended up writing special-case branches to handle each of a few different cases. Here&rsquo;s the code that handles the <code>add</code> instruction, for example:</p>
-<pre><code>['add', _, _] -&gt; map(args, type) :: {
+<pre tabindex="0"><code>['add', _, _] -&gt; map(args, type) :: {
     ['string', 'composite'] -&gt; operands := encodeMem(args.0, args.1) :: {
         () -&gt; ()
         _ -&gt; transform('03') + operands
@@ -139,7 +139,7 @@ add [ebx 4 ecx 0x10] 0x10
 <p>Any given memory access may come without a displacement, without an index register, or without both. And for each case, the encoding we need is slightly different. That&rsquo;s mildly annoying, but these are well-documented rules, and August simply implements these rules for these addressing modes in <a href="https://github.com/thesephist/august/blob/367229eef803e1cd12677a4da287fb1b0b44b13b/src/asm.ink#L215">the <code>encodeMem</code> function</a>.</p>
 <h2 id="encoding-data-and-labels-into-program-text">Encoding data and labels into program text</h2>
 <p>Encoding source code into machine instructions isn&rsquo;t just a simple matter of mapping each instruction to its encoding rule. Take this program that prints out Hello World or Goodbye to standard output, depending on a variable:</p>
-<pre><code>_start:
+<pre tabindex="0"><code>_start:
     ; if 0, says hello world
     ; if 1, says goodbye
     mov eax 0
@@ -182,13 +182,13 @@ len_b:
 <h2 id="disassemblers-and-symbol-tables">Disassemblers and symbol tables</h2>
 <p>There&rsquo;s one part of the assembler we haven&rsquo;t looked at in detail &ndash; the <strong>symbol table</strong>. The symbol table is a non-program section in the ELF file (meaning it isn&rsquo;t loaded into memory when the program runs) that tells other tools like disassemblers and debuggers where labels in the source code are in the final program text.</p>
 <p>In our <code>readelf</code> output from Part I, the symbol table looked like this:</p>
-<pre><code>Symbol table '.symtab' contains 3 entries:
+<pre tabindex="0"><code>Symbol table '.symtab' contains 3 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
      0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
      1: 0000000000401000     0 FUNC    LOCAL  DEFAULT    1 _start
      2: 0000000000401016     0 FUNC    LOCAL  DEFAULT    1 exit
 </code></pre><p>&hellip; for the original assembly:</p>
-<pre><code>_start:
+<pre tabindex="0"><code>_start:
     mov eax 0x1     ; write syscall
     mov edi 0x1     ; stdout
     mov esi msg     ; string to print
@@ -204,7 +204,7 @@ exit:
 </code></pre><p>The symbol table has an entry for every symbol in the source assembly, and some metadata about each. The most important piece of data for us is the <code>Value</code> column, which denotes the virtual address of the instruction that the symbol points to in the running program. In this case, our program text starts at virtual address <code>0x401000</code>, so our first symbol <code>_start</code> is at that address. <code>exit</code>, which appears <code>0x16</code> bytes later in the instruction stream, has virtual address <code>0x401016</code>. (Sometimes, for other kinds of symbols, &ldquo;value&rdquo; refers to something other than an address, but we won&rsquo;t dig into that detail today.)</p>
 <p>What&rsquo;s the use of a symbol table like this?</p>
 <p><a href="https://en.wikipedia.org/wiki/Symbol_table#Applications">Lots of uses</a>, it turns out. But for me, it was most useful when looking at disassembly of August&rsquo;s own output. As I started writing longer and longer assembly programs to test the assembler, I started using <code>objdump</code> to see a disassembly of the executable and check that it matched my input. An <code>objdump</code> of the Hello World program without symbols reads like</p>
-<pre><code>$ objdump -d ./hello-world
+<pre tabindex="0"><code>$ objdump -d ./hello-world
 
 ./hello-world:     file format elf64-x86-64
 
@@ -221,7 +221,7 @@ Disassembly of section .text:
   401020:	0f 05                	syscall
 	...
 </code></pre><p>Even though we had labels that held meaning in our source code, the disassembly can&rsquo;t find them within the instruction stream because that data isn&rsquo;t saved into our machine code. With our symbol table, though, <code>objdump</code> can map symbols back to their location in the disassembly:</p>
-<pre><code>$ objdump -d ./hello-world
+<pre tabindex="0"><code>$ objdump -d ./hello-world
 
 ./hello-world:     file format elf64-x86-64
 

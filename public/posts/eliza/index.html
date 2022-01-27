@@ -59,7 +59,7 @@
 <h2 id="eliza-a-chatbot-written-in-ink">Eliza, a chatbot written in Ink</h2>
 <p>The original <a href="https://en.wikipedia.org/wiki/ELIZA">ELIZA</a> was one of the first &ldquo;chat bots&rdquo;. Invented in the MIT AI lab in the mid-60&rsquo;s, it demonstrated how a simple algorithm based on matching patterns in language against a database could emulate reasonable human conversations, and became one of the first candidates for real &ldquo;Turing tests&rdquo;.</p>
 <p>Eliza works by taking a line of input from the user and breaking it down into meaningful recognized pieces by running through a list of predefined rules called a &ldquo;script&rdquo;. Here&rsquo;s a sample of the &ldquo;doctor&rdquo; script, which is one of the most popular scripts for Eliza. It&rsquo;s the script that the Ink version also happens to use.</p>
-<pre><code>key: if 3
+<pre tabindex="0"><code>key: if 3
   decomp: * if *
     reasmb: Do you think its likely that (2) ?
     reasmb: Do you wish that (2) ?
@@ -85,7 +85,7 @@ key: dreamed 4
 <p>Torus, like React, allows a program to define a user interface <em>declaratively</em> as a function from data to a tree of components. Both libraries have <em>renderers</em> that take the produced tree of components and compare it with the previously rendered tree to produce a list of DOM manipulations that they make to update the view. Torus&rsquo;s renderer is much simpler in design that React, and it&rsquo;s called <code>Torus.render</code>. Every UI component in Torus internally depends on <code>Torus.render</code> to take the virtual DOM produced and render any changes to the page.</p>
 <p>To build Eliza, I borrowed this renderer layer from Torus by importing the Torus library onto the page, and wrote a <a href="https://github.com/thesephist/eliza/blob/main/lib/torus.js.ink">small adapter library called <code>torus.js.ink</code></a> that provides an idiomatic Ink API for the Torus renderer.</p>
 <p>With the adapter, getting a basic web UI running as simple as the Ink program</p>
-<pre><code>` find an element into which we render the app `
+<pre tabindex="0"><code>` find an element into which we render the app `
 root := bind(document, 'querySelector')('#root')
 
 ` define the app as a function of state =&gt; DOM tree `

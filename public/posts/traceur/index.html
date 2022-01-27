@@ -114,7 +114,7 @@
 <p><em>(If you&rsquo;re not very interested in the minutiae of Ink programming, feel free to skip this section.)</em></p>
 <p>Path tracing very naturally lends itself to object-oriented programs. Arithmetic defined on 3-dimensional vectors, scattering and intersection behaviors on materials and shapes, positioning and moving cameras and objects in the scene &ndash; these are all naturally expressed as methods on objects. Ink, however, was designed as a functional language. While working on Traceur, I created an Ink idiom for object-oriented programming-style &ldquo;objects&rdquo; that encapsulates behavior in the way we want to use it, bound to object instances.</p>
 <p>Let&rsquo;s say we want some <code>Material</code> type that looks like</p>
-<pre><code>class Metal {
+<pre tabindex="0"><code>class Metal {
     constructor(color, fuzz) {
         this.color = color;
         this.fuzz = fuzz;
@@ -129,7 +129,7 @@ const mat = new Metal([1, 1, 1], 0.5);
 
 mat.scatter(r, h, att, sc) // ... call method
 </code></pre><p>the core of the <code>Metal</code> class is that we can call its constructor, <code>new Metal()</code>, to create an object that contains its properties and encapsulates behavior. Although Ink doesn&rsquo;t have class-based objects built in, we can emulate this idea with the following Ink code.</p>
-<pre><code>Metal := (color, fuzz) =&gt; {
+<pre tabindex="0"><code>Metal := (color, fuzz) =&gt; {
     scatter: (ray, hit, attenuation, scattered) =&gt; (
         attenuation := this.color
         ` ... some code ... `

@@ -82,7 +82,7 @@
 
         <p>Ink is a mostly functional programming language, and Ink programs express iteration through recursion. Usually, this kind of recursion is hidden behind higher level library functions like <code>map</code> and <code>each</code>. But under the hood, all loops and iteration in Ink makes use of recursive functions.</p>
 <p>For example, the <a href="/docs/lib/">standard library</a>&rsquo;s <code>std.each</code> function for looping over elements of a list is defined with an inner function <code>sub</code> that recursively calls itself.</p>
-<pre><code>each := (list, f) =&gt; (
+<pre tabindex="0"><code>each := (list, f) =&gt; (
     max := len(list)
     (sub := i =&gt; i :: {
         max -&gt; ()
@@ -100,7 +100,7 @@
 <p><em>(If you&rsquo;re familiar with TCE, feel free to skip to the <a href="#tce-techniques-in-the-wild">next section</a>)</em></p>
 <p>As a quick review, <em>tail calls</em> are function calls that occur as the <em>last thing in a function</em>. In other words, if the thing that a function returns is a <em>call to another function</em>, that call is called a &ldquo;tail call&rdquo; because it&rsquo;s in the &ldquo;tail position&rdquo; of the function (meaning it&rsquo;s the last thing in the surrounding function).</p>
 <p>Tail calls are not always recursive. For example, here, <code>b()</code> is a normal non-recursive tail call, and <code>a()</code> is a recursive tail call, because it calls itself. But in either case, calls to <code>a()</code> and <code>b()</code> are the last things that happen in that function &ndash; they are returned from the parent call to <code>a()</code>, so they&rsquo;re tail calls.</p>
-<pre><code>a := () =&gt; check?() :: {
+<pre tabindex="0"><code>a := () =&gt; check?() :: {
     true -&gt; a()
     false -&gt; b()
 }
@@ -120,12 +120,12 @@
 <p>Stack reuse is an efficient way to implement TCE for <em>tail recursive functions</em>. It performs TCE by compiling the tail recursive function so that a recursive tail call reuses the current space in the call stack for the new function call, rather than allocating a new stack frame. However, stack reuse usually comes with the constraint that the return value (and sometimes arguments) to the caller and callee functions must match. (In dynamically typed languages, this constraints disappears because there&rsquo;s just one type, the &ldquo;everything&rdquo; type.)</p>
 <p><img class="blend-multiply" src="/img/stack-reuse.jpg" alt="A diagram of a tail call made by reusing the stack frame"></p>
 <p>You&rsquo;ll also frequently hear this method referred to as TCE &ldquo;using a goto&rdquo;. Some languages implement tail recursion by turning</p>
-<pre><code>fn foo(x) {
+<pre tabindex="0"><code>fn foo(x) {
     ...
     return foo(x + 1)
 }
 </code></pre><p>into a</p>
-<pre><code>fn foo(x) {
+<pre tabindex="0"><code>fn foo(x) {
     ...
     x = x + 1
     goto start of function
@@ -136,7 +136,7 @@
 <h3 id="transformation-into-loops">Transformation into loops</h3>
 <p>To perform stack reuse in TCE, the language runtime needs to have fine-grained control over the call stack of the programming language to jump to arbitrary points in the stack. Many environments like JavaScript and the Java Virtual Machine don&rsquo;t allow a programming language runtime to directly manipulate the stack like this, so languages have come up with the next-best option, <strong>transforming tail recursion into loops</strong>. This technique comes with the same constraint as stack reuse &ndash; return types must match between callers and callees.</p>
 <p>Tail recursion is usually used to emulate loops, unless you&rsquo;re doing something more funky and special like continuation-passing. In these use cases, tail recursive functions often look like this, where the function checks some condition, and tail-calls itself in a conditional branch with a new value for the arguments.</p>
-<pre><code>function compute_something(x):
+<pre tabindex="0"><code>function compute_something(x):
     do_some_work(x)
 
     if some_condition:
@@ -144,7 +144,7 @@
     else:
         return compute_something(x + 1)
 </code></pre><p>This kind of tail recursion can be re-written to a loop! This particular function might be re-written to be:</p>
-<pre><code>function compute_something(x):
+<pre tabindex="0"><code>function compute_something(x):
     loop:
         do_some_work(x)
 
@@ -158,7 +158,7 @@
 <h3 id="trampolines">Trampolines</h3>
 <p>The previous two techniques have the advantage that they&rsquo;re usually as efficient as their equivalent loops, but they have the downside that they can&rsquo;t account for all kinds of tall calls, only &ldquo;self recursion&rdquo; or tail calling functions that recursively call itself. Many languages like Scheme require <em>all</em> tail calls to support TCE, and some programming patterns also require proper TCE everywhere. To support these cases, we can use a <strong>trampoline</strong>.</p>
 <p>To use a trampoline, we take our tail-recursive function</p>
-<pre><code>function compute_something(x):
+<pre tabindex="0"><code>function compute_something(x):
     do_some_work(x)
 
     if some_condition:
@@ -168,7 +168,7 @@
 
 compute_something(3)
 </code></pre><p>and transform it to something like</p>
-<pre><code>function compute_something(x):
+<pre tabindex="0"><code>function compute_something(x):
     do_some_work(x)
 
     if some_condition:
@@ -203,7 +203,7 @@ unwrap_trampoline(compute_something(3))
 <p>On the downside, the constraint of this design is that there is no explicit &ldquo;compile&rdquo; step at which the interpreter could transform a tail call into something more efficient like a loop with an exit condition. Ink doesn&rsquo;t have the concept of a loop at all, so the interpreter can&rsquo;t transform tail recursion into anything simpler.</p>
 <p>Because of this, the Go interpreter uses a trampoline in the runtime to emulate tail call elimination. <a href="https://github.com/thesephist/ink/blob/6e26a9395de3fb8b347beebbe837544457673116/pkg/ink/eval.go#L769">Every tail call returns as a trampoline value</a> called a <a href="https://en.wikipedia.org/wiki/Thunk">&ldquo;thunk&rdquo;</a> that represents the function to be called, and the caller checks if a return value is a thunk to &ldquo;unwrap&rdquo; it as required.</p>
 <p>You can see this in action in the Go code that calls into Ink functions:</p>
-<pre><code>// pkg/ink/eval.go, line 769
+<pre tabindex="0"><code>// pkg/ink/eval.go, line 769
 
 func evalInkFunction(fn Value, allowThunk bool, args ...Value) (Value, error) {
     // ... prepare function call
@@ -232,7 +232,7 @@ func evalInkFunction(fn Value, allowThunk bool, args ...Value) (Value, error) {
 <p>The main difference between Ink&rsquo;s Go interpreter and Schrift is that the Go interpreter uses Go&rsquo;s native call stack as Ink&rsquo;s &ldquo;call stack&rdquo;, while Schrift creates an explicit call stack for Ink code. In other words, when the Go interpreter calls a function, it simply calls a corresponding Go function under the hood. Schrift, by comparison, keeps an explicit &ldquo;call stack&rdquo; data structure in memory for Ink bytecode where all stack variables and function calls live. This means Schrift can manipulate the stack with more control than the Go interpreter, and true tail call elimination with stack reuse is possible.</p>
 <p>When the Schrift VM arrives at a function call in the tail position, rather than adding onto the existing call stack, the VM <a href="https://github.com/thesephist/schrift/blob/80077327c01a009ddb41dcf2c0948dc91156b6f6/src/vm.rs#L337">replaces the caller&rsquo;s stack frame with the callee&rsquo;s stack frame</a> and jumps back to the top of the VM&rsquo;s execution loop.</p>
 <p>In practice, as you can see in the Schrift VM source code here, the stack &ldquo;reuse&rdquo; is done by popping the last stack frame off and pushing the new stack frame onto the call stack. This takes some inspiration from Chicken Scheme&rsquo;s approach, and avoids the &ldquo;argument and return types must match&rdquo; restriction of pure stack reuse. With this method, all tail calls get the benefit of TCE.</p>
-<pre><code>// src/vm.rs, line 337
+<pre tabindex="0"><code>// src/vm.rs, line 337
 // end of VM execution loop
 
 // maybe_callee_frame is the stack frame for
@@ -270,14 +270,14 @@ match maybe_callee_frame {
 </ol>
 <p>September&rsquo;s compiler implements a <em>selective trampoline</em> to support tail call optimization, by detecting cases of self tail-recursion &ndash; when a function tail-calls itself &ndash; and <a href="https://github.com/thesephist/september/blob/da324007a5a91b418ff551e24312566ca0c25249/src/analyze.ink#L143">transforming only those function calls into trampoline calls</a>. It also adds a special construction inside these transformed functions so the trampoline is contained, and the overall return type of the function isn&rsquo;t changed. This overcomes the two main problems with trampolines. Although this isn&rsquo;t completely reliable TCE because it can&rsquo;t support all tail calls, it supports the use cases that matter.</p>
 <p>As an example, here&rsquo;s the simplest possible tail-recursive Ink function. It loops by counting down from the given <code>n</code> until zero, and returns <code>'done!'</code>.</p>
-<pre><code>countDown := n =&gt; n :: {
+<pre tabindex="0"><code>countDown := n =&gt; n :: {
     0 -&gt; 'done!'
     _ -&gt; countDown(n - 1)
 }
 
 log(countDown(10))
 </code></pre><p>Compiling with <code>september translate countDown.ink</code> transforms this Ink code to the following JavaScript.</p>
-<pre><code>countDown = n =&gt; (() =&gt; {
+<pre tabindex="0"><code>countDown = n =&gt; (() =&gt; {
   let __ink_trampolined_countDown = n =&gt;
     __ink_match(n, [
       [() =&gt; 0, () =&gt; __Ink_String(`done!`)],
@@ -291,7 +291,7 @@ log(countDown(10))
 
 log(countDown(10));
 </code></pre><p>There&rsquo;s a lot more code here to support the trampoline, but the key to this transformation is that Ink has created a new function for us <em>inside</em> our <code>countDown</code> function called <code>__ink_trampolined_countDown</code>. This is a version of <code>countDown</code> that returns a trampoline value (<code>__ink_trampoline(...)</code>). The overall <code>countDown</code> function returns the value you get when you call this trampolined function with the trampoline unwrapped. We can see this at</p>
-<pre><code>return __ink_resolve_trampoline(__ink_trampolined_countDown, n);
+<pre tabindex="0"><code>return __ink_resolve_trampoline(__ink_trampolined_countDown, n);
 </code></pre><p>The end result is that we&rsquo;ve created a trampoline for <code>countDown</code> to implement TCO for this function, without changing the return type for <code>countDown</code> itself because we&rsquo;ve hidden the actual trampoline completely within the function.</p>
 <p>There are downsides to this approach of TCO taken by the September compiler. Most importantly, this kind of code transformation only works for cases of clear self-recursion. If you&rsquo;ve renamed your recursive function, or if you have mutual recursion or something more complex, the compiler won&rsquo;t be able to recognize tail recursion and perform the correct transformation. I think this is a worthy tradeoff in ergonomics for a big benefit: painless tail call optimization where it matters most, in loops and iteration.</p>
 <h2 id="conclusion">Conclusion</h2>

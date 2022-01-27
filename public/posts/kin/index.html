@@ -100,13 +100,13 @@
 <p><img src="/img/kin-line-numbers.jpg" alt=""></p>
 <p>Next up, I reconsidered the split-pane design from my first attempt above. Initially, I wanted to see if simply having panes without tabs could work. In that approach, opening a new file would simply add a pane to the right of other open panes. But the more I played with my existing prototype, the more I realized I would probably eventually want each pane to have a few tabs I could switch between. So rather than push it off, I decided to re-design the code to support tabs inside panes.</p>
 <p>My &ldquo;open files&rdquo; state went from a list of files&hellip;</p>
-<pre><code>panes: [
+<pre tabindex="0"><code>panes: [
     { file object }
     { file object }
     { file object }
 ]
 </code></pre><p>&hellip; to a list of panes, each of which contained files.</p>
-<pre><code>panes: [
+<pre tabindex="0"><code>panes: [
     [ { file }, { file } ] ` 1st pane `
     [ { file }, { file }, { file } ] ` 2nd pane `
 ]
@@ -155,6 +155,9 @@
             
         </p>
         <p class="nextInSection">
+            
+            <a href="https://dotink.co/posts/oak-perf-jan-2022/"><em>Optimizing the Oak compiler for 30% smaller, 40% faster bundles</em></a>
+            &rarr;
             
         </p>
     </article>

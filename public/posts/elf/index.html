@@ -76,7 +76,7 @@
 <p>When I started out, what I really wanted was to bridge the gap between the lowest-level part of programs that I knew about, assembly source code, and the underlying processor running in the computer. It turns out there are two different steps we need to perform to transform assembly source into executable machine code for the processor, and they&rsquo;re referred to as <strong>assemble</strong> and <strong>link</strong> steps, respectively. Depending on the tool, some assemblers may perform both jobs (like August) while others like NASM only perform the assemble step, and rely on <em>linkers</em> like <code>ld</code> to perform the second step.</p>
 <p>Here&rsquo;s our high level roadmap. We need to go from x86 assembly, which looks like this for a Hello World program:</p>
 <p><em>(If you&rsquo;ve written x86 assembly before, you might notice this isn&rsquo;t standard syntax. Because August is a toy assembler, I started with the Intel syntax but made some subjective aesthetic choices to make parsing a little simpler and syntax a little nicer, but it shouldn&rsquo;t get in the way of reading the code. Notably, we don&rsquo;t have commas separating arguments, we don&rsquo;t have the <code>global</code> directive because every symbol is global, and data segment syntax is a little different.)</em></p>
-<pre><code>section .text
+<pre tabindex="0"><code>section .text
 
 _start:
     mov eax 0x1     ; write syscall
@@ -97,7 +97,7 @@ msg:
 len:
     eq 14
 </code></pre><p>&hellip; to a binary file that the operating system (in my case, Linux) can understand and spin up into a process. If I compile the above with the latest version of August and dump the resulting file with <code>xxd</code>, I get file a few kilobytes large:</p>
-<pre><code>$ august ./hello-world.asm ./hello-world
+<pre tabindex="0"><code>$ august ./hello-world.asm ./hello-world
 $ xxd -a ./hello-world
 
 00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
@@ -155,7 +155,7 @@ $ xxd -a ./hello-world
 <h2 id="faking-it-to-an-mvp">Faking it to an MVP</h2>
 <p>The first piece of code I wrote for the assembler was a program that simply output a hard-coded binary file and marked it as executable (you can find the <a href="https://github.com/thesephist/august/commit/fab25f47598746e04611013d3a2bc4ed05832638">diff of the commit here</a>). I wanted to begin with a program that worked for a very specific input and output (a basic Hello World program) and slowly generalize it as I understood more parts of the assembler.</p>
 <p>The first version of this &ldquo;fake&rdquo; assembler output the binary for this assembly program, hard-coded into the program itself:</p>
-<pre><code>mov eax 0x1     ; the &quot;exit&quot; syscall number
+<pre tabindex="0"><code>mov eax 0x1     ; the &quot;exit&quot; syscall number
 mov ebx 0x2a    ; argument to exit()
 int 0x80        ; make the syscall
 </code></pre><p>All this program does is make an &ldquo;exit&rdquo; system call, so that the program exits with an exit status code of 42 (<code>0x2a</code>). This is the simplest valid assembly program I could make on x86 &ndash; it uses two instructions, <code>mov</code> and <code>int</code>, two registers, <code>eax</code> and <code>ebx</code>, and a few <a href="https://en.wikipedia.org/wiki/Value_(computer_science)#In_assembly_language">immediate</a> integer values.</p>
@@ -191,7 +191,7 @@ int 0x80        ; make the syscall
 <h3 id="dissecting-elf-files-with-readelf">Dissecting ELF files with <code>readelf</code></h3>
 <p>To start writing a program that can generate an ELF file that we want, we need two things. First, we need a detailed spec of exactly what bits and bytes we need to place into our ELF file to represent our sections and segments. We can find this information in the manual page (on Linux a simple <code>man elf</code> command will get us there), or in various nooks and crannies of the low-level programming world online, some of which I&rsquo;ve linked on the <a href="https://github.com/thesephist/august#references-and-further-reading">August project readme</a>. Second, we need to be able to easily inspect the ELF structure of any file we output. We can theoretically do this by using a binary file-dumping tool like <code>hexdump</code> and reading the bytes, but that&rsquo;s painful and time consuming. I chose to use <code>readelf</code> to get a continuous read-out of the data in ELF files my program output to make sure my code produced a valid ELF file.</p>
 <p>A <code>readelf</code> output is pretty readable. Let&rsquo;s break it down for the Hello World program that I used to open this blog.</p>
-<pre><code>$ readelf --all ./hello-world
+<pre tabindex="0"><code>$ readelf --all ./hello-world
 
 ELF Header:
   Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
@@ -215,7 +215,7 @@ ELF Header:
   Section header string table index: 4
 </code></pre><p>The first set of information is a decoding of the ELF header at the start of our file. It contains metadata about the target machine architecture of this executable file, as well as various version information, and sizes and locations of program and section headers within this ELF file.</p>
 <p>The ELF header for this binary also contains a critical piece of information, the &ldquo;entry point address&rdquo;, which in this case is <code>0x401000</code>. Remember this address, because we&rsquo;ll see it again down below.</p>
-<pre><code>Section Headers:
+<pre tabindex="0"><code>Section Headers:
   [Nr] Name              Type             Address           Offset
        Size              EntSize          Flags  Link  Info  Align
   [ 0]                   NULL             0000000000000000  00001000
@@ -237,7 +237,7 @@ Key to Flags:
 There are no section groups in this file.
 </code></pre><p>Next up is a list of sections <code>readelf</code> found in this file&rsquo;s section header. It found our five sections I outlined above: the null section, <code>.text</code>, <code>.rodata</code>, the symbol table, and the string table. We can also see some extra metadata, like that the <code>.text</code> section has <code>AX</code> (allocate and execute) flag bits set, and that the <code>.symtab</code> and <code>.shstrtab</code> sections have their &ldquo;type&rdquo; set to those respective types so another program like a debugger can recognize them.</p>
 <p><code>readelf</code> also tells us that there are no &ldquo;section groups&rdquo; in this file. Section groups aren&rsquo;t particularly useful in executable files, but they&rsquo;re used sometimes in object files to group related sections together for a separate link step.</p>
-<pre><code>Program Headers:
+<pre tabindex="0"><code>Program Headers:
   Type           Offset             VirtAddr           PhysAddr
                  FileSiz            MemSiz              Flags  Align
   LOAD           0x0000000000001000 0x0000000000401000 0x0000000000401000
@@ -251,13 +251,13 @@ There are no section groups in this file.
    01     .rodata
 </code></pre><p>Here are our two program headers: one pointing to our machine code, marked with <code>R</code> (read) and <code>E</code> (execute) flags, and one pointing to our data (the &ldquo;Hello, World!&rdquo; string), with just the read flag set. <code>readelf</code> has also helpfully given us a mapping between our sections and segments based on their locations in the ELF file.</p>
 <p>One interesting piece of information here is the <code>VirtAddr</code> column on our text segment holding the program&rsquo;s code. It&rsquo;s <code>0x401000</code>, the same address as the &ldquo;entry point address&rdquo; specified in the ELF header above. When this executable file runs, it&rsquo;ll start running the code located at <code>0x401000</code>, which starts at the beginning of our machine code segment.</p>
-<pre><code>There is no dynamic section in this file.
+<pre tabindex="0"><code>There is no dynamic section in this file.
 
 There are no relocations in this file.
 
 The decoding of unwind sections for machine type Advanced Micro Devices X86-64 is not currently supported.
 </code></pre><p>Because our executable file is neither dynamically linked nor a linkable library object file, we don&rsquo;t have any dynamic sections or relocations.</p>
-<pre><code>Symbol table '.symtab' contains 3 entries:
+<pre tabindex="0"><code>Symbol table '.symtab' contains 3 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
      0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
      1: 0000000000401000     0 FUNC    LOCAL  DEFAULT    1 _start
@@ -286,7 +286,7 @@ No version information found in this file.
 <p>These assumed constants are arbitrary, but they&rsquo;re useful to have, because it makes the task of writing the ELF header much easier. Numbers like &ldquo;location of the section headers&rdquo; and &ldquo;number of segments&rdquo; become constants we know from the start.</p>
 <p>From this more concrete structure, I started to plan out my function to take program text and data, and emit an ELF binary.</p>
 <p>You can see the structure I ended up with at <a href="https://github.com/thesephist/august/blob/master/src/elf.ink"><code>./src/elf.ink</code></a> in the repository. For example, here is a little bit of logic in the library to generate each of the sections in the ELF file. My definition for the <code>.text</code> section looks like this.</p>
-<pre><code>TextSection := {
+<pre tabindex="0"><code>TextSection := {
     name: toBytes(registerString('.text'), 4)
     type: toBytes(SectionType.ProgBits, 4)
     flags: toBytes(SectionFlag.Alloc | SectionFlag.ExecInstr, 8)
@@ -297,7 +297,7 @@ No version information found in this file.
 }
 </code></pre><p>Most of this corresponds directly to the section metadata we saw in the <code>readelf</code> output. While debugging this part of August, I had a continuous <code>readelf</code> output up side-by-side with my editor so I could validate that what I wrote in the assembler matched the sections it generated.</p>
 <p>Here&rsquo;s the read-only data section, where I&rsquo;ll draw your attention to the flag bits that differ from the flags in the text section (just <code>Alloc</code> rather than <code>Alloc | ExecInstr</code>).</p>
-<pre><code>RODataSection := {
+<pre tabindex="0"><code>RODataSection := {
     name: toBytes(registerString('.rodata'), 4)
     type: toBytes(SectionType.ProgBits, 4)
     flags: toBytes(SectionFlag.Alloc, 8)
@@ -307,7 +307,7 @@ No version information found in this file.
     body: rodata
 }
 </code></pre><p>Here I define their corresponding segments</p>
-<pre><code>TextProg := {
+<pre tabindex="0"><code>TextProg := {
     type: toBytes(ProgType.Load, 4)
     flags: toBytes(ProgFlag.Read | ProgFlag.Execute, 4)
     offset: toBytes(PageSize, 8)
@@ -322,7 +322,7 @@ RODataProg := {
     size: toBytes(len(rodata), 8)
 }
 </code></pre><p>This ELF-file-generating function also builds the symbol table. Given a dictionary of symbols and their virtual addresses, the <code>makeSymTab</code> function creates entries in the <code>.symtab</code> section and strings it all together.</p>
-<pre><code>symtab := makeSymTab(symbols, registerString)
+<pre tabindex="0"><code>symtab := makeSymTab(symbols, registerString)
 
 ` ... `
 
@@ -339,7 +339,7 @@ SymTabSection := {
 </code></pre><p>Given all these sections and segments, we simply map over all the descriptions of sections and segments to encode them into table entries and lay them out next to each other so we can place them in our resulting ELF file.</p>
 <p>The last task in the ELF library is to generate the ELF header. This step is left to the end so we know exactly how many sections we have, and exactly how big they ended up being. We need this information to store the layout of our whole ELF file in the ELF header.</p>
 <p>The final line of the ELF generation code stitches all the sections together.</p>
-<pre><code>elfFile := padEndNull(ElfHeader + ProgHeaders, PageSize) +
+<pre tabindex="0"><code>elfFile := padEndNull(ElfHeader + ProgHeaders, PageSize) +
     SectionBodies + SectionHeaders
 </code></pre><p>There we have it. A small program to take in some encoded blob of machine code, some debug symbols, and some read-only data and produce an ELF file our operating system can execute!</p>
 <p>Now, our journey to build an assembler is half complete. We have the &ldquo;backend&rdquo; of August, but we still need to be able to encode assembly source code into machine code. That&rsquo;s the topic of the <a href="/posts/x86/">second part to this blog, where we&rsquo;ll continue our trek through the underbelly of programming</a> to look at how to encode x86 assembly instructions and finish the assembler.</p>

@@ -147,7 +147,7 @@
 \rightarrow \frac{4}{11} = 0.\overline{36}$$</p>
 <p>We can also extend this method to rationally approximate all reals, by splitting numbers outside of the unit interval to their whole number part and a fractional part, and then computing a rational approximation of the fractional part. From our previous example, we also know that a similar approximation for 1.37 is \(\frac{11 + 4}{11} = \frac{15}{11}\).</p>
 <p>An Ink program that executes this search is</p>
-<pre><code>` binary search to approximate numbers `
+<pre tabindex="0"><code>` binary search to approximate numbers `
 
 std := load('std')
 log := std.log
@@ -195,7 +195,7 @@ main := args =&gt; (
 
 main(args())
 </code></pre><p>This program takes two arguments: the (positive) decimal number to be approximated, and a maximum denominator we are willing to accept, after which the tree traversal would halt. For the 12-digit approximation of Pi with which I opened this post, I ran</p>
-<pre><code>./farey.ink 3.14159265358979 1000000
+<pre tabindex="0"><code>./farey.ink 3.14159265358979 1000000
 </code></pre><p>Which found <code>4272943 / 1360120</code> in the tree traversal at depth 323.</p>
 
         <hr/>

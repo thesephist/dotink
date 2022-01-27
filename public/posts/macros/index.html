@@ -69,17 +69,17 @@
         
 
         <p>Lisp is a <a href="https://en.wikipedia.org/wiki/Homoiconicity">homoiconic</a> programming language &ndash; Lisp program source code is also a first-class data structure in Lisp, made of nested lists of symbols. This allows Lisp programs to define and use really elegant macros, pieces of syntax defined in the Lisp program itself. For example, in most Lisps, then <code>when</code> form</p>
-<pre><code>(when (some-condition)
+<pre tabindex="0"><code>(when (some-condition)
   (do-something))
 </code></pre><p>isn&rsquo;t built into the language itself, but rather defined as a macro in a library. Usually, this expands to</p>
-<pre><code>(if (some-condition)
+<pre tabindex="0"><code>(if (some-condition)
   (do-something)
   ()) ; no-op
 </code></pre><p>Because Lisp syntax is extremely simple, Lisp macros can be as expressive as the situation requires, going from simple fill-in-the-blank substitution, as in the <code>when</code> macro above, to something more sophisticated like pattern matching or threading. As I dive further into programming in Clojure and Klisp, I&rsquo;ve been really enjoying writing and using a handful of really elegant macros to express ideas in my programs that, in other languages, would require new language features or even new programming paradigms.</p>
 <p>I want to briefly explain in this post how Lisp macros (specifically macros in Klisp) work, and discuss some macros I find particularly elegant. If you&rsquo;re familiar with Lisp macros already, feel free to skip this very next section and go straight to <a href="#macro-elegance">Macro elegance</a>.</p>
 <h2 id="lisp-macro-101">Lisp macro 101</h2>
 <p>Lisp programs are lists of <em>atoms</em>, where an atom is some indivisible unit of syntax, like a literal value or a variable name (&ldquo;symbol&rdquo;). A complex Lisp program is made up of many lists nested inside each other. Here&rsquo;s a function definition, for example.</p>
-<pre><code>   ______ atoms _____
+<pre tabindex="0"><code>   ______ atoms _____
   /       |   |  \ \ \
 (defn double (x) (* 2 x))
 |            | | |     ||
@@ -90,11 +90,11 @@
 <p>In Klisp (and most Lisps), we can define functions that operate on its inputs as bits of syntax, rather than as the evaluated values. We call these functions-on-syntax <em>macros</em>.</p>
 <p>When the Lisp evaluator comes across a macro invocation, rather than evaluating its arguments and passing them to the macro as if evaluating a function call, the evaluator simply takes the raw syntax of the arguments and passes it as a list to the called macro. When the macro returns some transformed bit of syntax as the output, the evaluator runs <em>that</em> instead. In other words, functions take values, and return values, while macros take program syntax, and return other program syntax.</p>
 <p>The <code>when</code> macro from the top of this post is <a href="https://github.com/thesephist/klisp/blob/main/lib/klisp.klisp">defined in Klisp</a> as</p>
-<pre><code>(def when
+<pre tabindex="0"><code>(def when
      (macro (terms)
             (list ,if (car terms) (cadr terms) ())))
 </code></pre><p>In other words, it takes <code>terms</code>, a list of argument expressions like <code>(some-condition do-something)</code>, and return us a new <code>list</code> for Klisp to evaluate, namely</p>
-<pre><code>(if some-condition
+<pre tabindex="0"><code>(if some-condition
   do-something
   ())
 </code></pre><p>Working this way, Lisp macros allow us to write functions <em>over language syntax</em> the way conventional functions work <em>over data</em> in a running program. Macros allow us to <strong>build abstractions over our vocabulary as programmers</strong>, not just abstractions over runtime data. While functions add functionality, macros add expressiveness.</p>
@@ -104,7 +104,7 @@
 <h3 id="conditional-macros-cond-and-match">Conditional macros <code>cond</code> and <code>match</code></h3>
 <p>Klisp, like most Lisps, comes with one primitive for conditional evaluation: <code>if</code>. But when writing real programs, we often need to choose between not one or the other option, but between multiple options depending on some set of conditions.</p>
 <p>The <code>cond</code> and <code>match</code> macros make this trivial. Rather than chaining <code>if</code> calls all the way down, we can describe conditions that could be met, and what to do if any are true. For example, a basic FizzBuzz program could be written:</p>
-<pre><code>(defn fizzbuzz (n)
+<pre tabindex="0"><code>(defn fizzbuzz (n)
   (each (nat n)
         (fn (i)
             (cond
@@ -116,7 +116,7 @@
                (println 'Buzz'))
               (true (println i))))))
 </code></pre><p>Similarly, the <code>match</code> macro allows us to take different actions depending on the value of some target variable, like a switch case.</p>
-<pre><code>; The Fibonacci sequence
+<pre tabindex="0"><code>; The Fibonacci sequence
 (defn fib (n)
   (match n
     (0 1)
@@ -127,7 +127,7 @@
 (map (seq 10) fib)
 ; =&gt; (1 1 2 3 5 8 13 21 34 55)
 </code></pre><p>The great thing about both of these abstractions over control flow is that they&rsquo;re both composed of the basic <code>if</code> under the hood. The <code>match</code> macro in the Fibonacci function, for example, expands out the function to</p>
-<pre><code>(defn fib-expanded (n)
+<pre tabindex="0"><code>(defn fib-expanded (n)
   (if (= n 0)
     1
     (if (= n 1)
@@ -141,31 +141,31 @@
 <h3 id="partial-application-with-the-partial-macro">Partial application with the <code>partial</code> macro</h3>
 <p>Macros can also be useful for expressing common patterns more concisely. The <code>partial</code> macro for partial function application is a great example of this.</p>
 <p>Let&rsquo;s say we have a list of numbers, and want to generate a list of their squares. To do this we need to pass to <code>map</code> some function that squares its argument. One way we could write this is</p>
-<pre><code>(map (list 1 2 3 4 5)
+<pre tabindex="0"><code>(map (list 1 2 3 4 5)
      (fn (n) (* n n)))
 </code></pre><p>In functional Lisp code, we often write lots of small functions to pass to other higher-order functions. Writing <code>(fn (x) (...))</code> every time we need a small function gets tedious quickly, and the <code>partial</code> macro allows us to write a function as a <em>partially applied</em> version of another function. The <code>partial</code> macro will create a function, where any <code>_</code> (underscore) slots in the given body will be replaced with the function&rsquo;s argument.</p>
 <p>Using this macro, we can rewrite the above as</p>
-<pre><code>(map (list 1 2 3 4 5)
+<pre tabindex="0"><code>(map (list 1 2 3 4 5)
      (partial (* _ _)))
 </code></pre><p>While this square-the-input function is small enough that this makes little difference, more complex functions are often more concisely or clearly represented as partial applications, than as anonymous functions using random one-time-use variables.</p>
 <p>In some Lisps, like <a href="https://clojure.org/guides/weird_characters#_anonymous_function">Clojure</a>, partial application like this is baked into the reader (syntax), making it even more concise and idiomatic in the language. In Clojure, you might write this same program as</p>
-<pre><code>(map #(* % %)
+<pre tabindex="0"><code>(map #(* % %)
      (list 1 2 3 4 5))
 </code></pre><h3 id="threading-macros---and--">Threading macros, <code>-&gt;</code> and <code>-&gt;&gt;</code></h3>
 <p>Threading macros are my favorite bit of syntax in Lisp, because it makes my code cleaner to read, easier to write, and more visually aesthetic, all in one stroke.</p>
 <p>To understand threading macros, we need to understand <em>pipelines</em>.</p>
 <p>A pipeline describes a program where some data flows through a sequence of functions in order, resulting in some final result in the end. For example, you may have run a command in your shell like</p>
-<pre><code>ls | grep 'report' | xargs cat | wc -l
+<pre tabindex="0"><code>ls | grep 'report' | xargs cat | wc -l
 </code></pre><p>This small program takes files in a directory (<code>ls</code>), filters out the ones that don&rsquo;t contain <code>report</code> in the name (<code>grep</code>), reads all their contents (<code>xargs cat</code>), and counts the total number of lines (<code>wc -l</code>). This is a <em>pipeline</em>, where each step modifies or acts on the data from some previous step in some way.</p>
 <p>Threading macros allow us to write Lisp programs similarly, as a pipeline of some data traveling through a sequence of functions acting on it.</p>
 <p>For example, this pipeline in Klisp generates a list of numbers 1-100, filters for just the prime numbers, and counts then with <code>size</code>.</p>
-<pre><code>(-&gt; (nat 1000)
+<pre tabindex="0"><code>(-&gt; (nat 1000)
     (filter prime?)
     size)
 
 ; =&gt; 168
 </code></pre><p>This macro <code>-&gt;</code>, called thread-first, expands this program out to</p>
-<pre><code>(size (filter (nat 1000) prime?))
+<pre tabindex="0"><code>(size (filter (nat 1000) prime?))
 </code></pre><p>Both programs perform the same task, but depending on the nature of a problem, it may be easier for us (humans) to think of the solution as &ldquo;threading&rdquo; the value <code>(nat 1000)</code> &ldquo;through&rdquo; a pipeline of functions, rather than as a single nested call to the same functions.</p>
 <p>The thread-first macro <code>-&gt;</code> has a complement in Klisp, called thread-last (<code>-&gt;&gt;</code>). The two macros differ only in that <code>-&gt;</code> places the previous step as the <em>first</em> argument to each next step, and <code>-&gt;&gt;</code> puts the last step as the <em>last</em> argument in the next step. Because data usually comes first in Klisp functions, <code>-&gt;</code> is used more often. But in Clojure, for example, where data usually comes last in the argument list, <code>-&gt;&gt;</code> is more common. Clojure also features a much broader set of useful threading macros than Klisp, as outlined <a href="https://clojure.org/guides/threading_macros">in this threading macros guide</a>.</p>
 <h2 id="programming-our-vocabulary">Programming our vocabulary</h2>

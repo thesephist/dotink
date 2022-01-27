@@ -57,9 +57,9 @@
 <h2 id="computing-spans-during-tokenization">Computing spans during tokenization</h2>
 <p>All good tokenizers produce tokens that contain some positional information for each token, like a line number and column number, to help debug programs produced by the compiler. Some tools keep richer location information than others. Until now, September&rsquo;s tokenizer simply recorded a <code>line</code> and <code>col</code> property for each token, recording the line and column number at which the token <em>started</em>. On a compiler error, September would output the line and column of the token where compilation failed.</p>
 <p>To syntax highlight a text file, we need to ultimately compute <em>spans</em>. A span is just a piece of data containing where in the text file a token begins, and where it ends. In a trivially simple program like this</p>
-<pre><code>num + 2
+<pre tabindex="0"><code>num + 2
 </code></pre><p>we could compute the following spans.</p>
-<pre><code> span  | token
+<pre tabindex="0"><code> span  | token
 
 [0, 4] | num
 [4, 6] | +
@@ -82,7 +82,7 @@
 <p>These are arbitrary coloring rules, but this illustrates the process. Because we have a list of all possible token types, we can simply associate each token with a color that we think make sense. Then we can iterate through the entire token stream, and for every token, we produce a correctly colored substring of the original program by referencing the token&rsquo;s span. In the end, we&rsquo;re left with a list of correctly syntax-highlighted substrings of the original program, which we can simply concatenate together to produce a fully highlighted source file.</p>
 <p>To apply color to text, we use <a href="https://github.com/thesephist/ansi.ink">ansi.ink</a>, a color terminal printing library for Ink. The ansi library gives us functions to produce colored versions of a string. For example, we cay say <code>(ansi.Red)('hello, world')</code> to produce a version of the string &lsquo;hello world&rsquo; that would display in red when printed to an ANSI compliant terminal.</p>
 <p>All this happens in the highlighter&rsquo;s <code>main</code> function:</p>
-<pre><code>`` src/highlight.ink
+<pre tabindex="0"><code>`` src/highlight.ink
 
 main := prog =&gt; (
     `` tokenize the program
