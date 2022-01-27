@@ -106,7 +106,7 @@
 </code></pre><p>is equivalent to writing the much more concise expression</p>
 <pre tabindex="0"><code>(first, second) =&gt; first + second
 </code></pre><p>This pattern leads to shorter generated code in many cases, because of additional optimizations it enables like eliminating the wrapping <code>{ ... }</code> block.</p>
-<h3 id="speeding-things-up">Speeding things up</h3>
+<h2 id="speeding-things-up">Speeding things up</h2>
 <p>The next significant change impacted how Oak&rsquo;s <a href="https://github.com/thesephist/oak/commit/3652bfdfa7fc6488be32fcd6fc335ebb6ee2b7b8">if expressions were compiled down to JavaScript</a>. Oak has exactly one universal way to express conditionals, which looks like this.</p>
 <pre tabindex="0"><code>if n % 2 {
     0 -&gt; :even

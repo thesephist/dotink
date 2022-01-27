@@ -85,7 +85,7 @@ is equivalent to writing the much more concise expression
 
 This pattern leads to shorter generated code in many cases, because of additional optimizations it enables like eliminating the wrapping `{ ... }` block.
 
-### Speeding things up
+## Speeding things up
 
 The next significant change impacted how Oak's [if expressions were compiled down to JavaScript](https://github.com/thesephist/oak/commit/3652bfdfa7fc6488be32fcd6fc335ebb6ee2b7b8). Oak has exactly one universal way to express conditionals, which looks like this.
 
