@@ -1,6 +1,11 @@
 ---
 title: "Optimizing the Oak compiler for 30% smaller, 40% faster bundles"
 date: 2022-01-26T15:37:28-05:00
+canonical: https://oaklang.org/posts/oak-perf-jan-2022/
+---
+
+_This blog post [originally appears on the Oak Blog](https://oaklang.org/posts/oak-perf-jan-2022/). It's been copied here, because when this blog went up, the Oak blog wasn't quite ready for primetime. For syntax highlighted Oak code and other information about the Oak language, you can read the same blog post there._
+
 ---
 
 I made a couple of much-needed optimizations to the JavaScript code generator in `oak build` this week, focused on runtime performance and generated code size. As usual for these focused optimizations, I tried to run some benchmarks and comparisons to validate the changes. This is a summary of exactly what changes I made, and how they improved the compiler.

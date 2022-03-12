@@ -93,10 +93,10 @@
           ../september/src/translate.ink \
           &gt; static/ink/september.js
 </code></pre><p>Then I wrapped the compiler&rsquo;s <code>main</code> function in a JavaScript function called <code>translateInkToJS</code>, and after fixing <a href="https://github.com/thesephist/september/commit/cda911684b3b140d2ad8efd667753fa3fd0a348f">a couple of scoping bugs</a> in the compiler, we had the compiler running in the browser!</p>
-<pre tabindex="0"><code>&gt; translateInkToJS('1 + 2 + 3')
-'log(__as_ink_string(__as_ink_string(1 + 2) + 3))'
+<pre tabindex="0"><code>&gt; translateInkToJS(&#39;1 + 2 + 3&#39;)
+&#39;log(__as_ink_string(__as_ink_string(1 + 2) + 3))&#39;
 </code></pre><p>The output of the compiler here is still simply a string containing JavaScript program. To keep things simple, I chose to run these resulting programs through JavaScript&rsquo;s <code>eval()</code>, which returns to us the result of evaluating a given JavaScript program.</p>
-<pre tabindex="0"><code>&gt; eval(translateInkToJS('1 + 2 + 3'))
+<pre tabindex="0"><code>&gt; eval(translateInkToJS(&#39;1 + 2 + 3&#39;))
 6
 </code></pre><p>We have made Ink-JavaScript contact! We can now compile and run Ink programs entirely in the browser.</p>
 <p>I spent some more time running more complex Ink programs through the (now web-based) compiler to ensure things worked correctly, and then building a simple UI around it using the <a href="https://codemirror.net">CodeMirror</a> text editor and <a href="https://github.com/thesephist/torus">Torus</a>.</p>
@@ -107,7 +107,7 @@
 --(which runs)-&gt; September compiler (written in Ink)
 --(which compiles)-&gt; September compiler (to JavaScript)
 --(which compiles)-&gt; other Ink programs (from Ink, to JS)
---(which runs in)-&gt; JavaScript's eval() function
+--(which runs in)-&gt; JavaScript&#39;s eval() function
 --(which returns)-&gt; the result!
 </code></pre><p>That&rsquo;s quite a compiler rabbit hole. But simply compiling Ink programs to JavaScript in the browser isn&rsquo;t the end of it. To have a full Ink programming environment, we need to get a few more things working.</p>
 <p>First, most Ink programs require the <strong>standard library</strong>, at least the <code>std</code> (standard library core), <code>str</code> (string functions), and <code>quicksort</code> (list sorting) libraries. Fortunately, these three libraries are also dependencies of the compiler, so they were already compiled into the JavaScript bundle and available as global variables in the browser. This meant Ink programs running in the playground can simply call, for example, <code>sort!([1, 3, 2])</code> without having to import other libraries.</p>

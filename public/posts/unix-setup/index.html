@@ -130,13 +130,13 @@ ufw status
 <p>I usually deploy Go applications by bundling all necessary assets into a single binary and <code>scp</code>-ing it to the server, then restarting the service. If I do need a local installation of Go, here&rsquo;s a three-liner to get Go set up on a new Linux server.</p>
 <pre tabindex="0"><code># Download the latest build of Go
 # (available from https://golang.org/dl/)
-wget 'https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz' -O .
+wget &#39;https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz&#39; -O .
 
 # Un-tar contents into /usr/local
 sudo tar -C /usr/local -xzf go1.14.4.linux-amd64.tar.gz
 
 # Add Go binary paths to $PATH
-echo 'PATH=$PATH:/usr/local/go/bin' &gt;&gt; ~/.profile
+echo &#39;PATH=$PATH:/usr/local/go/bin&#39; &gt;&gt; ~/.profile
 </code></pre><p><a href="https://github.com/thesephist/plume" class="button">Example: Plume.chat →</a></p>
 <h3 id="nodejs">Node.js</h3>
 <p>My older projects up to 2019 are mostly written in Node.js. Node and JavaScript allows for isomorphic code and Node.js in particular has excellent networking primitives and asynchronous programming capabilities through V8 and <a href="https://github.com/libuv/libuv">libuv</a>. I also enjoy the rapid prototyping that a fast, dynamic language like JavaScript makes possible.</p>
@@ -169,7 +169,7 @@ sudo apt-get install -y nodejs
 	listen [::]:80 default_server;
 
 	# if using HTTP auth headers
-	auth_basic &quot;[service] login&quot;;
+	auth_basic &#34;[service] login&#34;;
 	auth_basic_user_file /etc/nginx/conf.d/.htpasswd;
 
 	# if HTTP proxy
@@ -181,7 +181,7 @@ sudo apt-get install -y nodejs
 	location /connect {
 		proxy_pass http://localhost:7800;
 		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection &quot;Upgrade&quot;;
+		proxy_set_header Connection &#34;Upgrade&#34;;
 	}
 }
 </code></pre><h2 id="dotfiles">Dotfiles</h2>

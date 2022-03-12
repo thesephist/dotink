@@ -93,7 +93,7 @@ exit:
 section .rodata
 
 msg:
-    db &quot;Hello, World!&quot; 0xa
+    db &#34;Hello, World!&#34; 0xa
 len:
     eq 14
 </code></pre><p>&hellip; to a binary file that the operating system (in my case, Linux) can understand and spin up into a process. If I compile the above with the latest version of August and dump the resulting file with <code>xxd</code>, I get file a few kilobytes large:</p>
@@ -155,7 +155,7 @@ $ xxd -a ./hello-world
 <h2 id="faking-it-to-an-mvp">Faking it to an MVP</h2>
 <p>The first piece of code I wrote for the assembler was a program that simply output a hard-coded binary file and marked it as executable (you can find the <a href="https://github.com/thesephist/august/commit/fab25f47598746e04611013d3a2bc4ed05832638">diff of the commit here</a>). I wanted to begin with a program that worked for a very specific input and output (a basic Hello World program) and slowly generalize it as I understood more parts of the assembler.</p>
 <p>The first version of this &ldquo;fake&rdquo; assembler output the binary for this assembly program, hard-coded into the program itself:</p>
-<pre tabindex="0"><code>mov eax 0x1     ; the &quot;exit&quot; syscall number
+<pre tabindex="0"><code>mov eax 0x1     ; the &#34;exit&#34; syscall number
 mov ebx 0x2a    ; argument to exit()
 int 0x80        ; make the syscall
 </code></pre><p>All this program does is make an &ldquo;exit&rdquo; system call, so that the program exits with an exit status code of 42 (<code>0x2a</code>). This is the simplest valid assembly program I could make on x86 &ndash; it uses two instructions, <code>mov</code> and <code>int</code>, two registers, <code>eax</code> and <code>ebx</code>, and a few <a href="https://en.wikipedia.org/wiki/Value_(computer_science)#In_assembly_language">immediate</a> integer values.</p>
@@ -196,7 +196,7 @@ int 0x80        ; make the syscall
 ELF Header:
   Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
   Class:                             ELF64
-  Data:                              2's complement, little endian
+  Data:                              2&#39;s complement, little endian
   Version:                           1 (current)
   OS/ABI:                            UNIX - System V
   ABI Version:                       0
@@ -257,7 +257,7 @@ There are no relocations in this file.
 
 The decoding of unwind sections for machine type Advanced Micro Devices X86-64 is not currently supported.
 </code></pre><p>Because our executable file is neither dynamically linked nor a linkable library object file, we don&rsquo;t have any dynamic sections or relocations.</p>
-<pre tabindex="0"><code>Symbol table '.symtab' contains 3 entries:
+<pre tabindex="0"><code>Symbol table &#39;.symtab&#39; contains 3 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
      0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
      1: 0000000000401000     0 FUNC    LOCAL  DEFAULT    1 _start
@@ -287,7 +287,7 @@ No version information found in this file.
 <p>From this more concrete structure, I started to plan out my function to take program text and data, and emit an ELF binary.</p>
 <p>You can see the structure I ended up with at <a href="https://github.com/thesephist/august/blob/master/src/elf.ink"><code>./src/elf.ink</code></a> in the repository. For example, here is a little bit of logic in the library to generate each of the sections in the ELF file. My definition for the <code>.text</code> section looks like this.</p>
 <pre tabindex="0"><code>TextSection := {
-    name: toBytes(registerString('.text'), 4)
+    name: toBytes(registerString(&#39;.text&#39;), 4)
     type: toBytes(SectionType.ProgBits, 4)
     flags: toBytes(SectionFlag.Alloc | SectionFlag.ExecInstr, 8)
     addr: toBytes(ExecStartAddr, 8)
@@ -298,7 +298,7 @@ No version information found in this file.
 </code></pre><p>Most of this corresponds directly to the section metadata we saw in the <code>readelf</code> output. While debugging this part of August, I had a continuous <code>readelf</code> output up side-by-side with my editor so I could validate that what I wrote in the assembler matched the sections it generated.</p>
 <p>Here&rsquo;s the read-only data section, where I&rsquo;ll draw your attention to the flag bits that differ from the flags in the text section (just <code>Alloc</code> rather than <code>Alloc | ExecInstr</code>).</p>
 <pre tabindex="0"><code>RODataSection := {
-    name: toBytes(registerString('.rodata'), 4)
+    name: toBytes(registerString(&#39;.rodata&#39;), 4)
     type: toBytes(SectionType.ProgBits, 4)
     flags: toBytes(SectionFlag.Alloc, 8)
     addr: toBytes(ROStartAddr, 8)
@@ -327,7 +327,7 @@ RODataProg := {
 ` ... `
 
 SymTabSection := {
-    name: toBytes(registerString('.symtab'), 4)
+    name: toBytes(registerString(&#39;.symtab&#39;), 4)
     type: toBytes(SectionType.SymTab, 4)
     flags: zeroes(8)
     addr: zeroes(8)

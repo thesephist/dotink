@@ -108,15 +108,15 @@ main := prog =&gt; (
         }
     })
 
-    `` create highlighted &quot;pieces&quot; of the program by applying
-    ``  each token's colorFn to its span text
+    `` create highlighted &#34;pieces&#34; of the program by applying
+    ``  each token&#39;s colorFn to its span text
     pcs := map(
         spans
         span =&gt; (span.colorFn)(slice(prog, span.start, span.end))
     )
 
     `` concatenate highlighted pieces together for a final output
-    cat(pcs, '')
+    cat(pcs, &#39;&#39;)
 )
 </code></pre><p>There are some limitations to this approach:</p>
 <ol>

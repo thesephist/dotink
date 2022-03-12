@@ -53,7 +53,7 @@
 <p>$$\int_{0}^{1} \frac{4}{1 + x^2} \mathrm{d} x = 4 \tan ^{-1} (x) = \pi $$</p>
 <p>to find a reasonably quickly converging approximation of \( \pi \). This approach to approximating pi was novel to me, and seemed fun, so wrote a little <a href="https://github.com/thesephist/ink">Ink</a> script to compute the integrals numerically for me.</p>
 <h2 id="the-sum">The sum</h2>
-<p>If we wanted to establish upper and lower bounds for pi, we may take the left- and right-Riemann sums, but in this case I just wanted a useful approximation, so the approximation function computes the sum with each rectangle at the value of the midpoint of the rectangles' base.</p>
+<p>If we wanted to establish upper and lower bounds for pi, we may take the left- and right-Riemann sums, but in this case I just wanted a useful approximation, so the approximation function computes the sum with each rectangle at the value of the midpoint of the rectangles&rsquo; base.</p>
 <p><img class="blend-multiply" src="/img/riemann-sum.jpg" alt="Riemann sum"></p>
 <p>The sum we want to compute is just the sum of the areas of the \( n \) rectangles, expressed as</p>
 <p>$$ \lim_{n \to \infty} \sum_{i = 0}^{n} \frac{1}{n} \frac{4}{1 + x_{i}^2} $$</p>
@@ -69,7 +69,7 @@
   as a Riemann sum `
 
 ` imports from the standard library `
-std := load('std')
+std := load(&#39;std&#39;)
 log := std.log
 f := std.format
 range := std.range
@@ -83,7 +83,7 @@ pi := Count =&gt; (
   HalfSpanSqAdd1 := Span * Span / 4 + 1
 
   ` inlined &amp; optimized the function to integrate here
-    where each column is fixed to the span's midpoint x-value `
+    where each column is fixed to the span&#39;s midpoint x-value `
   columnArea := x =&gt; Span4 / (x * (x + Span) + HalfSpanSqAdd1)
 
   ` sum the columns with a raw tail recursive loop `
@@ -111,7 +111,7 @@ map(
     start.time := end
 
     log(f(
-      'Pi at Riemann sum of {{0}}: {{1}} ({{2}}ms)'
+      &#39;Pi at Riemann sum of {{0}}: {{1}} ({{2}}ms)&#39;
       [count, result, elapsed]
     ))
   )

@@ -96,7 +96,7 @@
 <li><strong>Remove trailing commas at line endings</strong>. In C-like programs, statements are terminated with the semicolon. Ink&rsquo;s analogous line terminator is the comma. But this isn&rsquo;t enforced at the source-code level, only in the language grammar. The Ink interpreter uses automatic comma insertion (like JavaScript&rsquo;s <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion">ASI</a>) to insert missing commas where appropriate. This means in idiomatic Ink code, lines don&rsquo;t end with commas. inkfmt removes such trailing commas at line endings.</li>
 <li><strong>Remove trailing commas in lists</strong>. Ink also allows commas to follow a list of items:
 <pre tabindex="0"><code>list := [1, 2, 3, 4, ]
-object := { key: 'value', apple: 'fruit', }
+object := { key: &#39;value&#39;, apple: &#39;fruit&#39;, }
 </code></pre>In such lists, well-formatted code should omit the last comma for visual consistency, and inkfmt makes this transformation automatically, removing the last comma.</li>
 <li><strong>Re-indent code</strong>. Indentation is one of the main ways we visually make sense of code before diving into it. inkfmt uses a deterministic algorithm to calculate a single correct indentation for a source file and applies it to the code. The current algorithm isn&rsquo;t perfect, but gets us 90% there.</li>
 <li><strong>Canonicalize whitespace between symbols</strong>. Within each line, whitespace (and the lack thereof) between expressions help readability. Ink also deterministically adds and removes whitespace between symbols on the same line to settle on a single correct format, opting for spaces between binary operations like <code>+</code> and <code>&amp;</code>, and no spaces within parentheses and brackets.</li>
@@ -149,10 +149,10 @@ object := { key: 'value', apple: 'fruit', }
 <p>This mismatch means that there isn&rsquo;t a single simple algorithm to compute how far we should indent every line.</p>
 <p>Let&rsquo;s start with the basics. The first and most obvious rule I implemented was that lines of code inside parentheses and brackets should be indented one level deeper that its surrounding lines. Seems sensible enough. Let&rsquo;s try to apply it to this snippet.</p>
 <pre tabindex="0"><code>1  user := {
-2      name: 'Linus'
+2      name: &#39;Linus&#39;
 3      place: {
-4          city: 'Berkeley'
-5          state: 'California'
+4          city: &#39;Berkeley&#39;
+5          state: &#39;California&#39;
 6      }
 7  }
 </code></pre><p>Lines 2 - 6 are easy to think about. We&rsquo;re inside the curly braces of <code>user := {...}</code>, so we should indent the block one level deeper. But what about line 7? When we reach the start of line 7, we are still inside the curly braces. But we intuitively want line 7 not to be indented, because line 7 <em>closes</em> the group we&rsquo;ve been indented by.</p>
@@ -165,7 +165,7 @@ object := { key: 'value', apple: 'fruit', }
 <p>If you&rsquo;d rather skip to the conclusion, you can <a href="#code-formatting-is-complicated-because-it-s-a-human-problem">click here</a>.</p>
 <h3 id="case-study-indentation-collapsing">Case study: indentation collapsing</h3>
 <p>Indentation collapsing is a phrase I made up for a particular condition where the indentation <em>style</em> matches what we want, but some blocks are indented much farther in that we would like. Take this fairly common pattern of passing callbacks into a function.</p>
-<pre tabindex="0"><code>1  readFile('/my-file', data =&gt; (
+<pre tabindex="0"><code>1  readFile(&#39;/my-file&#39;, data =&gt; (
 2      doSomething(data)
 3  ))
 </code></pre><p>Let&rsquo;s continue with our earlier rule of adding an indent level when we enter a parenthesized or bracketed group. That rule tells us that line 2 should be indented twice inwards, because line 2 is contained by two nested groups. First, the <code>readFile(...)</code> group, and then the <code>data =&gt; (...)</code> group. But that&rsquo;s obviously not what we want. We want to indent exactly once for these two nested groups.</p>

@@ -210,7 +210,7 @@ func evalInkFunction(fn Value, allowThunk bool, args ...Value) (Value, error) {
 
     // TCO: used for evaluating expressions that may be in tail positions
     // at the end of Nodes whose evaluation allocates another StackFrame
-    // like ExpressionList and FunctionLiteral's body
+    // like ExpressionList and FunctionLiteral&#39;s body
     returnThunk := FunctionCallThunkValue{
         vt:       argValueTable,
         function: fnv,
@@ -241,7 +241,7 @@ func evalInkFunction(fn Value, allowThunk bool, args ...Value) (Value, error) {
 match maybe_callee_frame {
     Some(mut callee_frame) =&gt; {
 
-        // should_pop_frame() is true if we're
+        // should_pop_frame() is true if we&#39;re
         // in a tail position of a function
         while self.should_pop_frame() {
 
@@ -271,7 +271,7 @@ match maybe_callee_frame {
 <p>September&rsquo;s compiler implements a <em>selective trampoline</em> to support tail call optimization, by detecting cases of self tail-recursion &ndash; when a function tail-calls itself &ndash; and <a href="https://github.com/thesephist/september/blob/da324007a5a91b418ff551e24312566ca0c25249/src/analyze.ink#L143">transforming only those function calls into trampoline calls</a>. It also adds a special construction inside these transformed functions so the trampoline is contained, and the overall return type of the function isn&rsquo;t changed. This overcomes the two main problems with trampolines. Although this isn&rsquo;t completely reliable TCE because it can&rsquo;t support all tail calls, it supports the use cases that matter.</p>
 <p>As an example, here&rsquo;s the simplest possible tail-recursive Ink function. It loops by counting down from the given <code>n</code> until zero, and returns <code>'done!'</code>.</p>
 <pre tabindex="0"><code>countDown := n =&gt; n :: {
-    0 -&gt; 'done!'
+    0 -&gt; &#39;done!&#39;
     _ -&gt; countDown(n - 1)
 }
 

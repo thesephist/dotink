@@ -106,24 +106,24 @@
         <h2 id="operating-system-interfaces">Operating system interfaces</h2>
 <p>Many system interface builtin functions are designed around asynchronous callbacks, and will return an event object to a callback function in response. Such an event object is of a semi-standard form, on success</p>
 <pre tabindex="0"><code>{
-    type: 'data'
+    type: &#39;data&#39;
     data: [... some data]
 }
 </code></pre><p>and on error, frequently the error interface</p>
 <pre tabindex="0"><code>{
-    type: 'error'
+    type: &#39;error&#39;
     message: &lt;string&gt;
 }
 </code></pre><p>When a system-interface builtin is capable of returning such an error event, we&rsquo;ll simply state so, without repeating the shape of the object again every time. Some builtin functions also need to send a &ldquo;the task is complete successfully&rdquo; event without sending any data. In such instances, an end event, shown below, is sent.</p>
 <pre tabindex="0"><code>{
-    type: 'end'
+    type: &#39;end&#39;
 }
 </code></pre><h3 id="args"><code>args()</code></h3>
 <p>Returns the list of command-line arguments as strings.</p>
 <h3 id="incb"><code>in(cb)</code></h3>
 <p>Reads from standard input, calls <code>cb</code> with an event of the form</p>
 <pre tabindex="0"><code>{
-    type: 'data'
+    type: &#39;data&#39;
     data: &lt;string&gt;
 }
 </code></pre><p>or an end event.</p>
@@ -133,7 +133,7 @@
 <h3 id="dirpath-cb"><code>dir(path, cb)</code></h3>
 <p>Returns a directory listing of the given path, in an event of the form</p>
 <pre tabindex="0"><code>{
-    type: 'data'
+    type: &#39;data&#39;
     data: list&lt;FileInfo&gt;
 }
 </code></pre><p>Where the <code>FileInfo</code> interface is the same one that <code>stat()</code> calls return to the callback. On error, it returns an error event.</p>
@@ -142,7 +142,7 @@
 <h3 id="statpath-cb"><code>stat(path, cb)</code></h3>
 <p>Returns metadata about a given path in the file tree, of the form</p>
 <pre tabindex="0"><code>{
-    type: 'data'
+    type: &#39;data&#39;
     data: {
         name: &lt;string&gt;
         `` if file, size in bytes; if dir, ambiguous
@@ -157,7 +157,7 @@
 <h3 id="readpath-offset-length-cb"><code>read(path, offset, length, cb)</code></h3>
 <p>Reads a file in the given path, at the byte offset <code>offset</code> for a length <code>length</code>. The callback is invoked with an event of shape</p>
 <pre tabindex="0"><code>{
-    type: 'data'
+    type: &#39;data&#39;
     data: &lt;string&gt;
 }
 </code></pre><p>or an error event, on a read error.</p>
@@ -169,7 +169,7 @@
 <h3 id="listenhost-handler"><code>listen(host, handler)</code></h3>
 <p>Starts an HTTP web server. <code>host</code> should specify the host the server should bind to, like <code>localhost:80</code>. The handler is invoked per each HTTP request received, with an event of the form</p>
 <pre tabindex="0"><code>{
-    type: 'req'
+    type: &#39;req&#39;
     data: {
         method: &lt;string&gt;
         url: &lt;string&gt;
@@ -195,7 +195,7 @@
 }
 </code></pre><p>The callback is called with a response event, of the form</p>
 <pre tabindex="0"><code>{
-    type: 'resp'
+    type: &#39;resp&#39;
     data: {
         status: &lt;number&gt;
         headers: map&lt;string, string&gt;
@@ -215,7 +215,7 @@
 <p>Spawns a child process with the executable at <code>path</code>, with command line arguments given in the list <code>args</code>, and a standard input <code>stdin</code>.</p>
 <p>When the process ends, the callback <code>cb</code> is invoked with the event of shape</p>
 <pre tabindex="0"><code>{
-    type: 'data'
+    type: &#39;data&#39;
     data: &lt;string&gt;
 }
 </code></pre><h3 id="env"><code>env()</code></h3>

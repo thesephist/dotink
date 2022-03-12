@@ -102,18 +102,18 @@ add [ebx 4 ecx 0x10] 0x10
                 ; memory &lt;- immediate
 </code></pre><p>Our instruction encoder needs to deal with all these cases for all the arithmetic instructions.</p>
 <p>For me, this part took the longest to get right. I ended up writing special-case branches to handle each of a few different cases. Here&rsquo;s the code that handles the <code>add</code> instruction, for example:</p>
-<pre tabindex="0"><code>['add', _, _] -&gt; map(args, type) :: {
-    ['string', 'composite'] -&gt; operands := encodeMem(args.0, args.1) :: {
+<pre tabindex="0"><code>[&#39;add&#39;, _, _] -&gt; map(args, type) :: {
+    [&#39;string&#39;, &#39;composite&#39;] -&gt; operands := encodeMem(args.0, args.1) :: {
         () -&gt; ()
-        _ -&gt; transform('03') + operands
+        _ -&gt; transform(&#39;03&#39;) + operands
     }
-    ['composite', 'string'] -&gt; operands := encodeMem(args.1, args.0) :: {
+    [&#39;composite&#39;, &#39;string&#39;] -&gt; operands := encodeMem(args.1, args.0) :: {
         () -&gt; ()
-        _ -&gt; transform('01') + operands
+        _ -&gt; transform(&#39;01&#39;) + operands
     }
-    ['string', 'string'] -&gt; transform('01') + encodeRM(args.1, args.0)
-    ['string', 'number'] -&gt; transform('81') + encodeRM(0, args.0) + toBytes(args.1, 4)
-    _ -&gt; failWith(f('Unsupported instruction: {{0}}', [instString(inst)]))
+    [&#39;string&#39;, &#39;string&#39;] -&gt; transform(&#39;01&#39;) + encodeRM(args.1, args.0)
+    [&#39;string&#39;, &#39;number&#39;] -&gt; transform(&#39;81&#39;) + encodeRM(0, args.0) + toBytes(args.1, 4)
+    _ -&gt; failWith(f(&#39;Unsupported instruction: {{0}}&#39;, [instString(inst)]))
 }
 </code></pre><p>The first case handles memory going to a register, the second case handles a register going to memory, the third handles register-to-register, and so on. In each case, the operands are encoded a little differently, and combined with a specific opcode variant for <code>add</code>.</p>
 <p>Lastly, there are a few <strong>special case instructions</strong>, like <code>mov</code>, which has its own rules, and <code>push</code> and <code>pop</code> that manipulate the program stack, which have their own rules too. These were pretty straightforward though.</p>
@@ -168,11 +168,11 @@ exit:
 
 section .rodata
 msg_a:
-    db &quot;Hello, World!&quot; 0xa
+    db &#34;Hello, World!&#34; 0xa
 len_a:
     eq 14
 msg_b:
-    db &quot;Goodbye!&quot; 10
+    db &#34;Goodbye!&#34; 10
 len_b:
     eq 9
 </code></pre><p>Some of the operands to instructions here are <em>pointers to data</em>, like <code>msg_a</code> and <code>len_b</code>. Other operands are <em>labels</em>, like <code>hello</code> and <code>exit</code>. The assembler needs to replace references to these memory addresses with real addresses at time of assembly.</p>
@@ -182,7 +182,7 @@ len_b:
 <h2 id="disassemblers-and-symbol-tables">Disassemblers and symbol tables</h2>
 <p>There&rsquo;s one part of the assembler we haven&rsquo;t looked at in detail &ndash; the <strong>symbol table</strong>. The symbol table is a non-program section in the ELF file (meaning it isn&rsquo;t loaded into memory when the program runs) that tells other tools like disassemblers and debuggers where labels in the source code are in the final program text.</p>
 <p>In our <code>readelf</code> output from Part I, the symbol table looked like this:</p>
-<pre tabindex="0"><code>Symbol table '.symtab' contains 3 entries:
+<pre tabindex="0"><code>Symbol table &#39;.symtab&#39; contains 3 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
      0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
      1: 0000000000401000     0 FUNC    LOCAL  DEFAULT    1 _start

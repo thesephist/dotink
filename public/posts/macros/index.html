@@ -109,11 +109,11 @@
         (fn (i)
             (cond
               ((divisible? i 15)
-               (println 'FizzBuzz'))
+               (println &#39;FizzBuzz&#39;))
               ((divisible? i 3)
-               (println 'Fizz'))
+               (println &#39;Fizz&#39;))
               ((divisible? i 5)
-               (println 'Buzz'))
+               (println &#39;Buzz&#39;))
               (true (println i))))))
 </code></pre><p>Similarly, the <code>match</code> macro allows us to take different actions depending on the value of some target variable, like a switch case.</p>
 <pre tabindex="0"><code>; The Fibonacci sequence
@@ -155,7 +155,7 @@
 <p>Threading macros are my favorite bit of syntax in Lisp, because it makes my code cleaner to read, easier to write, and more visually aesthetic, all in one stroke.</p>
 <p>To understand threading macros, we need to understand <em>pipelines</em>.</p>
 <p>A pipeline describes a program where some data flows through a sequence of functions in order, resulting in some final result in the end. For example, you may have run a command in your shell like</p>
-<pre tabindex="0"><code>ls | grep 'report' | xargs cat | wc -l
+<pre tabindex="0"><code>ls | grep &#39;report&#39; | xargs cat | wc -l
 </code></pre><p>This small program takes files in a directory (<code>ls</code>), filters out the ones that don&rsquo;t contain <code>report</code> in the name (<code>grep</code>), reads all their contents (<code>xargs cat</code>), and counts the total number of lines (<code>wc -l</code>). This is a <em>pipeline</em>, where each step modifies or acts on the data from some previous step in some way.</p>
 <p>Threading macros allow us to write Lisp programs similarly, as a pipeline of some data traveling through a sequence of functions acting on it.</p>
 <p>For example, this pipeline in Klisp generates a list of numbers 1-100, filters for just the prime numbers, and counts then with <code>size</code>.</p>

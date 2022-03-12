@@ -184,7 +184,7 @@ False := x =&gt; y =&gt; y
 </code></pre><p>We can write a <code>toBool</code> function that converts our lambda calculus representation of a boolean into a normal Ink boolean value as follows. The boolean, which is a selector function, will pick <code>true</code> if it&rsquo;s <code>True</code>, and pick <code>false</code> if it&rsquo;s <code>False</code>.</p>
 <pre tabindex="0"><code>toBool := c =&gt; c(true)(false)
 </code></pre><p>Using these representation of booleans as functions, we can define some boolean operators, like <code>not</code>, <code>and</code>, and <code>or</code>. These operations aren&rsquo;t immediately obvious, so sit with them for a bit and think about how the descriptions in comments are true about each operator.</p>
-<pre tabindex="0"><code>` &lt;not&gt; x simply flips the given value's choice. `
+<pre tabindex="0"><code>` &lt;not&gt; x simply flips the given value&#39;s choice. `
 not := x =&gt; x(False)(True)
 
 ` A &lt;and&gt; B returns B if A is true, and false if A is false. `

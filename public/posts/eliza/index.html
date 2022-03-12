@@ -86,16 +86,16 @@ key: dreamed 4
 <p>To build Eliza, I borrowed this renderer layer from Torus by importing the Torus library onto the page, and wrote a <a href="https://github.com/thesephist/eliza/blob/main/lib/torus.js.ink">small adapter library called <code>torus.js.ink</code></a> that provides an idiomatic Ink API for the Torus renderer.</p>
 <p>With the adapter, getting a basic web UI running as simple as the Ink program</p>
 <pre tabindex="0"><code>` find an element into which we render the app `
-root := bind(document, 'querySelector')('#root')
+root := bind(document, &#39;querySelector&#39;)(&#39;#root&#39;)
 
 ` define the app as a function of state =&gt; DOM tree `
 App := state =&gt; (
     update := Renderer(root).update
 
-    ` we can call &quot;update(vdom)&quot; to re-render the app `
+    ` we can call &#34;update(vdom)&#34; to re-render the app `
     update(
-        h('div', ['app'], [
-            str('Hello, World!')
+        h(&#39;div&#39;, [&#39;app&#39;], [
+            str(&#39;Hello, World!&#39;)
         ])
     )
 )

@@ -84,15 +84,15 @@
         <h2 id="whats-ink">What&rsquo;s Ink?</h2>
 <p>Ink is a functional, general-purpose, interpreted scripting language. It&rsquo;s dynamically and strongly typed. Ink programs can be web servers, short scripts, drawing programs, or anything else that interfaces with files and networks. Ink is designed to be minimal and simple, first and foremost.</p>
 <p>Here&rsquo;s a simple Ink program: a basic web server.</p>
-<pre tabindex="0"><code>std := load('std')
+<pre tabindex="0"><code>std := load(&#39;std&#39;)
 log := std.log
 
-listen('0.0.0.0:8080', evt =&gt; evt.type :: {
-    'error' -&gt; log('Error: ' + evt.message)
-    'req' -&gt; (evt.end)({
+listen(&#39;0.0.0.0:8080&#39;, evt =&gt; evt.type :: {
+    &#39;error&#39; -&gt; log(&#39;Error: &#39; + evt.message)
+    &#39;req&#39; -&gt; (evt.end)({
         status: 200
-        headers: {'Content-Type': 'text/plain'}
-        body: 'Hello, World!'
+        headers: {&#39;Content-Type&#39;: &#39;text/plain&#39;}
+        body: &#39;Hello, World!&#39;
     })
 })
 </code></pre><p>I made Ink as an experiment to study writing interpreters and compilers in mid-2019. Since then, I&rsquo;ve worked on several other related projects in the programming language space, but continue to write programs and apps in Ink in my day to day work. Because the language and runtime is so small, it&rsquo;s easy for me to understand the entire stack and debug Ink programs easily. Because Ink&rsquo;s interpreter is a single static binary that runs across operating systems, deploying Ink programs is also pretty simple.</p>
@@ -127,8 +127,8 @@ ink v0.1.9
 <pre tabindex="0"><code>$ ink
 &gt; 3 + 4
 7
-&gt; 'Hello ' + 'World!'
-'Hello World!'
+&gt; &#39;Hello &#39; + &#39;World!&#39;
+&#39;Hello World!&#39;
 &gt; acos(0.5)
 1.04719755
 &gt;
@@ -150,7 +150,7 @@ ink v0.1.9
 2, 3.5, ~42, 0.02
 
 ` string `
-'Hello, World!', ''
+&#39;Hello, World!&#39;, &#39;&#39;
 
 ` booleans `
 true, false
@@ -159,7 +159,7 @@ true, false
 ()
 
 ` composites `
-[1, 2, 3], {key: 'value'}
+[1, 2, 3], {key: &#39;value&#39;}
 </code></pre><p>You&rsquo;ll notice here that Ink comments are demarcated with backticks. This is Ink&rsquo;s multiline comment. We can also prepend two backticks to the start of a line to comment just the line.</p>
 <p>We define variables in Ink with the <code>:=</code> assignment operator. The assignment operator binds a value to a variable name (or a composite value&rsquo;s key) in the current scope. Variables in Ink are lexically scoped.</p>
 <p>Ink supports the basic arithmetic operations using infix operators, and more advanced functions using builtin native functions. Note that to declare a negative number, Ink uses the negation operator <code>~</code> (a tilde) instead of a negative sign.</p>
@@ -181,10 +181,10 @@ false ^ true `` -&gt; true
 15 ^ 23 `` -&gt; 24 (15 xor 23)
 
 `` bitwise ops on strings (byte arrays)
-'abcd' &amp; 'ABCD' `` -&gt; 'ABCD'
-'abcd' | 'ABCD' `` -&gt; 'abcd'
-'abcd' ^ 'ABCD' `` -&gt; '    '
-`` note: if two string lengths don't match, the shorter
+&#39;abcd&#39; &amp; &#39;ABCD&#39; `` -&gt; &#39;ABCD&#39;
+&#39;abcd&#39; | &#39;ABCD&#39; `` -&gt; &#39;abcd&#39;
+&#39;abcd&#39; ^ &#39;ABCD&#39; `` -&gt; &#39;    &#39;
+`` note: if two string lengths don&#39;t match, the shorter
 ``  string will be zero-extended at the end.
 </code></pre><h3 id="variables">Variables</h3>
 <p>A variable in Ink can contain any alphanumeric Unicode character, as well as <code>?</code>, <code>!</code> and <code>@</code>. The three last special symbols are conventionally used to indicate special semantics:</p>
@@ -208,55 +208,55 @@ false ^ true `` -&gt; true
 </code></pre><h3 id="strings">Strings</h3>
 <p>Ink supports string values. An Ink string is simply a byte slice, in the style of <a href="https://www.lua.org/pil/2.4.html">Lua</a>, and doesn&rsquo;t know about Unicode. We can construct a string literal by surrounding data in single quotes, and we can escape single quotes within a string literal with a backslash.</p>
 <p>We can access individual characters in a string with the dot <code>.</code> operator followed by an index into the string. Since Ink strings are mutable, we can also change sub-slices of a string in the same way by assigning to it.</p>
-<pre tabindex="0"><code>s := 'Hello, World!'
+<pre tabindex="0"><code>s := &#39;Hello, World!&#39;
 
 ` index into s `
-s.0 `` -&gt; 'H'
-s.4 `` -&gt; 'o'
+s.0 `` -&gt; &#39;H&#39;
+s.4 `` -&gt; &#39;o&#39;
 
 ` an index out of bounds will return null () `
 s.20 `` -&gt; ()
 
 ` change substring of s `
-s.7 := 'World'
-s `` -&gt; 'Hello, World!'
+s.7 := &#39;World&#39;
+s `` -&gt; &#39;Hello, World!&#39;
 
 ` concatenate strings with the + operator `
-t + ', I said.'
-s + t `` -&gt; 'Hello, Linus!, I said.'
+t + &#39;, I said.&#39;
+s + t `` -&gt; &#39;Hello, Linus!, I said.&#39;
 </code></pre><p>A common idiom to append a string mutably at the end of another string (which is more efficient than concatenating two strings together) is to assign to the index that is the length of a string, <code>len(s)</code>.</p>
 <pre tabindex="0"><code>` Append two strings mutably `
-s := 'first'
-t := 'second'
+s := &#39;first&#39;
+t := &#39;second&#39;
 
-s.len(s) := t `` -&gt; 'firstsecond'
+s.len(s) := t `` -&gt; &#39;firstsecond&#39;
 </code></pre><h3 id="match-expressions">Match expressions</h3>
 <p>The match expression is Ink&rsquo;s singular control flow structure, and is an expression followed by the match symbol <code>::</code> and a list of clauses in curlybraces.</p>
 <pre tabindex="0"><code>x := false
 
 x :: {
-    true -&gt; 'X is true'
-    false -&gt; 'X is false'
-} `` returns 'X is false'
+    true -&gt; &#39;X is true&#39;
+    false -&gt; &#39;X is false&#39;
+} `` returns &#39;X is false&#39;
 </code></pre><p>In a match expression, the case clauses are checked from top to bottom, and the first path whose value matches the case is taken. If there are no matches, the expression does nothing.</p>
 <p>Both the expression being matched and the individual cases can contain complex expressions. As a contrived example:</p>
 <pre tabindex="0"><code>n % 2 :: {
-    0 + 1 -&gt; 'odd'
-    0 + 0 -&gt; 'even'
+    0 + 1 -&gt; &#39;odd&#39;
+    0 + 0 -&gt; &#39;even&#39;
 }
 </code></pre><p>Sometimes, we&rsquo;d like for a match expression to match against one or more particular cases, and then have a &ldquo;default&rdquo; or &ldquo;else&rdquo; branch that&rsquo;s taken if no other options match. Those cases are matched with an underscore <code>_</code>.</p>
 <pre tabindex="0"><code>n :: {
-    1 -&gt; 'first'
-    2 -&gt; 'second'
-    3 -&gt; 'third'
-    _ -&gt; 'a lot'
+    1 -&gt; &#39;first&#39;
+    2 -&gt; &#39;second&#39;
+    3 -&gt; &#39;third&#39;
+    _ -&gt; &#39;a lot&#39;
 }
 </code></pre><p>Ink compares composite values deeply, so we can combine the catchall (underscore) symbol with more complex values to be able to match against some complex cases.</p>
 <pre tabindex="0"><code>response :: {
-    {status: 'ok', body: _} -&gt; 'ok response, any body'
-    {status: 'error', body: 'unknown'} -&gt; 'error but unknown error'
-    {status: 'error', body: _} -&gt; 'any other uncaught error'
-    _ -&gt; 'any other cases'
+    {status: &#39;ok&#39;, body: _} -&gt; &#39;ok response, any body&#39;
+    {status: &#39;error&#39;, body: &#39;unknown&#39;} -&gt; &#39;error but unknown error&#39;
+    {status: &#39;error&#39;, body: _} -&gt; &#39;any other uncaught error&#39;
+    _ -&gt; &#39;any other cases&#39;
 }
 </code></pre><h3 id="functions-closures-and-recursion">Functions, closures, and recursion</h3>
 <p>We create a new function with the arrow <code>=&gt;</code> symbol, and assign it to a variable.</p>
@@ -316,7 +316,7 @@ list.(len(list) - 1) `` -&gt; last item
 
 list.(1 + 2 + 3) `` -&gt; equivalent to list.6
 
-map.('three') := 3
+map.(&#39;three&#39;) := 3
 
 ` an identifier directly following . is considered
     a string key of the map value `
@@ -333,7 +333,7 @@ list.len(list) := newItem
 myFunc := () =&gt; 2 + 3
 </code></pre><pre tabindex="0"><code>` b.ink `
 
-a := load('./a')
+a := load(&#39;./a&#39;)
 
 a.myFunc `` -&gt; () =&gt; 2 + 3
 </code></pre><h2 id="security-and-permissions-model">Security and permissions model</h2>

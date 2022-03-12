@@ -149,7 +149,7 @@
 <p>An Ink program that executes this search is</p>
 <pre tabindex="0"><code>` binary search to approximate numbers `
 
-std := load('std')
+std := load(&#39;std&#39;)
 log := std.log
 f := std.format
 
@@ -189,7 +189,7 @@ main := args =&gt; (
 	})
 
 	result := fareyApproximate(target, max)
-	log(f('{{ 2 }} approx. = {{ 3 }} = {{ 0 }} / {{ 1 }}'
+	log(f(&#39;{{ 2 }} approx. = {{ 3 }} = {{ 0 }} / {{ 1 }}&#39;
 		[result.0, result.1, target, result.0 / result.1]))
 )
 

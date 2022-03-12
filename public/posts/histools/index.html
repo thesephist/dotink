@@ -55,7 +55,7 @@
 <p><a href="https://github.com/thesephist/histools" class="button">See Histools on GitHub →</a></p>
 <h2 id="inspecting-safaris-history-database">Inspecting Safari&rsquo;s history database</h2>
 <p>Histools works by transforming history data from the database into a format that can be usefully visualized on a heatmap. In macOS Catalina, Safari keeps history in a simple SQLite3 database, at <code>~/Library/Safari/History.db</code>. So the first step for me was to copy this database file out to a safe location, and open the sqlite shell to look at the database schema.</p>
-<pre tabindex="0"><code>sqlite History.db &quot;.schema&quot;
+<pre tabindex="0"><code>sqlite History.db &#34;.schema&#34;
 </code></pre><p>This returns us all of the table definitions, which you can also check out <a href="https://github.com/thesephist/histools/blob/main/meta/History.schema.sql">here</a>. For the sake of looking at history, we&rsquo;re only really concerned with two tables: <code>history_items</code> and <code>history_visits</code>. Here&rsquo;s what those tables looks like.</p>
 <pre tabindex="0"><code>CREATE TABLE history_items
 (

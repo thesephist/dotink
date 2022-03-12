@@ -13,7 +13,7 @@
       <pubDate>Wed, 26 Jan 2022 15:37:28 -0500</pubDate>
       
       <guid>https://dotink.co/posts/oak-perf-jan-2022/</guid>
-      <description>I made a couple of much-needed optimizations to the JavaScript code generator in oak build this week, focused on runtime performance and generated code size.</description>
+      <description>This blog post originally appears on the Oak Blog. It&amp;rsquo;s been copied here, because when this blog went up, the Oak blog wasn&amp;rsquo;t quite ready for primetime.</description>
     </item>
     
     <item>

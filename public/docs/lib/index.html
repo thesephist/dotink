@@ -167,7 +167,7 @@
 <h3 id="reducebacklist-f-acc"><code>reduceBack(list, f, acc)</code></h3>
 <p>Like <code>reduce</code>, but traverses the list from the end, in decreasing-index order.</p>
 <h3 id="flattenlist"><code>flatten(list)</code></h3>
-<p>Flattens a list of lists into a single list containing the sublists' items in order. <code>flatten</code> only flattens a list one-level deep.</p>
+<p>Flattens a list of lists into a single list containing the sublists&rsquo; items in order. <code>flatten</code> only flattens a list one-level deep.</p>
 <h3 id="somelist"><code>some(list)</code></h3>
 <p>Returns true if <code>list</code> contains at least one <code>true</code>.</p>
 <h3 id="everylist"><code>every(list)</code></h3>
@@ -186,14 +186,14 @@
 <p>Writes a string buffer, given as <code>data</code>, to the file at <code>path</code>. If a file is already present, <code>writeFile</code> truncates the existing file. If the file is not there, <code>writeFile</code> creates it. If write is successful, <code>cb</code> is called with <code>true</code>. On any error, <code>()</code> is passed instead to the callback.</p>
 <h3 id="formatraw-values"><code>format(raw, values)</code></h3>
 <p>Returns a format string with the string formatting substrings replaced with their referenced values from <code>values</code>, which can be a map or a list. For example:</p>
-<pre tabindex="0"><code>format('{{ 0 }} {{ 1 }} {{ 0 }}', ['A', 'B'])
-`` -&gt; 'A B A'
+<pre tabindex="0"><code>format(&#39;{{ 0 }} {{ 1 }} {{ 0 }}&#39;, [&#39;A&#39;, &#39;B&#39;])
+`` -&gt; &#39;A B A&#39;
 
-format('{{ steve }} met {{ jony }}', {
-    steve: 'Steve Jobs'
-    jony: 'Jony Ive'
+format(&#39;{{ steve }} met {{ jony }}&#39;, {
+    steve: &#39;Steve Jobs&#39;
+    jony: &#39;Jony Ive&#39;
 })
-`` -&gt; 'Steve Jobs met Jony Ive'
+`` -&gt; &#39;Steve Jobs met Jony Ive&#39;
 </code></pre><h2 id="string-str">String (<code>str</code>)</h2>
 <p><code>str</code> contains string manipulation functions.</p>
 <p><a href="https://github.com/thesephist/ink/blob/master/samples/str.ink" class="button">See source on GitHub →</a></p>
